@@ -1,0 +1,21 @@
+/* ===== Worker app: "My tasks" / "About me" tabs and the received-review screen ===== */
+.wa-tabs{display:flex;gap:4px;margin:6px 16px 10px;padding:4px;background:#F3F4F6;border-radius:10px}
+.wa-tabs button{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;height:36px;border:0;border-radius:8px;background:none;font:inherit;font-size:14px;font-weight:600;color:#6B7280;cursor:pointer}
+.wa-tabs button.on{background:#fff;color:#111827;box-shadow:0 1px 2px rgba(16,24,40,.12)}
+.wa-tabs .wa-badge{min-width:18px;height:18px;font-size:11px;padding:0 5px}
+.wa-chip.b{color:#1D4ED8;background:#EFF6FF;border-color:#BFDBFE;font-style:normal}
+.wa-rbadge{width:40px;height:40px;flex:none;border-radius:10px;background:#FEF3C7;color:#92400E;display:grid;place-items:center;font-size:16px;font-weight:700;line-height:1}
+.wa-rbadge small{font-size:10px;font-weight:600;margin-top:-6px}
+.wa-task.locked{cursor:default}.wa-task.locked b{color:#6B7280}
+.wa-ck.lock{border-style:dashed;font-size:12px}
+.wa-empty{padding:40px 24px;text-align:center;font-size:14px;color:#6B7280}
+.wa-big{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.wa-big b{font-size:16px;color:#111827}
+.wa-stars{letter-spacing:1px}.wa-stars .off{color:#D1D5DB}
+.wa-sec.flush{padding:20px 0 4px}
+.wa-area{padding:12px 0;border-bottom:1px solid #E5E7EB}
+.wa-area-h{display:flex;align-items:center;justify-content:space-between;gap:10px}.wa-area-h b{font-size:15px;font-weight:600;color:#111827}
+.wa-area p{margin:6px 0 0;font-size:14px;color:#374151}
+.wa-pill{flex:none;font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;background:#EFF6FF;color:#1D4ED8}
+.wa-link{display:flex;align-items:center;gap:12px;width:100%;margin-top:14px;padding:12px 0;border:0;border-top:1px solid #E5E7EB;background:none;font:inherit;font-size:15px;font-weight:600;color:#111827;text-align:left;cursor:pointer}
+.wa-link>svg{margin-left:auto;color:#6B7280;flex:none}
+.wa-link.card{margin:10px 0 0;padding:12px;border:1px solid #E5E7EB;border-radius:12px;background:#F9FAFB}

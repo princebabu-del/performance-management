@@ -21,3 +21,4 @@
 @import "./18-cycle-detail-layout.css"; /* Cycle detail page layout (LMS course-detail pattern) */
 @import "./19-profile-panel.css"; /* Employee profile panel (Figma Desktop-UX 39133:21561) */
 @import "./20-payroll-viewer.css"; /* Payroll admin: view-only cycle pages */
+@import "./21-worker-received.css"; /* Worker app: "About me" tab + received review screen */
