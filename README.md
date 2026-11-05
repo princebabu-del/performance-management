@@ -29,7 +29,7 @@ Requires Node 20+.
 │       └── 14-topbar.css       # Lumber top nav
 ├── public/                     # Served as-is at the site root (copied to dist/)
 │   ├── assets/
-│   │   └── lumber-logo.svg     # Favicon / logo
+│   │   └── lumber-logo-icon.svg  # Favicon / logo
 │   ├── components/             # Reusable UI components (plain JS + CSS, linked from index.html)
 │   │   └── banners/            # Info / warning / error / gray notes — see its README.md
 │   └── js/
