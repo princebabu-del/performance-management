@@ -1,0 +1,11 @@
+.pr-rate{display:flex;flex-wrap:wrap;gap:24px;align-items:center}
+.pr-big{display:flex;align-items:center;gap:14px}
+.pr-big>b{font-size:24px;font-weight:700;background:var(--blue-t);color:var(--blue);border-radius:12px;padding:10px 14px}
+.pr-stars{color:#F59E0B;font-size:20px;letter-spacing:1px;white-space:nowrap}.pr-stars span{color:var(--line2)}
+.pr-lv{font-weight:600;margin-top:2px}
+.pr-meta{flex:1;min-width:240px;display:grid;gap:4px}
+.pr-hist{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.pr-tr{color:var(--mute)}.pr-tr.up{color:var(--green-d)}.pr-tr.dn{color:var(--red)}
+.pr-row{display:flex;align-items:center;gap:12px;padding:12px 20px;border-top:1px solid var(--line)}
+.pr-row .pr-stars{font-size:14px}
+.card .hd .seg2{margin-left:auto}

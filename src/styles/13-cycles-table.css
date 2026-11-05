@@ -1,0 +1,132 @@
+.cyctbl td .link{font-weight:500;font-size:16px}
+.cyctbl tr.hl td{background:#F5F8FF}
+.cyctbl td.nw{white-space:nowrap}
+/* fixed 56px rows: one line per cell, overflowing text truncates with "…" */
+.cyctbl tbody td{height:56px;padding-top:0;padding-bottom:0;white-space:nowrap;box-sizing:border-box}
+.cl-t{display:block;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cyctbl td:nth-child(2) .cl-t{max-width:340px}   /* Cycle Name gets more room */
+/* pinned columns: checkbox + Cycle Name stick left, actions stick right while the table scrolls sideways.
+   :where() keeps the white fill at zero specificity so hover / selected / highlighted row colours still win.
+   --cl-cbx = the checkbox column's width (measured in clPinSync, 12-create-then-assign.js). */
+.cyctbl th.cbx,.cyctbl td.cbx{position:sticky;left:0;z-index:2}
+.cyctbl th:nth-child(2),.cyctbl td:nth-child(2){position:sticky;left:var(--cl-cbx,48px);z-index:2}
+.cyctbl th.act,.cyctbl td.act{position:sticky;right:0;z-index:2}
+.cyctbl :where(td.cbx,td:nth-child(2),td.act){background:var(--surface)}
+.cyctbl :where(th.cbx,th:nth-child(2),th.act){background:var(--head)}
+.cyctbl td:nth-child(2),.cyctbl th:nth-child(2),.cyctbl td.act,.cyctbl th.act{transition:box-shadow .15s}
+.tw.pin-l .cyctbl td:nth-child(2),.tw.pin-l .cyctbl th:nth-child(2){box-shadow:6px 0 6px -4px rgba(16,24,40,.12)}
+.tw.pin-r .cyctbl td.act,.tw.pin-r .cyctbl th.act{box-shadow:-6px 0 6px -4px rgba(16,24,40,.12)}
+.cyctbl th.act,.cyctbl td.act{width:1%;white-space:nowrap;text-align:right}
+.cyctbl .cyc-act{display:flex;align-items:center;justify-content:flex-end;gap:12px}
+/* button group (Figma 7724:20393): Live / Closed on the overview Cycles card */
+.bgrp{display:inline-flex;border:1px solid var(--line2);border-radius:8px;overflow:hidden;flex-shrink:0}
+.bgrp button{height:40px;padding:0 16px;border:0;background:var(--surface);font-size:14px;font-weight:500;color:var(--ink2);cursor:pointer;white-space:nowrap}
+.bgrp button+button{border-left:1px solid var(--line2)}
+.bgrp button:hover{background:var(--sub)}
+.bgrp button.on{background:var(--blue-t);color:var(--link)}
+.bgrp button:focus-visible{outline-offset:-2px}
+/* overview: 12-column grid, 16px gutter */
+.dgrid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px;align-items:start;min-width:0}
+.dgrid>.g12{grid-column:span 12}
+.dgrid>.g8{grid-column:span 8}
+.dgrid>.g4{grid-column:span 4}
+.dgrid>.card{min-width:0}
+@media (max-width:1100px){.dgrid>.g8,.dgrid>.g4{grid-column:span 12}}
+
+/* HR Admin overview: summary cards row */
+.statrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;min-width:0}
+.stat{display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:20px;background:var(--surface);border:0;border-radius:14px;box-shadow:0 0 0 1px #EDEEF0;text-align:left;cursor:pointer;min-width:0}
+.stat:hover{box-shadow:0 0 0 1px var(--line2),0 2px 6px rgba(0,0,0,.05)}
+.stat-l{display:flex;align-items:center;gap:8px;width:100%;font-size:14px;font-weight:500;color:var(--mute)}
+.stat-lt{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stat-chev{width:16px;height:16px;flex-shrink:0;color:var(--mute);opacity:0;transition:opacity .15s}
+.stat:hover .stat-chev,.stat:focus-visible .stat-chev{opacity:1}
+.stat.static{cursor:default}
+.stat.static:hover{box-shadow:0 0 0 1px #EDEEF0}
+.stat-v{font-size:32px;font-weight:600;line-height:1.15;color:var(--ink)}
+.stat-of{font-size:16px;font-weight:500;color:var(--mute)}
+.stat-d{font-size:13px;font-weight:400;color:var(--mute);margin-left:8px;letter-spacing:0}
+.stat.warn .stat-d{color:var(--amber)}
+.stat.bad .stat-v{color:var(--red)}
+
+/* HR Admin overview: 7 / 5 column body, right column stacks cards */
+.dgrid>.g7{grid-column:span 7}
+.dgrid>.g5{grid-column:span 5}
+.dcol{display:flex;flex-direction:column;gap:16px;min-width:0}
+@media (max-width:1100px){.dgrid>.g7,.dgrid>.g5{grid-column:span 12}}
+/* compact list rows used by Cycles and Recent Templates cards */
+.hlist{display:flex;flex-direction:column}
+.hrow{display:flex;align-items:center;gap:12px;width:100%;padding:12px 20px;border:0;border-top:1px solid var(--line);background:none;text-align:left;cursor:pointer;min-width:0}
+.hrow:first-child{border-top:0}
+.hrow:hover{background:var(--sub)}
+.hrow .grow{min-width:0;flex:1}
+.hrow-t{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hrow-r{display:flex;align-items:center;gap:10px;flex-shrink:0}
+/* My Tasks list (HR Admin overview) */
+.task-grp{display:flex;align-items:center;gap:8px;padding:10px 20px;background:var(--sub);border-top:1px solid var(--line);border-bottom:1px solid var(--line);font-size:12px;font-weight:600;color:var(--ink2);text-transform:uppercase;letter-spacing:.04em}
+.card .hd+.task-grp{border-top:0}
+.att.task .pill{flex-shrink:0}
+.att.task .btn{flex-shrink:0}
+/* overview list rows: smaller type tile, wrapping meta line, chevron */
+.cd-tile.sm{width:40px;height:40px;border-radius:10px}
+.cd-tile.sm svg{width:20px;height:20px}
+.hrow-m{margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hrow-chev{width:16px;height:16px;flex-shrink:0;color:var(--mute)}
+.hrow:hover .hrow-chev{color:var(--ink2)}
+/* bulk selection: search + bulk bar (shared .cd-bulk markup from the cycle detail Employees table) on the left of the toolbar */
+.cl-tools-l{--cd-blue:#2970FF;display:flex;align-items:center;gap:12px;flex:1 1 auto;min-width:0;flex-wrap:wrap}
+.cl-tools-l .cd-bulk-wrap{flex:1 1 320px}
+.cyctbl tr.sel td{background:#F5F8FF}
+/* tertiary (gray, borderless) button: card-header "View All ›" */
+.btn.tert{border-color:transparent;background:transparent;color:var(--ink2);gap:4px;padding:0 8px}
+.btn.tert:hover{background:var(--sub);color:var(--ink)}
+.btn.tert .hrow-chev{color:currentColor}
+/* Columns dropdown (anchored 4px under the button; grey focus ring on the button while open) */
+.btn.col-open{border-color:#D0D5DD;box-shadow:0 1px 2px rgba(16,24,40,.05),0 0 0 4px rgba(152,162,179,.14)}
+.col-pop{--fc-blue:#2970FF;position:fixed;top:0;left:0;z-index:1300;width:260px;max-width:calc(100vw - 16px);max-height:min(480px,calc(100vh - 16px));overflow:auto;box-sizing:border-box;background:#fff;border:1px solid #EAECF0;border-radius:8px;box-shadow:0 12px 16px -4px rgba(16,24,40,.08),0 4px 6px -2px rgba(16,24,40,.03);padding:6px 0}
+.col-row{position:relative;display:flex;align-items:center;gap:8px;padding:0 16px 0 10px;min-height:44px}
+.col-row:hover{background:#F9FAFB}
+.col-row.drag{opacity:.4}
+.col-row.bf:before,.col-row.af:after{content:"";position:absolute;left:10px;right:10px;height:2px;border-radius:1px;background:var(--fc-blue)}
+.col-row.bf:before{top:-1px}.col-row.af:after{bottom:-1px}
+.col-h{display:grid;place-content:center;width:24px;height:28px;padding:0;border:0;border-radius:4px;background:none;color:#667085;cursor:grab}
+.col-h .i{width:20px;height:20px}
+.col-h:focus-visible{outline:2px solid var(--fc-blue);outline-offset:0}
+.col-h:disabled{color:#D0D5DD;cursor:default}
+.col-l{display:flex;align-items:center;gap:12px;flex:1;min-width:0;font-size:16px;font-weight:500;color:#101828;cursor:pointer;padding:10px 0}
+.col-row.lk .col-l{cursor:default}
+.col-pop .col-cb:disabled{opacity:1;cursor:default}
+.col-pop .col-cb:disabled:checked{background-color:#D0D5DD;border-color:#D0D5DD}
+/* header split-button menu: items match the button text (16px / 600) with 20px icons */
+.split-menu button{font-size:16px;font-weight:600}
+.split-menu svg.i{width:20px;height:20px}
+/* card empty state (HR Admin overview) */
+.es{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;padding:80px 20px}
+.es-h{font-size:16px;font-weight:500;color:var(--ink)}
+.es-d{font-size:14px;font-weight:400;color:var(--mute);max-width:360px}
+.es-a{margin-top:12px}
+/* Questionnaires table: Actions header lines up with the right-aligned icon buttons */
+.tpltbl th.act{text-align:right}
+.tpltbl td.act{width:1%;white-space:nowrap}
+/* Questionnaires row actions: favourite + kebab use the review cycles table's ghost icon button */
+.tpltbl .tpl-act{display:flex;align-items:center;justify-content:flex-end;gap:4px}
+.tpltbl .tpl-act .btn.fav{color:#F59E0B}
+.tpltbl .tpl-act .btn.fav svg{fill:#F59E0B}
+/* row kebab menus inside a table scroller float so the scroller can't clip them (placed by layer 22) */
+/* z-index 44: above page content, below the top bar (45), drawers (50), modals (60) and toasts (70) */
+.tw .kebab>.menu:not(.cd-kb-menu){position:fixed;top:0;left:0;right:auto;z-index:44}
+/* sticky cells (e.g. .cyctbl td.act, z-index 2) each form a stacking context, so the next row's sticky cell painted over
+   the open menu. Lift the cell that holds the open menu just above its neighbours (3 > 2), never above overlays. */
+.tw td:has(.kebab>.menu),.tw th:has(.kebab>.menu){z-index:3}
+/* table row kebab menus: 20px icons, 16px medium labels */
+.tw .kebab>.menu button{font-size:16px;font-weight:500}
+.tw .kebab>.menu button svg.i{width:20px;height:20px;flex:none}
+/* HR Admin overview type scale: section heading 20/600, list heading 14/600, subtext 14/400 gray */
+.ov .card .hd h3{font-size:20px;font-weight:600}
+.ov .att .t,.ov .hrow-t{font-size:14px;font-weight:600}
+.ov .att .d,.ov .hrow-m{font-size:14px;font-weight:400;color:var(--mute)}
+/* metadata separator dot */
+.sep{display:inline-block;margin:0 6px;color:#D0D5DD;font-weight:700}
+/* overview lists: dividers inset to the row padding instead of running edge to edge */
+.ov .att.task,.ov .hrow{position:relative;border-top:0}
+.ov .att.task+.att.task::before,.ov .hrow+.hrow::before{content:"";position:absolute;top:0;left:20px;right:20px;border-top:1px solid var(--line)}

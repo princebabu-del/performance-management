@@ -1,0 +1,254 @@
+/* Participants · Rating Scale · Additional Settings (focused cycle editor) */
+.fc-hd{display:flex;flex-direction:column;gap:6px}
+.fc-hd p{margin:0;font-size:14px;line-height:1.45;color:#667085}
+.fc-help{margin:0;font-size:13px;line-height:1.45;color:#667085;padding:0}
+
+/* checkbox (Lumber style: rounded square, blue when on) */
+.rx-cb{appearance:none;-webkit-appearance:none;width:20px;height:20px;margin:0;flex-shrink:0;border:1.5px solid #D0D5DD;border-radius:6px;background:#fff;cursor:pointer;display:inline-grid;place-content:center;transition:background .12s,border-color .12s}
+.rx-cb:hover{border-color:#98A2B3}
+.rx-cb:checked{background:var(--fc-blue) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M11.7 3.5 5.5 9.8 2.3 6.6' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/14px no-repeat;border-color:var(--fc-blue)}
+.rx-cb:focus-visible{outline:2px solid var(--fc-blue);outline-offset:2px}
+.rx-cb:disabled{opacity:.5;cursor:not-allowed}
+
+/* dropdowns */
+.rx-dd{position:relative;min-width:0}
+.rx-pop{position:absolute;top:calc(100% + 6px);left:0;z-index:45;width:max(100%,280px);max-width:calc(100vw - 32px);background:#fff;border:1px solid var(--fc-card-line);border-radius:12px;box-shadow:0 12px 16px -4px rgba(16,24,40,.08),0 4px 6px -2px rgba(16,24,40,.03);padding:6px;display:flex;flex-direction:column}
+/* reviewer multi-select */
+.rx-ms{height:46px;min-height:0;box-sizing:border-box;overflow:hidden;display:flex;flex-wrap:nowrap;align-items:center;gap:6px;padding:6px 44px 6px 8px;cursor:pointer;position:relative;background:#fff url(/assets/chevron-down.svg) right 14px center/20px 20px no-repeat}
+.rx-ms.open{border-color:var(--fc-blue)}
+.rx-ph{padding:0 6px;color:var(--fc-ph)}
+.rx-tag{display:inline-flex;align-items:center;gap:2px;max-width:100%;height:30px;padding:0 4px 0 10px;border:1px solid var(--fc-card-line);border-radius:6px;background:#F9FAFB;font-size:14px;font-weight:500;color:var(--fc-ink);white-space:nowrap}
+.rx-tagx{width:22px;height:22px;border:0;border-radius:4px;background:none;color:#98A2B3;font-size:16px;line-height:1;cursor:pointer;position:relative;z-index:1}
+.rx-tagx:hover{background:#EAECF0;color:var(--fc-ink)}
+.rx-chev{position:absolute;inset:0;width:100%;border:0;background:none;cursor:pointer;border-radius:8px}
+.rx-chev:focus-visible{outline:2px solid var(--fc-blue);outline-offset:2px}
+.rx-tag{position:relative;z-index:1}
+/* multi-selects stay one line high: chips that don't fit are hidden (rxFitChips) behind a "+N" badge */
+.rx-ms>.rx-tag{flex-shrink:0}
+.rx-tag[hidden]{display:none}
+.rx-more{flex-shrink:0;position:relative;z-index:1;display:inline-flex;align-items:center;height:30px;padding:0 8px;border-radius:6px;background:#F2F4F7;font-size:14px;font-weight:500;color:var(--fc-ink);white-space:nowrap}
+.rx-mo{display:flex;align-items:center;gap:8px;min-height:40px;padding:8px 10px;border-radius:8px;font-size:14px;font-weight:500;color:#101828;cursor:pointer}
+.rx-mo:hover{background:#F9FAFB}
+.rx-same{margin-left:auto;font-size:12px;font-weight:500;color:#667085;white-space:nowrap}
+/* questionnaire picker: search · templates (pick or preview) · Add Template */
+.rx-tplpop{padding:0;width:max(100%,320px)}
+.rx-srch{padding:8px 8px 4px}
+.rx-search{width:100%;height:36px;border:1px solid var(--fc-line);border-radius:8px;padding:0 12px 0 34px;font-family:var(--f);font-size:14px;color:#101828;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='m17.5 17.5-3.6-3.6m2.1-5a7.1 7.1 0 1 1-14.2 0 7.1 7.1 0 0 1 14.2 0Z' stroke='%23667085' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") 11px center/16px no-repeat;box-sizing:border-box}
+.rx-search:focus{outline:none;border-color:var(--fc-blue)}
+.rx-search::placeholder{color:var(--fc-ph)}
+.rx-pop-list{max-height:248px;overflow-y:auto;padding:4px 6px 6px;display:flex;flex-direction:column;gap:2px}
+.rx-oi{display:flex;align-items:center;gap:4px;border-radius:8px}
+.rx-oi:hover{background:#F9FAFB}
+.rx-oi[hidden]{display:none}
+.rx-o{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;text-align:left;border:0;background:none;padding:8px 10px;border-radius:8px;cursor:pointer;font-family:var(--f)}
+.rx-o:focus-visible,.rx-prev:focus-visible{outline:2px solid var(--fc-blue);outline-offset:-2px}
+.rx-o.on{background:#EFF4FF}
+.rx-o-n{font-size:14px;font-weight:600;color:#101828;overflow-wrap:anywhere}
+.rx-o.on .rx-o-n{color:#1849A9}
+.rx-o-m{font-size:12px;color:#667085}
+.rx-prev{flex-shrink:0;width:32px;height:32px;margin-right:4px;border:0;border-radius:6px;background:none;color:#667085;cursor:pointer;display:grid;place-content:center}
+.rx-prev:hover{background:#EAECF0;color:#101828}
+.rx-none{padding:16px 10px;text-align:center;font-size:14px;color:#667085}
+.rx-none[hidden]{display:none}
+.rx-addtpl{display:flex;align-items:center;gap:8px;width:100%;border:0;border-top:1px solid var(--fc-card-line);background:#fff;border-radius:0 0 12px 12px;padding:12px 16px;font-family:var(--f);font-size:14px;font-weight:600;color:var(--fc-blue);cursor:pointer;text-align:left}
+.rx-addtpl:hover,.rx-addtpl:focus-visible{background:#F5F8FF;outline:none}
+.rx-addtpl span{font-size:18px;line-height:1}
+
+/* reviewer grid: fixed-width table that scrolls horizontally inside the card; total row stays put */
+.rx-tblock{display:flex;flex-direction:column;gap:12px}
+.rx-tblock>.fc-err{margin-top:-4px}
+.rx-grid{border:1px solid var(--fc-card-line);border-radius:12px;background:#fff;min-width:0}
+.rx-scroll{overflow-x:auto;overflow-y:hidden;border-radius:12px 12px 0 0;overscroll-behavior-x:contain}
+/* the Questionnaire dropdown would be clipped by the scroller, so it's pinned to the viewport (rxPlacePops) */
+.rx-scroll .rx-pop{position:fixed;top:auto;left:auto}
+.rx-g{display:grid;min-width:1196px;grid-template-columns:minmax(140px,1fr) 104px minmax(200px,1.6fr) 292px 100px 120px 96px 28px;column-gap:12px;align-items:center;min-height:44px;padding:0 16px;border-bottom:1px solid var(--fc-card-line);box-sizing:border-box}
+.rx-grid.noself .rx-g{min-width:1084px;grid-template-columns:minmax(140px,1fr) 104px minmax(200px,1.6fr) 292px 120px 96px 28px}
+.rx-g>*{min-width:0}
+/* Reviewer column stays pinned on the left while the table scrolls; it covers the row's 16px left padding */
+.rx-g>:first-child{position:sticky;left:0;z-index:2;align-self:stretch;margin-left:-16px;padding-left:16px;line-height:43px;background:#fff;transition:box-shadow .15s}
+.rx-head>:first-child{background:#F9FAFB}
+.rx-scroll.is-scrolled .rx-g>:first-child{box-shadow:6px 0 6px -4px rgba(16,24,40,.12)}
+.rx-g .c{text-align:center;justify-self:center}
+.rx-head{height:44px;background:#F9FAFB;border-radius:12px 12px 0 0;font-size:14px;font-weight:600;color:#344054;line-height:1.2;white-space:nowrap}
+.rx-head>div{overflow:hidden;text-overflow:ellipsis}
+.rx-r{height:44px}
+.rx-name{font-weight:600;font-size:14px;color:#101828;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rx-pct{display:flex;align-items:center;width:100%;height:36px;border:1px solid var(--fc-line);border-radius:8px;background:#fff;overflow:hidden;box-sizing:border-box}
+.rx-pct:focus-within{border-color:var(--fc-blue)}
+.rx-pct input{flex:1;min-width:0;height:100%;border:0;outline:none;padding:0 10px;font:inherit;font-size:14px;font-weight:500;color:#101828;background:none}
+.rx-pct span{padding:0 10px 0 2px;color:#667085;font-size:14px}
+.rx-g .fc-inp{height:36px;font-size:14px}
+.rx-tplbtn{text-align:left;display:block;padding-right:36px;background-position:right 10px center;background-size:18px 18px}
+.rx-tplbtn span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rx-tplbtn[aria-expanded="true"]{border-color:var(--fc-blue)}
+/* due date: [count ▲▼] days [After assigned date | Before end date] */
+.rx-duec{display:flex;align-items:center;gap:8px;min-width:0}
+.rx-days{font-size:14px;font-weight:500;color:#344054;flex-shrink:0}
+.rx-step:not(.rx-step-n){flex:0 0 72px}
+.rx-dn{height:36px;width:100%;font-size:14px;padding:0 36px 0 10px;-moz-appearance:textfield}
+.rx-dn::-webkit-inner-spin-button,.rx-dn::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+/* stepper (Figma): two small grey rounded chevron buttons stacked inside the right edge — shown on hover / focus.
+   Used by every number field: due date, weightage, peer limit. */
+.rx-step{position:relative}
+.rx-step .fc-inp{padding-right:36px}
+.rx-step input,.rx-pct input{-moz-appearance:textfield}
+.rx-step input::-webkit-inner-spin-button,.rx-step input::-webkit-outer-spin-button,
+.rx-pct input::-webkit-inner-spin-button,.rx-pct input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.rx-step-b{position:absolute;top:4px;right:4px;bottom:4px;width:26px;display:flex;flex-direction:column;gap:2px}
+/* buttons appear only while the field is hovered or focused (space stays reserved so the value doesn't shift) */
+.rx-step-b{visibility:hidden;opacity:0;transition:opacity .12s}
+.rx-step:hover .rx-step-b,.rx-step:focus-within .rx-step-b,.rx-pct:hover .rx-step-b,.rx-pct:focus-within .rx-step-b{visibility:visible;opacity:1}
+.rx-step:has(input:disabled) .rx-step-b{visibility:hidden;opacity:0}
+.rx-pct .rx-step-b{position:static;flex:0 0 26px;align-self:stretch;margin:4px 4px 4px 0;padding:0}
+.rx-step-b button{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;border:0;border-radius:4px;background:#F2F4F7;padding:0;cursor:pointer}
+.rx-step-b button:hover{background:#EAECF0}
+.rx-step-b button:active{background:#D0D5DD}
+.rx-step-b img{display:block;width:12px;height:12px}
+.rx-step-b img.up{transform:rotate(180deg)}
+.rx-step-n{display:inline-block;width:88px;flex:0 0 88px}
+.rx-step-n .rx-numin{width:100%;box-sizing:border-box}
+.rx-dref{flex:1;min-width:0;height:36px;font-size:14px;padding:0 28px 0 10px;background-position:right 10px center;background-size:16px 16px;text-overflow:ellipsis}
+.rx-duec.bad .rx-dn,.rx-duec.bad .rx-dref{border-color:var(--red)}
+.rx-opt-tag{font-weight:400;color:#667085}
+.rx-ck{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;color:#101828}
+.rx-cl{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.rx-na{color:#98A2B3}
+.rx-x{width:32px;height:32px;border:0;border-radius:8px;background:none;color:#98A2B3;font-size:20px;line-height:1;cursor:pointer}
+.rx-x:hover{background:#F2F4F7;color:var(--fc-ink)}
+.rx-tot{display:flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;background:#F9FAFB;border-radius:0 0 12px 12px;font-size:14px;box-sizing:border-box}
+.rx-tot-l{font-weight:600;color:#101828}
+.rx-total{font-weight:600}
+.rx-total.is-ok{color:#067647}
+.rx-total.is-bad{color:var(--red)}
+.rx-link{margin-left:auto;border:0;background:none;padding:0;color:var(--fc-blue);font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap}
+.rx-link:hover{text-decoration:underline}
+/* self-evaluation / peers / additional settings: checkbox + label + description */
+.rx-opts{display:flex;flex-direction:column;gap:22px}
+.rx-opt{display:grid;grid-template-columns:20px minmax(0,1fr);column-gap:8px;row-gap:4px}
+.rx-opt-l{display:contents;cursor:pointer}
+.rx-opt-l .rx-cb{margin-top:1px}
+.rx-opt-t{font-size:16px;font-weight:500;color:#101828;line-height:22px;cursor:pointer}
+.rx-opt-b{grid-column:2;min-width:0}
+.rx-opt-b p{margin:0;font-size:14px;line-height:1.45;color:#475467}
+.rx-nest{display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;margin-top:12px;font-size:14px;color:var(--fc-ink)}
+.rx-numin{width:80px;height:40px;font-size:15px}
+.rx-numin:disabled{background:#F9FAFB;color:#98A2B3;cursor:not-allowed}
+.rx-nest-h{color:#667085}
+.rx-nest .fc-err{flex-basis:100%;padding:0}
+
+/* rating scale */
+.rx-scale .lb-banner__text{display:flex;flex-direction:column;gap:10px}
+.rx-scale .rx-scale-h{display:block;font-weight:600}
+.rx-scale-r{display:flex;align-items:center;gap:16px;min-width:0}
+.rx-lv{font-size:14px;font-weight:500;color:#30374F;min-width:0;overflow-wrap:anywhere}
+.rx-stars{display:inline-flex;gap:2px;font-size:18px;line-height:1;flex-shrink:0;width:104px}
+.rx-stars span{color:#EAECF0}
+.rx-stars span.on{color:#FDB022}
+.rx-num{width:32px;height:32px;border-radius:8px;display:inline-grid;place-content:center;font-weight:700;font-size:14px;flex-shrink:0}
+.rx-num.n1{background:#FEE4E2;color:#B42318}
+.rx-num.n2{background:#FEF0C7;color:#B54708}
+.rx-num.n3{background:#F2F4F7;color:#344054}
+.rx-num.n4{background:#D1FADF;color:#067647}
+.rx-num.n5{background:#039855;color:#fff}
+
+@media (max-width:700px){
+  .rx-opt-t{font-size:15px}
+}
+/* reviewer checkboxes row under "Who should review them?" (Figma LMS 1032:14652) */
+.rx-checks{display:flex;flex-direction:column;align-items:flex-start;gap:12px;margin-top:4px}
+.rx-check{display:inline-flex;align-items:center;gap:8px;font-size:16px;font-weight:500;line-height:1.4;color:#000;cursor:pointer}
+.rx-cb.sm{width:16px;height:16px;border-width:1px;border-radius:4px}
+.rx-cb.sm:checked{background-size:12px}
+/* info tooltip: dark bubble above the icon, pointer at bottom centre; shows on hover and keyboard focus */
+.rx-tip{position:relative;display:inline-flex}
+.rx-tip-btn{display:flex;padding:0;border:0;background:none;cursor:help;border-radius:50%}
+.rx-tip-btn:focus-visible{outline:2px solid var(--fc-blue);outline-offset:2px}
+.rx-tip-btn img{display:block}
+.rx-tip-box{position:absolute;bottom:calc(100% + 10px);left:50%;transform:translate(-50%,4px);z-index:50;width:max-content;max-width:280px;
+  padding:8px 12px;border-radius:8px;background:#101828;color:#fff;font-size:12px;font-weight:500;line-height:18px;text-align:center;
+  box-shadow:0 12px 16px -4px rgba(16,24,40,.08),0 4px 6px -2px rgba(16,24,40,.03);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .12s,transform .12s,visibility .12s}
+.rx-tip-box:after{content:"";position:absolute;top:100%;left:50%;margin-left:-6px;border:6px solid transparent;border-top-color:#101828}
+.rx-tip:hover .rx-tip-box,.rx-tip-btn:focus-visible+.rx-tip-box{opacity:1;visibility:visible;transform:translate(-50%,0)}
+/* peer limit nests under "Allow reviewee to nominate peers": indent = 16px checkbox + 8px gap, so its checkbox lines up with that label's text */
+/* checkbox group under "Who is this review for?": 24px below the select (8px field gap + 16px) */
+.rx-chkbox{display:flex;flex-direction:column;gap:12px;margin-top:16px}
+.rx-chkbox .rx-checks{margin-top:0}
+/* nested option: vertical guide line under the parent checkbox's centre (16px box → 7px + 2px line + 15px = content at 24px) */
+.rx-chkbox>.rx-nest{margin:0 0 0 7px;padding:4px 0 4px 15px;border-left:2px solid #EAECF0}
+/* "(optional)" next to a card title */
+.fc-opt{font-size:16px;font-weight:400;color:#667085}
+/* subsection inside a card (Employees → Add employees automatically) */
+.fc-subsec{display:flex;flex-direction:column;gap:24px;padding-top:24px;border-top:1px solid var(--fc-card-line)}
+.fc-subsec h3{margin:0;font-size:16px;line-height:1.3;font-weight:600;color:#000}
+.fc-subsec h3 .fc-opt{font-size:14px}
+/* Save as Draft → Saved */
+.fc-btn.fc-save.is-saved,.fc-btn.fc-save:disabled{opacity:1;cursor:default;color:#667085;background:#fff}
+/* exit confirmation (Figma LMS 1:20632) */
+.fc-dlg{--fc-line:#D0D5DD;--fc-ink:#344054;--fc-blue:#2970FF;--fc-shadow:0 1px 2px rgba(16,24,40,.05);position:relative;width:450px;max-width:100%;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 20px 24px -4px rgba(16,24,40,.08),0 8px 8px -4px rgba(16,24,40,.03);font-family:var(--f)}
+.fc-dlg-bg{position:absolute;left:-120px;top:-120px;width:336px;height:336px;pointer-events:none;-webkit-mask:url(/assets/dlg-pattern-mask.svg) center/336px 336px no-repeat;mask:url(/assets/dlg-pattern-mask.svg) center/336px 336px no-repeat}
+.fc-dlg-bg img{display:block}
+.fc-dlg-x{position:absolute;top:16px;right:16px;z-index:1;display:flex;padding:10px;border:0;background:none;border-radius:8px;cursor:pointer}
+.fc-dlg-x:hover{background:#F2F4F7}
+.fc-dlg-x:focus-visible{outline:2px solid var(--fc-blue);outline-offset:0}
+.fc-dlg-x img{display:block}
+.fc-dlg-h{position:relative;display:flex;flex-direction:column;gap:16px;padding:24px 24px 16px}
+.fc-dlg-ic{width:48px;height:48px;box-sizing:border-box;border-radius:28px;background:#EAECF0;border:8px solid #F9FAFB;display:flex;align-items:center;justify-content:center}
+.fc-dlg-ic img{display:block}
+.fc-dlg-t{display:flex;flex-direction:column;gap:4px}
+.fc-dlg-t h2{margin:0;font-size:18px;line-height:28px;font-weight:600;color:#101828}
+.fc-dlg-t p{margin:0;font-size:14px;line-height:20px;color:#475467}
+.fc-dlg-t b{font-weight:600}
+.fc-dlg-a{position:relative;display:flex;gap:12px;padding:16px 24px 24px}
+.fc-dlg-a .fc-btn{flex:1;padding:10px 18px;line-height:24px}
+
+/* Which employees should be included? — radios + category/value group rows */
+.rx-rad{appearance:none;-webkit-appearance:none;width:16px;height:16px;margin:0;flex-shrink:0;border:1px solid #D0D5DD;border-radius:50%;background:#fff;cursor:pointer;transition:border-color .12s,box-shadow .12s}
+.rx-rad:hover{border-color:#98A2B3}
+.rx-rad:checked{border:5px solid var(--fc-blue)}
+.rx-rad:focus-visible{outline:2px solid var(--fc-blue);outline-offset:2px}
+/* nested under Auto-assign: guide line under the 20px checkbox's centre, content stays aligned with the label text */
+.aa-body{display:flex;flex-direction:column;gap:20px;margin:16px 0 0 -19px;padding:4px 0 4px 17px;border-left:2px solid #EAECF0}
+.aa-grps{display:flex;flex-direction:column;gap:8px;margin-left:24px}
+.aa-grp{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr) 36px;gap:12px;align-items:start}
+.aa-grp .fc-sel{min-height:44px}
+.aa-grp .rx-ms{height:44px}
+.aa-del{width:36px;height:44px}
+.aa-del:disabled{opacity:.35;cursor:not-allowed;background:none}
+.aa-and{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#667085;padding-left:2px}
+.aa-add{margin:4px 0 0;align-self:flex-start;display:inline-flex;align-items:center;gap:6px}
+.aa-add span{font-size:18px;line-height:1}
+.rx-ms.is-dis{background:#F9FAFB;cursor:not-allowed}
+.rx-ms.is-dis .rx-ph{color:#98A2B3}
+@media (max-width:700px){.aa-grps{margin-left:0}.aa-grp{grid-template-columns:minmax(0,1fr) 36px}.aa-grp .rx-dd{grid-column:1}}
+
+/* nested option stack (allow edits after submission · reopen details). Checkboxes reuse .rx-check + .rx-cb.sm,
+   the same as "Allow self-evaluation"; text next to a number field matches that label. */
+.rx-nest-col{flex-direction:column;align-items:flex-start;gap:12px}
+.rx-nest-col>.rx-nest{margin-top:0}
+.rx-check-t{font-size:16px;font-weight:500;line-height:1.4;color:#000}
+.rx-check-h{margin:-8px 0 0 24px;font-size:14px;line-height:1.45;color:#475467}
+.rx-opt-b>.rx-nest-col{gap:16px;margin-top:16px}
+.rx-opt-b>.rx-nest-col>.rx-nest{margin-top:0}
+.rx-opt-sm{font-size:14px}
+.rx-reopen-l{font-size:16px;font-weight:500;line-height:1.4;color:#000}
+/* Additional Settings → reopen window + who can reopen */
+.rx-reopen{width:100%}
+.rx-reopen-f{display:flex;flex-direction:column;gap:8px;width:100%;max-width:480px}
+.rx-reopen-row{display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px}
+.rx-reopen-sel{width:200px;flex:0 0 200px}
+/* New Hire Review › At regular intervals: "till [End of probation | Specific period]" select */
+.rx-till-sel{width:300px;flex:0 0 300px;max-width:100%}
+/* Review Schedule › At regular intervals: number boxes and the "till" select share one 44px height */
+.fc-prob .rx-nest .fc-inp:not(.rx-ms){height:44px;box-sizing:border-box}
+/* …and the words between the fields use the same type as the text inside them */
+.fc-prob .rx-nest,.fc-prob .rx-nest .rx-numin{font-size:16px;font-weight:500;color:#101828}
+.fc-prob .rx-nest .fc-err{font-weight:400}
+/* Project Completion Review › Specific projects: the multi-select fills the nested row */
+.rx-proj .rx-dd{flex:1 1 100%}
+/* Projects sits on its own row, under "Who is going to be reviewed?" (same column and width) */
+.fc-field.rx-proj-f{grid-column:1}
+.rx-reopen-f .fc-err{padding:0}
+#rxDefNote:empty{display:none}
+.rx-inlink{border:0;background:none;padding:0;margin-left:4px;color:var(--fc-blue,#155EEF);font:inherit;font-weight:600;cursor:pointer;white-space:nowrap}
+.rx-inlink:hover{text-decoration:underline}
+.rx-inlink:focus-visible{outline:2px solid currentColor;outline-offset:2px;border-radius:2px}

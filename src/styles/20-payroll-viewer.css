@@ -1,0 +1,6 @@
+/* ---------- Payroll admin: view-only cycle pages (body.ro-payroll, set in layer 24) ---------- */
+.ro-payroll .cd-acts,
+.ro-payroll .cs-edit{display:none}
+.pr-res{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap}
+.pr-res b{font-weight:700}
+.pr-cal{font-size:12px;font-weight:500;color:var(--violet);background:var(--violet-t);border-radius:10px;padding:1px 8px}

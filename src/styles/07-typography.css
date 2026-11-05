@@ -1,0 +1,7 @@
+/* Type system: one family (Inter), five sizes — 12 caption · 14 body · 16 emphasis/inputs · 20 section · 24 page title */
+body,button,input,select,textarea,table,.phone2{font-family:var(--f)}
+body{font-size:14px}
+h1{font-size:24px;font-weight:600}h2{font-size:20px;font-weight:600}h3,h4{font-size:16px;font-weight:600}h5,h6{font-size:14px;font-weight:600}
+small{font-size:12px}
+.ph h1,.pdesc h1{font-size:24px!important}
+.card .hd h3,.drawer h3{font-size:16px}

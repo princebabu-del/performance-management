@@ -1,0 +1,71 @@
+/* ================= Lumber Topbar — vanilla port of TopNav.tsx ================= */
+:root{--lt-nav-bg:#4D4D4D;--lt-sel-bg:#1C1C1C;--lt-text:#344054;--lt-hover:#D0D5DD;--lt-selected:#EFF4FF}
+.lt-bar{background:var(--lt-nav-bg);position:sticky;top:0;z-index:45;display:flex;align-items:center;
+  padding:0 24px;height:68px;box-sizing:border-box;font-family:Inter,sans-serif;color:#fff}
+.lt-in{height:100%;width:100%;display:flex;align-items:center;justify-content:space-between;min-width:0}
+.lt-left{display:flex;align-items:center;min-width:0;flex:1 1 auto;overflow:hidden}
+.lt-logo{cursor:pointer;margin-right:40px;display:flex;align-items:center;flex-shrink:0;border-radius:4px;background:none;border:0;padding:0;color:#fff}
+.lt-logo-img{display:block;width:141px;height:36px}
+.lt-items{display:flex;align-items:center;margin-left:8px;min-width:0}
+.lt-app{padding:9px 14px;margin-right:2px;font-weight:500;font-size:16px;cursor:pointer;color:#fff;border-radius:8px;display:flex;align-items:center;white-space:nowrap;flex-shrink:0;background:none;border:0;font-family:inherit;line-height:1.5}
+.lt-app:hover{background:rgba(255,255,255,.08)}
+.lt-app.on,.lt-app.on:hover{background:var(--lt-sel-bg);color:#fff}
+.lt-app:focus-visible,.lt-icon:focus-visible,.lt-logo:focus-visible{outline:2px solid #7AECB4;outline-offset:2px}
+.lt-app svg.lt-chev{padding-left:4px;width:20px;height:20px;box-sizing:content-box;fill:currentColor;transition:transform .15s}
+.lt-app.open svg.lt-chev{transform:rotate(180deg)}
+.lt-right{display:flex;gap:8px;align-items:center;flex-shrink:0}
+.lt-icon{width:36px;height:36px;border-radius:50%;border:0;background:none;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:8px;box-sizing:content-box}
+.lt-icon:hover{background:rgba(255,255,255,.08)}
+.lt-icon svg{width:20px;height:20px;fill:#fff}
+.lt-right{gap:12px}
+.lt-icon svg{width:24px;height:24px}
+.lt-bell{position:relative}
+.lt-count{position:absolute;top:-2px;right:-4px;min-width:22px;height:22px;padding:0 6px;box-sizing:border-box;border-radius:11px;background:#D92D20;color:#fff;font:700 12px/22px Inter,sans-serif;text-align:center;pointer-events:none}
+/* menus (MUI Menu look) */
+.lt-menu{position:fixed;z-index:1300;background:#fff;color:var(--lt-text);border-radius:8px;min-width:120px;padding:16px 8px;
+  box-shadow:0 5px 5px -3px rgba(0,0,0,.2),0 8px 10px 1px rgba(0,0,0,.14),0 3px 14px 2px rgba(0,0,0,.12);
+  font-family:Inter,sans-serif;max-height:calc(100vh - 32px);overflow:auto;box-sizing:border-box;animation:ltIn .12s ease-out}
+@keyframes ltIn{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}
+.lt-menu.nested{min-width:160px;padding:8px 0}
+.lt-mi{display:flex;align-items:center;justify-content:space-between;gap:12px;width:calc(100% - 16px);margin:0 8px;border:0;background:none;border-radius:4px;
+  color:var(--lt-text);font:500 16px/1 Inter,sans-serif;padding:20px 16px;text-align:left;cursor:pointer;white-space:nowrap;box-sizing:border-box}
+.lt-menu:not(.nested) .lt-mi{width:100%;margin:0}
+.lt-mi:hover,.lt-mi.hot,.lt-mi:focus-visible{background:var(--lt-hover);outline:0}
+.lt-mi.sel{background:var(--lt-selected)}
+.lt-mi.sel:hover,.lt-mi.sel.hot{background:var(--lt-hover)}
+.lt-mi svg{width:20px;height:20px;fill:var(--lt-text);flex-shrink:0;position:relative;top:1px}
+.lt-mi .lt-sub{display:block;font-size:13px;font-weight:400;color:#667085;margin-top:6px}
+.lt-mi .lt-badge{margin-left:auto;background:#FEE4E2;color:#B42318;font-size:12px;font-weight:700;border-radius:999px;padding:2px 8px;line-height:1.3}
+.lt-mi .lt-l{display:flex;flex-direction:column}
+.lt-cap{font:600 12px/1 Inter,sans-serif;color:#667085;text-transform:uppercase;letter-spacing:.06em;padding:4px 16px 10px}
+.lt-hr{border:0;border-top:1px solid #EAECF0;margin:6px 8px}
+/* overflow ("More") menu */
+.lt-menu.ov{padding:8px;min-width:max-content}
+.lt-menu.ov .lt-list{display:flex;flex-direction:column;gap:4px}
+.lt-menu.ov .lt-mi{min-width:176px;padding:12px 16px;border-radius:8px;font-size:16px;color:#1D2939;margin:0;width:100%}
+.lt-menu.ov .lt-mi svg{fill:#98A2B3}
+.lt-menu.ovsub{padding:8px}
+.lt-menu.ovsub .lt-mi{border-radius:8px;padding:12px 16px;color:#1D2939;margin:0;width:100%}
+.lt-menu.ovsub .lt-list{display:flex;flex-direction:column;gap:4px}
+/* settings / user profile */
+.lt-prof{display:flex;flex-direction:column;align-items:flex-start;align-self:stretch;padding:0 8px;margin-top:4px}
+.lt-prof .lt-mi{border-top:1px solid #EAECF0;border-radius:0;padding:12px;width:100%;margin:0}
+.lt-prof .lt-mi:hover{border-radius:6px}
+.lt-pname{color:#344054;font:600 14px/20px Inter,sans-serif}
+.lt-pmail{color:#475467;font:400 14px/20px Inter,sans-serif}
+.lt-pd{display:flex;flex-direction:column;align-items:flex-start;margin:0 20px;padding:8px 0;min-width:0}
+.lt-stub{display:none!important}
+@media (max-width:760px){.lt-bar{padding:3.2px 12px}.lt-logo{margin-right:12px}.lt-logo-img{width:118px;height:30px}.lt-items{padding:12px 0;margin-left:4px}.lt-app{padding:12px 14px;margin-right:4px}.lt-right{gap:0}}
+/* header tab dropdowns (Lumber app look): plain list, 16px regular text, no row gaps */
+.lt-menu.tab{padding:8px 0;min-width:200px;border-radius:8px;box-shadow:0 12px 16px -4px rgba(16,24,40,.08),0 4px 6px -2px rgba(16,24,40,.03),0 0 0 1px rgba(16,24,40,.04)}
+.lt-menu.tab .lt-list{display:flex;flex-direction:column;gap:0}
+.lt-menu.tab .lt-mi,.lt-menu.tab:not(.nested) .lt-mi{width:100%;margin:0;padding:6px 24px;min-height:36px;border-radius:0;font:500 16px/24px Inter,sans-serif;color:#1D2939}
+.lt-menu.tab .lt-mi:hover,.lt-menu.tab .lt-mi.hot,.lt-menu.tab .lt-mi:focus-visible{background:#F2F4F7}
+.lt-menu.tab .lt-mi.sel{background:var(--lt-selected)}
+.lt-menu.tab .lt-mi.sel:hover,.lt-menu.tab .lt-mi.sel.hot{background:#E0EAFF}
+.lt-menu.tab .lt-mi svg{fill:#98A2B3}
+.lt-menu.tab .lt-sub{font-size:13px;line-height:18px;margin-top:2px}
+/* gear menu uses the tab-dropdown look; the profile row at the bottom keeps its own layout */
+.lt-menu.tab .lt-prof{padding:0 8px;margin-top:8px}
+.lt-menu.tab .lt-prof .lt-mi{padding:12px;min-height:0;border-top:1px solid #EAECF0;border-radius:0}
+.lt-menu.tab .lt-prof .lt-mi:hover{border-radius:6px}

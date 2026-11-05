@@ -1,0 +1,28 @@
+/* Page tabs: underline tabs with optional count badges. Spec: Tabs.tsx · Usage: README.md */
+.lb-tabs{display:flex;align-items:flex-end;gap:18px;margin:0;overflow-x:auto;scrollbar-width:none}
+.lb-tabs::-webkit-scrollbar{display:none}
+
+/* Tab: default state */
+.lb-tab{display:inline-flex;align-items:center;gap:6px;padding:12px 4px;border:0;border-bottom:3px solid transparent;background:none;
+ font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif;font-size:16px;font-weight:500;line-height:24px;color:#4B5563;
+ cursor:pointer;white-space:nowrap;transition:color .12s,border-color .12s}
+/* Reserve the bold width so the row doesn't shift when a tab becomes selected */
+.lb-tab__label{display:inline-flex;flex-direction:column}
+.lb-tab__label::after{content:attr(data-label);font-weight:600;height:0;overflow:hidden;visibility:hidden;pointer-events:none}
+
+/* Hover */
+.lb-tab:hover:not(.is-selected):not(:disabled){color:#111827;border-bottom-color:#D1D5DB}
+/* Selected: blue underline */
+.lb-tab.is-selected{color:#111827;font-weight:600;border-bottom-color:#2F6FDE;cursor:default}
+/* Keyboard focus */
+.lb-tab:focus-visible{outline:2px solid #2F6FDE;outline-offset:-2px;border-radius:4px 4px 0 0}
+/* Disabled */
+.lb-tab:disabled{color:#9CA3AF;cursor:not-allowed}
+.lb-tab:disabled .lb-tab__badge{opacity:.6}
+
+/* Count badge */
+.lb-tab__badge{display:inline-block;min-width:24px;height:20px;padding:0 8px;border-radius:999px;box-sizing:border-box;
+ font-size:12px;font-weight:500;line-height:20px;text-align:center;font-variant-numeric:tabular-nums;
+ background:#F3F4F6;color:#6B7280}
+.lb-tab__badge--info{background:#EFF4FF;color:#2F6FDE}
+.lb-tab__badge--danger{background:#FEE2E2;color:#DC2626;font-weight:600}

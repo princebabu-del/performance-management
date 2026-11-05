@@ -1,0 +1,215 @@
+/* Review cycle detail page — LMS course-detail layout (Figma LMS 1:17316) */
+.cd{--cd-g200:#EAECF0;--cd-g300:#D0D5DD;--cd-g500:#667085;--cd-g600:#475467;--cd-g700:#344054;--cd-blue:#2970FF;--cd-xs:0 1px 2px rgba(16,24,40,.05);
+ --cd-pad:max(28px,env(safe-area-inset-left,0px));margin:0 calc(-1*var(--cd-pad))}
+@media (max-width:900px){.cd{--cd-pad:16px}}
+
+/* sub header: "← Back to Review Cycles" link (Figma LMS 1051:14724) */
+.cd-sub{display:flex;align-items:center;padding:8px 40px;background:#fff;border-bottom:1px solid var(--cd-g300)}
+.cd-back{display:inline-flex;align-items:center;gap:8px;padding:4px 0;border:0;background:none;cursor:pointer;font:inherit;font-size:16px;font-weight:600;line-height:1.2;letter-spacing:-.32px;color:var(--cd-g700);border-radius:6px}
+.cd-back:hover{text-decoration:underline}
+.cd-back:focus-visible{outline:2px solid var(--cd-blue);outline-offset:2px}
+
+/* header: name + metadata strip + actions, then tabs */
+.cd-head{background:#fff;padding:24px 40px 0;display:flex;flex-direction:column;gap:24px}
+.cd-top{display:flex;align-items:flex-start;gap:32px}
+.cd-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:24px}
+.cd-info h1{margin:0;font-size:24px;font-weight:600;line-height:1.2;letter-spacing:-.48px;color:#000}
+.cd-meta{display:flex;align-items:center;gap:16px 32px;flex-wrap:wrap}
+.cd-m{display:flex;flex-direction:column;gap:2px;min-width:0}
+.cd-mk{font-size:14px;font-weight:500;line-height:1.4;letter-spacing:-.28px;color:var(--cd-g500);white-space:nowrap}
+.cd-mv{font-size:16px;font-weight:500;line-height:1.4;letter-spacing:-.32px;color:#000;white-space:nowrap}
+.cd-div{width:1px;height:40px;background:var(--cd-g200);flex-shrink:0}
+.cd-st{display:flex;align-items:center;gap:8px}
+.cd-by{font-size:14px;font-weight:500;line-height:1.4;letter-spacing:-.28px;color:var(--cd-g500);white-space:nowrap}
+.cd-acts{display:flex;align-items:flex-start;gap:12px;flex-shrink:0}
+.cd-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 20px;border:1px solid var(--cd-g300);border-radius:8px;background:#fff;box-shadow:var(--cd-xs);font:inherit;font-size:16px;font-weight:600;color:var(--cd-g700);cursor:pointer;white-space:nowrap}
+.cd-btn:hover{background:#F9FAFB}
+.cd-btn.p{background:var(--cd-blue);border-color:var(--cd-blue);color:#fff}
+.cd-btn.p:hover{background:#155EEF;border-color:#155EEF}
+.cd-btn .i{width:20px;height:20px}
+.cd-iconbtn{width:44px;height:44px;padding:0;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--cd-g300);border-radius:8px;background:#fff;box-shadow:var(--cd-xs);color:var(--cd-g700);cursor:pointer}
+.cd-iconbtn:hover{background:#F9FAFB}
+.cd-iconbtn .i{width:20px;height:20px}
+.cd-btn:focus-visible,.cd-iconbtn:focus-visible{outline:2px solid var(--cd-blue);outline-offset:2px}
+@media (max-width:900px){.cd-sub,.cd-head{padding-left:16px;padding-right:16px}.cd-top{flex-direction:column;gap:16px}.cd-div{display:none}}
+
+/* tabs */
+/* section tabs use the shared Tabs component (public/components/tabs); this only adds the divider under the row */
+.cd-tabs{border-bottom:1px solid var(--cd-g200)}
+
+/* body */
+.cd-body{padding:16px 40px 0;display:flex;flex-direction:column;gap:16px}
+@media (max-width:900px){.cd-body{padding:16px 16px 0}}
+.cd-body>.warn{margin:0}
+
+/* stat cards (one per stage) */
+.cd-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+.cd-stat{background:#fff;border:1px solid var(--cd-g200);border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.cd-stat-k{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500;line-height:1.4;letter-spacing:-.28px;color:var(--cd-g700)}
+.cd-now{padding:2px 8px;border-radius:16px;border:1px solid #B2DDFF;background:#EFF8FF;color:#175CD3;font-size:12px;font-weight:500}
+.cd-stat-v{font-size:32px;font-weight:600;line-height:1.2;color:#000;font-variant-numeric:tabular-nums}
+.cd-stat-v span{font-size:20px;color:var(--cd-g500);font-weight:500}
+.cd-stat-d{font-size:12px;font-weight:500;color:var(--cd-g500)}
+
+/* table card */
+.cd-card{background:#fff;border:1px solid var(--cd-g200);border-radius:12px;overflow:hidden;min-width:0}
+.cd-tools{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:24px;flex-wrap:wrap}
+.cd-tools-r{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.cd-srch{display:flex;align-items:center;gap:8px;width:320px;max-width:100%;height:44px;padding:0 14px;border:1px solid var(--cd-g300);border-radius:8px;background:#fff;color:var(--cd-g500)}
+.cd-srch .i{width:20px;height:20px;flex-shrink:0}
+.cd-srch input{flex:1;min-width:0;border:0;outline:0;background:transparent;font:inherit;font-size:16px;font-weight:500;color:#000}
+.cd-srch input::placeholder{color:#7D89B0}
+.cd-srch:focus-within{border-color:var(--cd-blue);box-shadow:0 0 0 3px rgba(41,112,255,.15)}
+.cd-tbl th{background:#F9FAFB;border-right:0;border-bottom:1px solid var(--cd-g200);height:44px;padding:0 24px;font-size:14px;font-weight:500;line-height:1.4;letter-spacing:-.28px;color:var(--cd-g600)}
+.cd-tbl td{height:56px;padding:8px 24px;border-top:0;border-bottom:1px solid var(--cd-g200);font-size:14px;font-weight:500;letter-spacing:-.28px;color:#000}
+.cd-tbl td.tab-num{color:#1D2939}
+.cd-tbl th.cbx,.cd-tbl td.cbx{width:44px;padding-left:24px;padding-right:0}
+.cd-who{display:flex;align-items:center;gap:12px;min-width:0}
+.cd-who .rdot{margin-right:-6px}
+.cd-n{font-size:14px;font-weight:500;color:#000;white-space:nowrap}
+.cd-s{font-size:12px;font-weight:500;color:var(--cd-g500)}
+.cd-av{width:32px;height:32px;border-radius:50%;background:#F2F4F7;box-shadow:inset 0 0 0 .5px rgba(16,24,40,.08);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;font-weight:600;color:var(--cd-g600)}
+.cd-card .pgfoot{padding:16px 24px;border-top:0}
+.cd-card .pgfoot .pp{font-size:14px}
+.cd-card .pgfoot .pp select{height:32px;min-width:74px;font-size:16px}
+.cd-card .pgfoot .pg button,.cd-card .pgfoot .pg span{min-width:32px;height:32px;font-size:14px}
+
+/* status badges (Figma badge: tinted fill + 1px border) */
+.cd .pill{border:1px solid transparent;padding:3px 12px;font-size:14px;font-weight:500}
+.cd .pill.g{background:#ECFDF3;border-color:#ABEFC6;color:#067647}
+.cd .pill.a{background:#FFFAEB;border-color:#FEDF89;color:#B54708}
+.cd .pill.r{background:#FEF3F2;border-color:#FECDCA;color:#B42318}
+.cd .pill.b{background:#EFF8FF;border-color:#B2DDFF;color:#175CD3}
+.cd .pill.v{background:#F4F3FF;border-color:#D9D6FE;color:#5925DC}
+.cd .pill.n{background:#F9FAFB;border-color:var(--cd-g200);color:var(--cd-g700)}
+
+/* audit log card */
+.cd-card-hd{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:24px;border-bottom:1px solid var(--cd-g200);flex-wrap:wrap}
+.cd-card-hd h3{margin:0;font-size:18px;font-weight:600;color:#000}
+.cd-card-hd p{margin:4px 0 0;font-size:14px;color:var(--cd-g500)}
+.cd-feed{padding:8px 24px 24px}
+/* status badge sits in a 22px value row, like the other values */
+.cd-mv .pill{padding:0 10px;line-height:20px;font-size:14px}
+/* header title block: name + status badge (12px), secondary line, description */
+.cd-title{display:flex;flex-direction:column;gap:8px;min-width:0}
+.cd-name{display:flex;align-items:center;gap:12px;flex-wrap:wrap;min-width:0}
+.cd-name .pill{padding:2px 12px;font-size:14px}
+.cd-desc{margin:0;font-size:14px;font-weight:400;line-height:1.4;letter-spacing:-.28px;color:var(--cd-g500)}
+.cd-more:focus-visible{outline:2px solid var(--cd-blue);outline-offset:2px;border-radius:2px}
+/* Employees toolbar: segmented control left, search + Filters right — all 44px tall */
+.cd-seg{height:44px;box-sizing:border-box;flex-wrap:nowrap;align-items:stretch;overflow-x:auto;scrollbar-width:none;max-width:100%}
+.cd-seg button{display:inline-flex;align-items:center;padding:0 14px;white-space:nowrap}
+.cd-srch,.cd-tools .cd-btn{height:44px;box-sizing:border-box}
+/* review-type icon tile (56×56) before the cycle name, top-aligned with it */
+.cd-dot{color:#D0D5DD}
+.cd-info.cd-info--tile{flex-direction:row;align-items:flex-start;gap:16px}
+.cd-info--tile .cd-title{flex:1;min-width:0}
+.cd-tile{width:56px;height:56px;flex-shrink:0;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;border:1px solid transparent}
+.cd-tile--general{background:#EFF4FF;border-color:#D1E0FF;color:#2970FF}
+.cd-tile--probation{background:#ECFDF3;border-color:#ABEFC6;color:#079455}
+.cd-tile--project{background:#FFFAEB;border-color:#FEDF89;color:#DC6803}
+
+/* Employees table: needs attention is yellow (dot + attention pills) */
+.cd .rdot{background:#F79009}
+.cd-miss{color:#B54708;font-weight:500}
+/* collapsible reviewee groups: chevron left of the name, reviewer rows underneath */
+.cd-chev{flex-shrink:0;width:24px;height:24px;margin:0 -4px 0 -6px;padding:0;border:0;border-radius:6px;background:none;color:#667085;cursor:pointer;display:grid;place-content:center}
+.cd-chev svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.67;stroke-linecap:round;stroke-linejoin:round;transition:transform .15s}
+.cd-chev.open svg{transform:rotate(90deg)}
+.cd-chev:hover{background:#F2F4F7;color:#101828}
+.cd-chev:focus-visible{outline:2px solid var(--cd-blue);outline-offset:0}
+.cd-avs{display:inline-flex}
+.cd-avs-i{position:relative;display:inline-flex;border-radius:50%;box-shadow:0 0 0 2px #fff}
+.cd-avs-i+.cd-avs-i{margin-left:-6px}
+.cd-avs .cd-av{width:28px;height:28px;font-size:11px;letter-spacing:0}
+.cd-tbl tr.cd-sub-row td{height:48px;background:#FCFCFD}
+.cd-tbl tr.cd-sub-row:hover td{background:#F9FAFB}
+/* role label lines up with the reviewee's name: chevron 24 − 10 margin + gap 12 + dot 9 − 6 + gap 12 + avatar 32 + gap 12 */
+.cd-role{padding-left:85px;font-size:14px;font-weight:400;color:#475467;white-space:nowrap}
+/* row actions: vertical kebab, no border */
+.cd-tbl th.cd-act,.cd-tbl td.cd-act{width:150px;text-align:right}
+.cd-kb{width:32px;height:32px;padding:0;border:0;border-radius:6px;background:none;color:#667085;cursor:pointer;display:inline-grid;place-content:center}
+.cd-kb .i{width:20px;height:20px}
+.cd-kb:hover,.cd-kb[aria-expanded="true"]{background:#F2F4F7;color:#101828}
+.cd-kb:focus-visible{outline:2px solid var(--cd-blue);outline-offset:0}
+.cd-act .menu{text-align:left;min-width:220px}
+.cd-vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+/* questionnaire column */
+.cd-tpl{display:flex;align-items:center;gap:6px;min-width:0}
+.cd-tpl-n{overflow:hidden;text-overflow:ellipsis}
+/* missing reviewer: placeholder avatar, Assign (blue tertiary, no border) before the kebab */
+.cd-acts-c{display:inline-flex;align-items:center;justify-content:flex-end;gap:4px}
+.cd-tert{height:32px;padding:0 10px;border:0;border-radius:6px;background:none;font-size:14px;font-weight:600;color:var(--cd-blue,#155EEF);cursor:pointer}
+.cd-tert:hover{background:#EFF4FF}
+.cd-tert:focus-visible{outline:2px solid var(--cd-blue);outline-offset:0}
+.cd-av-empty{border:1px dashed #D0D5DD;background:#fff;box-shadow:none;color:#98A2B3}
+.cd-av-empty .i{width:16px;height:16px}
+/* Assign dialog (renders in #layer, outside .cd, so it brings the tokens it uses) */
+.cd-asg{--cd-g300:#D0D5DD;--cd-g500:#667085;--cd-blue:#2970FF}
+.cd-asg h3{margin:0;font-size:18px;font-weight:600;color:#101828}
+.cd-asg-s{display:flex;width:100%;height:40px;margin-bottom:8px;box-sizing:border-box}
+.cd-asg-list{max-height:320px;overflow:auto;margin:0 -8px 8px;padding:0 8px}
+.cd-asg-o{display:flex;align-items:center;gap:12px;padding:8px;border-radius:8px;cursor:pointer}
+.cd-asg-o:hover{background:#F9FAFB}
+.cd-asg-o:has(input:checked){background:#EFF4FF}
+.cd-asg-o input{flex-shrink:0;margin:0}
+.cd-asg-t{display:flex;flex-direction:column;min-width:0;flex:1}
+/* Review drawer: one section per cycle, stacked */
+.pk-stack{display:flex;flex-direction:column;gap:16px}
+.pk-cyc{border:1px solid #EAECF0;border-radius:12px;background:#fff;padding:16px 20px}
+.pk-cyc.is-cur{border-color:#C7D7FE}
+.pk-cyc-hd{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
+.pk-cyc-hd h3{margin:0;font-size:16px;font-weight:600;color:#101828}
+.pk-cyc .nextbox{margin-bottom:12px}
+.pk-none{margin:0;text-align:center}
+/* questionnaire eye: hidden until the cell is hovered (or the button has keyboard focus) */
+.cd-tpl .cs-q-tip{opacity:0;transition:opacity .12s}
+td:hover>.cd-tpl .cs-q-tip,.cd-tpl .cs-q-tip:focus-within{opacity:1}
+/* Employees table: fixed column widths (the expanded layout), so opening or closing a group never shifts columns */
+.cd-tbl-fixed{table-layout:fixed;width:100%;min-width:1100px}
+.cd-tbl-fixed .c-cbx{width:68px}
+.cd-tbl-fixed .c-emp{width:22%}
+.cd-tbl-fixed .c-rev{width:17%}
+.cd-tbl-fixed .c-tpl{width:26%}
+.cd-tbl-fixed .c-due{width:12%}
+.cd-tbl-fixed .c-st{width:15%}
+.cd-tbl-fixed .c-act{width:150px}
+.cd-tbl-fixed td{overflow:hidden}
+.cd-tbl-fixed .cd-n,.cd-tbl-fixed .cd-s,.cd-tbl-fixed .cd-role{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cd-tbl-fixed td .cd-who>div{min-width:0}
+/* top stroke on the table header, matching the row dividers */
+.cd-tbl thead th{border-top:1px solid var(--cd-g200)}
+/* group row: checkbox · attention dot · chevron · avatar */
+.cd-grp .cd-who .rdot{margin:0 -4px 0 -8px}
+.cd-grp .cd-chev{margin:0 -4px 0 0}
+/* toolbar: segmented control + bulk bar on the left (12px apart), search + Filters on the right */
+.cd-tools{flex-wrap:nowrap}
+.cd-tools-l{display:flex;align-items:center;gap:12px;flex:1 1 auto;min-width:0}
+.cd-tools-l .lb-bgrp{flex-shrink:0}
+.cd-tools-r{flex-shrink:0;flex-wrap:nowrap}
+/* Bulk Action Panel (Figma 7729:20740) */
+.cd-bulk-wrap{position:relative;flex:1 1 0;min-width:0}
+.cd-bulk{display:inline-flex;align-items:stretch;max-width:100%;height:44px;box-sizing:border-box;border:1px solid #D0D5DD;border-radius:8px;background:#fff;overflow:hidden;vertical-align:top}
+.cd-bulk-n{display:flex;align-items:center;flex-shrink:0;padding:0 20px;background:#F9FAFB;font-size:16px;font-weight:500;color:#667085;white-space:nowrap}
+.cd-bulk-acts{display:flex;min-width:0;border-left:1px solid #D0D5DD;border-right:1px solid #D0D5DD}
+.cd-bulk-a{display:inline-flex;align-items:center;gap:8px;flex-shrink:0;height:42px;padding:0 20px;border:0;background:#fff;font:inherit;font-size:16px;font-weight:600;color:#344054;white-space:nowrap;cursor:pointer}
+.cd-bulk-a[hidden]{display:none}
+.cd-bulk-a .i,.cd-bulk-x .i{width:20px;height:20px}
+.cd-bulk-a:hover{background:#F9FAFB}
+.cd-bulk-a.d{color:#D92D20}
+.cd-bulk-more[aria-expanded="true"]{background:#F2F4F7}
+.cd-bulk-car{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.67;stroke-linecap:round;stroke-linejoin:round}
+.cd-bulk-x{display:grid;place-content:center;flex-shrink:0;width:44px;border:0;background:#fff;color:#344054;cursor:pointer;box-shadow:0 1px 2px rgba(16,24,40,.05)}
+.cd-bulk-x:hover{background:#F9FAFB}
+.cd-bulk-a:focus-visible,.cd-bulk-x:focus-visible{outline:2px solid var(--cd-blue);outline-offset:-2px}
+.cd-bulk-menu{top:52px;right:auto;min-width:240px}
+.cd-bulk-menu button[hidden]{display:none}
+/* row kebab menu: fixed so it isn't clipped by the card or the table scroller (placed by cdKbPlace) */
+.cd-act .menu.cd-kb-menu{position:fixed;top:0;left:0;right:auto;z-index:44}
+
+/* employee name in a group row: opens the Resources profile; the rest of the row expands the group */
+.cd-n-link{display:block;max-width:100%;padding:0;border:0;background:none;font:inherit;font-size:14px;font-weight:500;color:#000;text-align:left;cursor:pointer;overflow:hidden;text-overflow:ellipsis}
+.cd-n-link:hover{color:var(--blue,#155EEF);text-decoration:underline;text-underline-offset:2px}
+.cd-n-link:focus-visible{outline:2px solid var(--blue,#155EEF);outline-offset:2px;border-radius:2px}
+/* review cycle steps: only two icon states (empty / done), 28×28 */
+.pk-steps .tdot{width:28px;height:28px;font-size:14px;font-weight:600}

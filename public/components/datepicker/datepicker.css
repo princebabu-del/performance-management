@@ -1,0 +1,25 @@
+/* Date field (MM/DD/YYYY) + one-month calendar popover. See datepicker.js. */
+.ldp{display:block;min-width:0}
+.ldp-btn{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;text-align:left;cursor:pointer;font-family:inherit}
+.ldp-btn .ldp-v{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ldp-btn img{flex-shrink:0;display:block}
+.ldp-btn.empty .ldp-v{color:#98A2B3}
+.ldp-btn[aria-expanded="true"]{border-color:#2970FF}
+.ldp-btn:disabled{cursor:not-allowed;opacity:.6}
+.ldp-pop{position:fixed;z-index:1400;width:312px;box-sizing:border-box;background:#fff;border:1px solid #EAECF0;border-radius:12px;padding:16px;
+  box-shadow:0 12px 16px -4px rgba(16,24,40,.08),0 4px 6px -2px rgba(16,24,40,.03);font-family:Inter,sans-serif}
+.ldp-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;font-size:16px;font-weight:600;color:#344054}
+.ldp-nav{width:32px;height:32px;border:0;background:none;border-radius:8px;font-size:22px;line-height:1;color:#344054;cursor:pointer}
+.ldp-nav:hover{background:#F2F4F7}
+.ldp-wk,.ldp-days{display:grid;grid-template-columns:repeat(7,40px)}
+.ldp-wk span{height:40px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;color:#344054}
+.ldp-days button{height:40px;border:0;background:none;border-radius:20px;font-size:14px;color:#344054;cursor:pointer;position:relative;font-family:inherit}
+.ldp-days button:hover:not(:disabled){background:#F9FAFB}
+.ldp-days button:disabled{color:#D0D5DD;cursor:not-allowed}
+.ldp-days button.t:after{content:"";position:absolute;bottom:5px;left:50%;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:#2970FF}
+.ldp-days button.sel{background:#2970FF;color:#fff;font-weight:600}
+.ldp-days button.sel.t:after{background:#fff}
+.ldp-days button:focus-visible,.ldp-nav:focus-visible,.ldp-clear:focus-visible{outline:2px solid #2970FF;outline-offset:1px}
+.ldp-f{display:flex;justify-content:flex-end;border-top:1px solid #EAECF0;margin:12px -16px 0;padding:12px 16px 0}
+.ldp-clear{border:0;background:none;padding:4px 8px;border-radius:6px;font:600 14px Inter,sans-serif;color:#344054;cursor:pointer}
+.ldp-clear:hover{background:#F2F4F7}

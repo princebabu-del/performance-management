@@ -1,0 +1,12 @@
+/* Feedback banner — Figma: Prince's Cauldron · "Feedkack Banners" (7722:20392). See README.md. */
+.lb-banner{display:flex;align-items:flex-start;gap:8px;width:100%;padding:12px;border:1px solid;border-radius:8px;box-sizing:border-box}
+.lb-banner__icon{display:flex;align-items:center;padding:2px 0;flex-shrink:0}
+.lb-banner__icon img{display:block;width:16px;height:16px}
+.lb-banner__text{flex:1 0 0;min-width:1px;margin:0;font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif;font-size:14px;font-weight:500;line-height:1.4;letter-spacing:-.28px;color:#30374F;overflow-wrap:anywhere}
+.lb-banner__text b,.lb-banner__text strong{font-weight:600}
+.lb-banner__text a{color:inherit;text-decoration:underline}
+
+.lb-banner--info{background:#F5F8FF;border-color:#D1E0FF}
+.lb-banner--warning{background:#FFFAEB;border-color:#FEDF89}
+.lb-banner--error{background:#FEF3F2;border-color:#FECDCA}
+.lb-banner--gray{background:#F9FAFB;border-color:#EAECF0}

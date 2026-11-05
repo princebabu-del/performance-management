@@ -1,0 +1,119 @@
+/* New Review Cycle: focused full-page editor (Figma LMS 1024:14407) */
+body.focusmode{background:#F2F4F7}
+body.focusmode .lt-bar{display:none}
+body.focusmode .main{padding:0;background:#F2F4F7;min-height:100vh}
+.fc{--fc-line:#D0D5DD;--fc-card-line:#EAECF0;--fc-ink:#344054;--fc-ph:#98A2B3;--fc-blue:#2970FF;--fc-shadow:0 1px 2px rgba(16,24,40,.05);min-height:100vh;display:flex;flex-direction:column}
+
+/* sub header */
+.fc-sub{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--fc-line);display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 32px;flex-wrap:wrap}
+.fc-left{display:flex;align-items:center;gap:16px;min-width:0}
+.fc-exit{display:inline-flex;align-items:center;gap:8px;border:0;background:none;padding:0;cursor:pointer;font-family:var(--f);font-size:16px;line-height:normal;font-weight:600;color:var(--fc-ink)}
+.fc-exit img{display:block;flex-shrink:0}
+.fc-div{width:1px;height:28px;background:var(--fc-line);flex-shrink:0}
+.fc-sub h1{margin:0;font-size:20px;line-height:1.2;font-weight:600;color:#000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fc-acts{display:flex;gap:12px}
+.fc-btn{display:inline-flex;align-items:center;justify-content:center;padding:12px 20px;border-radius:8px;border:1px solid var(--fc-line);background:#fff;color:var(--fc-ink);font-size:16px;line-height:1;font-weight:600;box-shadow:var(--fc-shadow);cursor:pointer;white-space:nowrap}
+.fc-btn:hover{background:#F9FAFB}
+.fc-btn.p{background:var(--fc-blue);border-color:var(--fc-blue);color:#fff}
+.fc-btn.p:hover{background:#155EEF;border-color:#155EEF}
+
+/* canvas + cards */
+/* body: 320px section nav + 1200px content column, centred (Figma 1024:14443) */
+.fc-body{flex:1;display:flex;align-items:flex-start;justify-content:center;gap:24px;padding:24px}
+.fc-main{flex:0 1 1200px;min-width:0;display:flex;flex-direction:column;gap:12px}
+.fc-main>.fc-card{scroll-margin-top:99px}
+.fc-steps{position:sticky;top:99px;flex:0 0 320px;box-sizing:border-box;display:flex;flex-direction:column;gap:4px}
+.fc-step{display:flex;align-items:center;gap:8px;width:100%;padding:12px;border:0;border-radius:8px;background:none;cursor:pointer;text-align:left;font-family:var(--f)}
+.fc-step:hover{background:rgba(255,255,255,.6)}
+.fc-step.on{background:#fff}
+.fc-step:focus-visible{outline:2px solid var(--fc-blue);outline-offset:-2px}
+.fc-step-n{flex-shrink:0;width:24px;height:24px;box-sizing:border-box;border:1.5px solid var(--fc-card-line);border-radius:12px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;line-height:1;color:#667085}
+.fc-step-t{flex:1;min-width:0;font-size:16px;font-weight:500;line-height:1.4;letter-spacing:-.32px;color:#000}
+.fc-card{width:100%;box-sizing:border-box;background:#fff;border:1px solid var(--fc-card-line);border-radius:20px;padding:32px;display:flex;flex-direction:column;gap:24px}
+.fc-card h2,.fc-card .sec h4{margin:0;font-size:20px;line-height:1.2;font-weight:600;color:#000}
+/* cards built from the existing review sections */
+.fc-card>.sec{padding:0;border:0}
+.fc-card .sec h4{margin-bottom:8px}
+.fc-card .sec .sd{font-size:14px;color:#667085;margin-bottom:20px}
+.fc-card .card.rv{border-color:var(--fc-card-line);border-radius:12px;box-shadow:none;margin:0}
+.fc-warn{padding:20px 24px}
+.fc-warn .lwarn{margin:0}
+
+/* Cycle Details form */
+.fc-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.fc-field{display:flex;flex-direction:column;gap:8px;min-width:0}
+.fc-field.full{grid-column:1/-1}
+.fc-lbl{display:flex;align-items:center;gap:4px;padding:0;color:#000;line-height:1.4}
+.fc-lbl label{font-size:14px;font-weight:500}
+.fc-lbl label span{font-size:14px;letter-spacing:.07px}
+.fc-count{flex:1;text-align:right;font-size:14px;letter-spacing:.07px}
+.fc-inp{height:46px;width:100%;border:1px solid var(--fc-line);border-radius:8px;background:#fff;padding:0 14px;font-family:var(--f);font-size:16px;font-weight:500;color:#101828}
+.fc-inp::placeholder{color:var(--fc-ph);opacity:1}
+.fc-inp:focus{outline:none;border-color:var(--fc-blue)}
+.fc-inp.bad{border-color:var(--red)}
+.fc-err{font-size:14px;color:var(--red);padding:0}
+.fc-sel.empty{color:var(--fc-ph)}
+.fc-dwrap{position:relative}
+/* Cycle Period field + two-month range calendar */
+.fc-period{display:flex;align-items:center;justify-content:space-between;gap:8px;text-align:left;cursor:pointer}
+.fc-period span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fc-period.empty{color:var(--fc-ph)}
+.fc-period[aria-expanded="true"]{border-color:var(--fc-blue)}
+.fc-pop{position:absolute;top:calc(100% + 8px);left:0;z-index:40;width:640px;background:#fff;border:1px solid var(--fc-card-line);border-radius:12px;box-shadow:0 12px 16px -4px rgba(16,24,40,.08),0 4px 6px -2px rgba(16,24,40,.03);padding:20px 24px 0}
+.fc-pop-nav{position:absolute;left:12px;right:12px;top:14px;display:flex;justify-content:space-between;pointer-events:none}
+.fc-nav{pointer-events:auto;width:32px;height:32px;border:0;background:none;border-radius:8px;font-size:22px;line-height:1;color:var(--fc-ink);cursor:pointer}
+.fc-nav:hover{background:#F2F4F7}
+.fc-mons{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+.fc-mon-h{text-align:center;font-size:16px;font-weight:600;color:var(--fc-ink);height:24px;margin-bottom:12px}
+.fc-wk,.fc-days{display:grid;grid-template-columns:repeat(7,40px);justify-content:center}
+.fc-wk span{height:40px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;color:var(--fc-ink)}
+.fc-days button{height:40px;border:0;background:none;font-size:14px;color:var(--fc-ink);cursor:pointer;border-radius:20px;position:relative}
+.fc-days button:hover{background:#F9FAFB}
+.fc-days button.t:after{content:"";position:absolute;bottom:5px;left:50%;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:var(--fc-blue)}
+.fc-days button.in{background:#F2F4F7;border-radius:0}
+.fc-days button.s,.fc-days button.e{background:var(--fc-blue);color:#fff;font-weight:600}
+.fc-days button.s.t:after,.fc-days button.e.t:after{background:#fff}
+.fc-pop-f{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid var(--fc-card-line);margin:16px -24px 0;padding:16px 24px}
+.fc-pop-sel{font-size:14px;font-weight:500;color:var(--fc-ink)}
+.fc-btn.sm{padding:10px 16px;font-size:14px}
+.fc-btn:disabled{opacity:.5;cursor:not-allowed}
+/* Extend a phase: same range calendar, floated over the modal; start date is locked, days up to the current end are disabled */
+.cx-pop{--fc-line:#D0D5DD;--fc-card-line:#EAECF0;--fc-ink:#344054;--fc-blue:#2970FF;--fc-shadow:0 1px 2px rgba(16,24,40,.05);position:fixed;top:0;left:0;z-index:1400;max-width:calc(100vw - 16px);box-sizing:border-box}
+.cx-pop .fc-days button:disabled{color:#D0D5DD;cursor:not-allowed;background:none}
+.cx-pop .fc-days button.s:disabled,.cx-pop .fc-days button.e:disabled{background:var(--fc-blue);color:#fff;opacity:.6}
+.cx-pop .fc-days button.in:disabled{background:#F2F4F7;color:#98A2B3}
+#cxPeriod{display:flex}
+.fc-sel{text-align:left;text-align-last:left;appearance:none;-webkit-appearance:none;cursor:pointer;padding-right:44px;background:#fff url(/assets/chevron-down.svg) right 14px center/20px 20px no-repeat}
+.fc-sel option{color:#101828}
+
+@media (max-width:1000px){.fc-steps{display:none}}
+@media (max-width:700px){
+  .fc-sub{padding:12px 16px}
+  .fc-sub h1{font-size:18px}
+  .fc-acts{width:100%}
+  .fc-btn{flex:1}
+  .fc-body{padding:16px}
+  .fc-card{padding:20px;border-radius:16px}
+  .fc-form{grid-template-columns:1fr}
+  .fc-pop{width:min(100%,328px);padding:16px 12px 0}
+  .fc-mons{grid-template-columns:1fr;gap:16px}
+  .fc-pop-f{margin:12px -12px 0;padding:12px}
+}
+/* clearable select: × appears left of the chevron on hover / focus once a value is picked */
+.fc-clr{position:relative}
+.fc-clr.has .fc-sel{padding-right:72px}
+.fc-clr-x{position:absolute;right:40px;top:50%;transform:translateY(-50%);width:24px;height:24px;display:none;align-items:center;justify-content:center;border:0;background:none;border-radius:6px;padding:0;cursor:pointer}
+.fc-clr-x:hover{background:#F2F4F7}
+.fc-clr-x img{display:block}
+.fc-clr.has:hover .fc-clr-x,.fc-clr.has:focus-within .fc-clr-x{display:flex}
+.fc-clr-x:focus-visible{outline:2px solid var(--fc-blue);outline-offset:1px}
+/* Review Type → New Hire / Project Completion: schedule radios sit right under the label */
+.fc-lbl-t{font-size:14px;font-weight:500}
+.fc-lbl-t span{font-size:14px;letter-spacing:.07px}
+.rx-chkbox.fc-prob{margin-top:8px}   /* + the field's 8px gap = 16px between label and radios */
+/* Cycle Details › Description (optional, 500 characters) */
+.fc-inp.fc-ta{height:auto;min-height:104px;padding:12px 14px;line-height:1.4;resize:vertical}
+/* Overview › section Edit: brief blue highlight on the section scrolled to */
+.fc-card{transition:border-color .2s ease-out,box-shadow .2s ease-out}
+.fc-card.fc-flash{border-color:#2970FF;box-shadow:0 0 0 3px rgba(41,112,255,.16)}
+@media (prefers-reduced-motion:reduce){.fc-card{transition:none}}

@@ -1,0 +1,13 @@
+/* filter tags were picking up the generic close-button .x style */
+.tag.x{font-size:14px;line-height:1.4;padding:4px 10px;background:var(--sub);border:1px solid var(--line);border-radius:6px;color:var(--ink2)}
+.tag.x b{font-weight:600;color:var(--ink)}
+.asg .hd{flex-wrap:wrap;gap:10px}
+.asg .tbl td,.asg .tbl th{font-size:14px}
+.asg-g{padding:12px 20px;border-top:1px solid var(--line)}
+.asg-ex{display:flex;flex-wrap:wrap;gap:6px;align-items:center;border-top:1px solid var(--line)}
+.asg-list{margin-top:10px;border:1px solid var(--line);border-radius:8px;max-height:280px;overflow:auto;background:#fff}
+.asg-row{display:grid;grid-template-columns:24px minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr) 90px;gap:10px;align-items:center;padding:8px 12px;border-top:1px solid var(--line);font-size:14px;cursor:pointer}
+.asg-row:first-child{border-top:0}
+.asg-row:hover{background:var(--sub)}
+.asg-row.hdr{position:sticky;top:0;background:var(--head);font-size:12px;font-weight:600;color:var(--ink2);text-transform:uppercase;letter-spacing:.04em}
+@media (max-width:640px){.asg-row{grid-template-columns:24px minmax(0,1fr) minmax(0,1fr)}.asg-row span:nth-child(4),.asg-row span:nth-child(5){display:none}}

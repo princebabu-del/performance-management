@@ -1,0 +1,138 @@
+/* Employee profile panel — Figma Desktop-UX "Employee info" (39133:21561) */
+.ep{--ep-ink:#1A293A;--ep-g700:#344054;--ep-g300:#D0D5DD;--ep-g200:#EAECF0;--ep-g100:#F2F4F7;--ep-g50:#F9FAFB;--ep-blue:#2970FF;--ep-xs:0 1px 2px rgba(16,24,40,.05);
+ width:1098px;max-width:100%;height:100%;background:#fff;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px)}
+
+/* open: panel pushes in from the right while the backdrop fades in */
+.dbg.ep-enter{animation:ep-fade .24s ease-out both}
+.dbg.ep-enter .ep{animation:ep-push .32s cubic-bezier(.22,1,.36,1) both}
+@keyframes ep-fade{from{background:rgba(17,24,39,0)}}
+@keyframes ep-push{from{transform:translateX(100%)}to{transform:none}}
+@media (prefers-reduced-motion:reduce){.dbg.ep-enter,.dbg.ep-enter .ep{animation:none}}
+
+/* header */
+.ep-hd{display:flex;align-items:center;justify-content:space-between;gap:12px;height:80px;padding:0 24px;border-bottom:1px solid var(--ep-g200);flex-shrink:0}
+.ep-who{display:flex;align-items:center;gap:12px;min-width:0}
+.ep-photo{display:block;flex-shrink:0}
+.ep-lab-top{font-size:16px;font-weight:500;color:var(--ep-ink);line-height:normal}
+.ep-name{margin:0;font-size:24px;font-weight:700;color:var(--ep-ink);line-height:normal;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ep-hd-acts{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.ep-hist{display:flex;align-items:center;justify-content:center;width:44px;height:44px;padding:12px;background:#fff;border:1px solid var(--ep-g300);border-radius:8px;box-shadow:var(--ep-xs);cursor:pointer}
+.ep-hist:hover{background:var(--ep-g50)}
+.ep-hist img{display:block}
+.ep-status{position:relative;display:flex;align-items:center;min-width:150px;height:44px;background:#fff;border:1px solid rgba(0,0,0,.23);border-radius:8px;filter:drop-shadow(0 1px 1px rgba(14,24,41,.05));cursor:pointer}
+.ep-status:hover{border-color:rgba(0,0,0,.87)}
+.ep-status:focus-within{border-color:var(--ep-blue);box-shadow:0 0 0 1px var(--ep-blue)}
+.ep-status .ep-dot{position:absolute;left:12px;top:50%;transform:translateY(-50%);pointer-events:none}
+.ep-status.off .ep-dot{filter:grayscale(1);opacity:.5}
+.ep-status select{appearance:none;-webkit-appearance:none;width:100%;height:100%;padding:0 32px 0 33px;border:0;background:none;font:inherit;font-size:16px;line-height:24px;color:#000;cursor:pointer;outline:none}
+.ep-status .ep-car{position:absolute;right:7px;top:50%;transform:translateY(-50%);pointer-events:none}
+
+/* nav + content */
+.ep-wrap{flex:1;display:flex;min-height:0}
+.ep-nav{width:280px;flex-shrink:0;display:flex;flex-direction:column;padding:12px 8px;border-right:1px solid var(--ep-g200);overflow-y:auto}
+.ep-nav-i{display:block;width:100%;padding:12px 16px;border:0;border-radius:8px;background:transparent;font:inherit;font-size:16px;font-weight:500;line-height:1.5;letter-spacing:.15px;color:var(--ep-g700);text-align:left;cursor:pointer}
+.ep-nav-i:hover{background:var(--ep-g50)}
+.ep-nav-i.on{background:var(--ep-g100)}
+.ep-nav-i:focus-visible{outline:2px solid var(--ep-blue);outline-offset:-2px}
+.ep-main{flex:1;min-width:0;overflow:auto;background:var(--ep-g100);padding:24px}
+.ep-stack{display:grid;gap:16px;align-content:start}
+
+/* section card */
+.ep-card{background:#fff;border-radius:8px;padding:8px 24px 24px}
+.ep-sec{margin:0 0 24px;padding:12px 0 13px;border-bottom:1px solid #CCD5DF;font-size:16px;font-weight:700;color:var(--ep-ink);line-height:normal}
+.ep-row{display:grid;grid-template-columns:128px minmax(0,1fr);align-items:center;margin-bottom:8px;min-height:40px}
+.ep-row.ep-pair{grid-template-columns:128px minmax(0,1fr) 126px minmax(0,1fr);margin-bottom:16px}
+.ep-row.ep-gap{margin:24px 0}
+.ep-row.ep-gap-b{margin-bottom:24px}
+.ep-lab{padding-right:9.6px;font-size:14px;font-weight:500;line-height:normal;color:rgba(0,0,0,.87);text-align:right}
+.ep-ctl{min-width:0}
+.ep-inp{display:block}
+.ep .ldp-btn.ep-date{display:flex}
+.ep-inp,.ep .ldp-btn.ep-date{width:100%;height:40px;padding:0 8px 0 9.6px;background:#fff;border:1px solid var(--ep-g300);border-radius:8px;font:inherit;font-size:14px;font-weight:600;color:var(--ep-ink)}
+.ep-inp::placeholder{color:var(--ep-ink);opacity:.42}
+.ep-inp:hover,.ep .ldp-btn.ep-date:hover{border-color:#98A2B3}
+.ep-inp:focus,.ep .ldp-btn.ep-date:focus-visible{outline:none;border-color:var(--ep-blue);box-shadow:0 0 0 1px var(--ep-blue)}
+.ep .ldp-btn.ep-date.empty .ldp-v{opacity:.42}
+.ep-sel{text-align:left;text-align-last:left;appearance:none;-webkit-appearance:none;padding-right:40px;background:#fff url(/assets/profile/select-caret.svg) no-repeat right 8px center/24px 24px;cursor:pointer}
+.ep-sel.empty{color:rgba(26,41,58,.42)}
+.ep-sel option{color:var(--ep-ink)}
+.ep-radios{display:flex;flex-wrap:wrap;gap:8px 32px}
+.ep-radio,.ep-check{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:500;color:rgba(0,0,0,.87);cursor:pointer}
+.ep-radio input{width:18px;height:18px;margin:0;accent-color:var(--ep-blue)}
+.ep-check input{width:16px;height:16px;margin:0;accent-color:var(--ep-blue)}
+.ep-hr{border:0;border-top:1px solid var(--ep-g200);margin:16px 0}
+.ep-line{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--ep-g200);font-size:14px}
+.ep-line:last-child{border-bottom:0}
+.ep-empty{padding:24px 0;text-align:center;color:#667085;font-size:14px}
+.ep-empty b{display:block;color:var(--ep-ink);margin-bottom:4px}
+
+/* Performance tab: cycle cards get a full-width divider under the header, like the Reviews/Overall rating cards */
+.ep .pk-cyc{padding:0 20px 8px}
+.ep .pk-cyc-hd{margin:0 -20px 4px;padding:16px 20px;border-bottom:1px solid var(--line)}
+
+/* footer */
+.ep-ft[hidden]{display:none}
+.ep-ft{display:flex;justify-content:flex-end;gap:12px;padding:16px 24px calc(16px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--ep-g200);background:#fff;flex-shrink:0}
+.ep-btn{padding:12px 20px;border:1px solid var(--ep-g300);border-radius:8px;background:#fff;box-shadow:var(--ep-xs);font:inherit;font-size:16px;font-weight:600;line-height:normal;color:var(--ep-g700);cursor:pointer}
+.ep-btn:hover{background:var(--ep-g50)}
+.ep-btn.p{background:var(--ep-blue);border-color:var(--ep-blue);color:#fff}
+.ep-btn.p:hover{background:#155EEF;border-color:#155EEF}
+.ep-btn:focus-visible{outline:2px solid var(--ep-blue);outline-offset:2px}
+
+/* narrow screens: nav becomes a horizontal strip, form rows stack */
+@media (max-width:760px){
+ .ep-hd{height:auto;padding:12px 16px;flex-wrap:wrap}
+ .ep-wrap{flex-direction:column}
+ .ep-nav{width:auto;flex-direction:row;border-right:0;border-bottom:1px solid var(--ep-g200);overflow-x:auto;padding:8px}
+ .ep-nav-i{width:auto;white-space:nowrap}
+ .ep-main{padding:16px}
+ .ep-card{padding:8px 16px 16px}
+ .ep-row,.ep-row.ep-pair{grid-template-columns:1fr;gap:6px}
+ .ep-lab{text-align:left;padding-right:0}
+}
+
+/* Performance tab: segmented control (All · Active · Past), left, search right, above the cycle list */
+.ep-cyc-tools{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+.ep .ep-cyc-q{flex:0 1 300px;width:300px;height:40px;border-color:var(--ep-g300);background:#fff}
+.ep .ep-cyc-q:focus-within{border-color:var(--ep-blue);box-shadow:0 0 0 1px var(--ep-blue)}
+.ep .ep-cyc-q input{font-weight:500;color:var(--ep-ink)}
+@media (max-width:640px){.ep .ep-cyc-q{flex:1 1 100%;width:100%}}
+
+/* Performance tab: overall rating card. Heading, then the score with its level + what it averages beside it. Only the score is colored by the rating. */
+.ep-rate{padding:20px 24px;display:grid;gap:12px}
+.ep-rate-k{margin:0;font-size:16px;font-weight:600;line-height:24px;color:var(--ep-ink)}
+.ep-rate-row{display:flex;align-items:center;gap:16px}
+.ep-rate-n{flex-shrink:0;font-size:64px;line-height:68px;letter-spacing:-.02em;font-weight:600;font-variant-numeric:tabular-nums;color:var(--ep-ink)}
+.ep-rate-txt{display:grid;gap:2px;min-width:0}
+.ep-rate-l{font-size:16px;font-weight:600;line-height:22px;color:var(--ep-ink)}
+.ep-rate-s{font-size:12px;font-weight:500;line-height:18px;color:#667085}
+.ep-rate-n.g{color:#16A34A}
+.ep-rate-n.b{color:var(--ep-blue)}
+.ep-rate-n.a{color:var(--amber)}
+.ep-rate-n.r{color:var(--red)}
+/* cycle search clear button: only while the field has text; replaces the browser's own search clear icon */
+.ep-cyc-q input::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none}
+.ep-cyc-x{display:none;flex-shrink:0;align-items:center;justify-content:center;width:24px;height:24px;margin-right:-4px;padding:0;border:0;border-radius:6px;background:none;color:#667085;cursor:pointer}
+.ep-cyc-q.has-v .ep-cyc-x{display:inline-flex}
+.ep-cyc-x:hover{background:var(--ep-g100);color:var(--ep-ink)}
+.ep-cyc-x:focus-visible{outline:2px solid var(--ep-blue);outline-offset:0}
+.ep-cyc-x .i{width:16px;height:16px}
+/* rating card glow: a blurred shape in the score's color covering the right side */
+.ep-rate{position:relative;overflow:hidden;isolation:isolate}
+.ep-rate>*{position:relative;z-index:1}
+.ep-rate::after{content:"";position:absolute;z-index:0;top:-180px;right:-260px;width:520px;height:360px;pointer-events:none;
+ background:radial-gradient(closest-side,color-mix(in srgb,var(--ep-rate-c,#98A2B3) 42%,transparent),color-mix(in srgb,var(--ep-rate-c,#98A2B3) 18%,transparent) 35%,color-mix(in srgb,var(--ep-rate-c,#98A2B3) 5%,transparent) 60%,transparent 80%)}
+.ep-rate.g{--ep-rate-c:#22C55E}
+.ep-rate.b{--ep-rate-c:#2970FF}
+.ep-rate.a{--ep-rate-c:#F59E0B}
+.ep-rate.r{--ep-rate-c:#EF4444}
+/* rating card stars (one per level), drawn over the glow on the right */
+.ep-rate-stars{position:absolute;z-index:1;right:16px;top:50%;width:300px;height:120px;transform:translateY(-50%);pointer-events:none}
+.ep-rate-stars .ep-star-on{filter:drop-shadow(0 3px 4px color-mix(in srgb,var(--ep-rate-c,#98A2B3) 35%,transparent))}
+.ep-rate-stars .ep-star-off{fill:#E4E7EC;stroke:#D0D5DD}
+.ep-rate-stars .ep-sg1{stop-color:color-mix(in srgb,var(--ep-rate-c,#98A2B3) 55%,#fff)}
+.ep-rate-stars .ep-sg2{stop-color:var(--ep-rate-c,#98A2B3)}
+.ep-rate-stars .ep-spark{fill:color-mix(in srgb,var(--ep-rate-c,#98A2B3) 45%,#fff)}
+@media (max-width:760px){.ep-rate-stars{display:none}}
+/* cycle filter segmented control: semibold labels */
+#ep-cyc-seg .lb-bgrp__btn{font-weight:600}

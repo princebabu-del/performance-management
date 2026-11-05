@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <title>Lumber Performance Admin</title>
+    <link rel="icon" type="image/svg+xml" href="/assets/lumber-logo.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
+    <link rel="stylesheet" href="/src/styles/main.css" />
+    <link rel="stylesheet" href="/components/banners/banner.css" />
+    <link rel="stylesheet" href="/components/datepicker/datepicker.css" />
+    <link rel="stylesheet" href="/components/tabs/tabs.css" />
+    <link rel="stylesheet" href="/components/button-group/button-group.css" />
+  </head>
+  <body>
+    <header class="lt-bar" id="ltBar" role="navigation" aria-label="Lumber"></header>
+    <div class="lt-stub" aria-hidden="true"><div id="pmNav"></div><div id="resNav"></div><div id="pmdd" hidden></div></div>
+    <main class="main" id="main"></main>
+    <div id="layer"></div>
+    <div id="toastHost"></div>
+
+    <!-- Classic (non-module) scripts: they share one global scope and the markup uses inline onclick="…" handlers.
+         Load order matters — each layer overrides functions from the files before it. -->
+    <script src="/js/app.js"></script>
+    <script src="/components/banners/banner.js"></script>
+    <script src="/components/datepicker/datepicker.js"></script>
+    <script src="/components/tabs/tabs.js"></script>
+    <script src="/components/button-group/buttonGroup.js"></script>
+    <script src="/js/layers/01-assign-groups.js"></script>
+    <script src="/js/layers/02-reviewers-step.js"></script>
+    <script src="/js/layers/03-org-model.js"></script>
+    <script src="/js/layers/04-multiple-managers.js"></script>
+    <script src="/js/layers/05-timeline-removed.js"></script>
+    <script src="/js/layers/06-admin-dashboard.js"></script>
+    <script src="/js/layers/07-field-dashboards.js"></script>
+    <script src="/js/layers/08-worker-app.js"></script>
+    <script src="/js/layers/09-employee-profile.js"></script>
+    <script src="/js/layers/10-wizard-three-steps.js"></script>
+    <script src="/js/layers/11-assign-workers-modal.js"></script>
+    <script src="/js/layers/12-create-then-assign.js"></script>
+    <script src="/js/layers/13-focused-cycle-editor.js"></script>
+    <script src="/js/layers/14-reviewee-reviewers.js"></script>
+    <script src="/js/layers/15-cycle-settings-kv.js"></script>
+    <script src="/js/layers/16-edit-cycle.js"></script>
+    <script src="/js/layers/17-cycle-detail-layout.js"></script>
+    <script src="/js/layers/18-cycle-description.js"></script>
+    <script src="/js/layers/19-extend-period.js"></script>
+    <script src="/js/layers/20-cycles-bulk.js"></script>
+    <script src="/js/layers/21-columns-dropdown.js"></script>
+    <script src="/js/layers/22-floating-row-menus.js"></script>
+    <script src="/js/layers/23-employee-profile-panel.js"></script>
+    <script src="/js/layers/24-payroll-viewer.js"></script>
+    <script src="/js/layers/25-field-overview-layout.js"></script>
+    <script src="/js/topnav.js"></script>
+    <script src="/js/scenarios.js"></script>
+  </body>
+</html>
