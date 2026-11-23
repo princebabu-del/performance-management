@@ -30,9 +30,9 @@
  *                         No secondary text             With secondary text (`description`)
  *   ────────────────────  ────────────────────────────  ─────────────────────────────────────
  *   No search             options in the 4px menu,      options in the 4px menu,
- *                         40px rows, max 7 → 300px      56px rows, max 7 → 412px
+ *                         36px rows, max 7 → 260px      56px rows, max 7 → 400px
  *   Search                search block (8px 8px 4px)    search block (8px 8px 4px)
- *   (`searchPlaceholder`) + 4px list, 40px rows         + 4px list, 56px rows
+ *   (`searchPlaceholder`) + 4px list, 36px rows         + 4px list, 56px rows
  *   A list uses 56px rows as soon as any option has a description; an option without one keeps a single line.
  *   Search matches the primary and the secondary text.
  *
@@ -44,14 +44,14 @@
  *   Container       4px padding (0 when it holds a search block + list; the list then has the 4px)
  *   Search block    8px top · 8px sides · 4px bottom, sits above the list, doesn't scroll
  *   Search clear    16px x-close in text-tertiary #667085, 8px after the text, shown once there is text; empties the search
- *   Option          min 40px · 8px 12px padding · 8px radius
+ *   Option          hugs content (36px) · 8px 12px padding · 8px radius
  *   Primary text    Inter 14/20 medium · #101828 (text-primary)
  *   Secondary text  Inter 12/18 medium · #667085 (text-tertiary) · 2px under the primary line
  *   Link in it      Inter 12/18 semibold · #2970FF, e.g. "Preview" (opens the item without picking it)
  *   Option gap      2px
  *   Height          7 options, then vertical scroll.
- *                   max-height = 7 × row + 6 × 2px + 8px → 300px for one-line rows (40px),
- *                   412px for two-line rows (56px = 8 + 20 + 2 + 18 + 8)
+ *                   max-height = 7 × row + 8px → 260px for one-line rows (36px),
+ *                   400px for two-line rows (56px = 8 + 20 + 2 + 18 + 8)
  *   Scrollbar       native bar hidden. Thumb: 6px wide, 3px radius, 2px from the right border, 4px from top/bottom,
  *                   min 24px tall, #D0D5DD (#98A2B3 on hover / drag), z-index above the options, so it overlaps
  *                   their right edge. Shown only while the pointer is over the menu (or while dragging).
@@ -96,7 +96,7 @@
  * ─────────────────────────────────────────────────────────────────────────────
  *   State        Background  Notes
  *   ───────────  ──────────  ─────────────────────────────────────────────────
- *   Default      none        40px min height (56px with a secondary line), 8px 12px padding, 8px radius
+ *   Default      none        36px (56px with a secondary line), 8px 12px padding, 8px radius
  *                            Primary Inter 14/20 medium #101828 · secondary 12/18 #667085, 2px gap
  *   Hover        #F9FAFB
  *   Selected     #F2F4F7     Same on hover and focus. 20px #2970FF check, 12px left margin
@@ -153,9 +153,9 @@ const MENU_TOKENS = {
     border: "#D0D5DD", focusBorder: "#2970FF", placeholder: "#98A2B3", icon: "#667085",
     clear: { size: 16, hit: 20, right: 10, gap: 8, color: "#667085" },   // × once there is text, text-tertiary
   },
-  list: { padding: 4, gap: 2, maxVisible: 7 },
+  list: { padding: 4, gap: 0, maxVisible: 7 },
   option: {
-    minHeight: 40, twoLineHeight: 56, paddingY: 8, paddingX: 12, radius: 8, lineGap: 2,
+    minHeight: 36, twoLineHeight: 56, paddingY: 8, paddingX: 12, radius: 8, lineGap: 2,
     primary: { fontSize: 14, lineHeight: 20, fontWeight: 500, color: "#101828" },
     secondary: { fontSize: 12, lineHeight: 18, fontWeight: 500, color: "#667085" },
     link: { fontSize: 12, lineHeight: 18, fontWeight: 600, color: "#2970FF" },   // e.g. "Preview" in the secondary line

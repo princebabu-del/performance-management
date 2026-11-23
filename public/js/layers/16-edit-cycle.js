@@ -13,7 +13,7 @@ function cycEdit(cid,sec){const c=C(cid);if(!c)return;
   FC_TYPE_KEYS.forEach(k=>{if(c[k]!=null)w[k]=fcCopy(c[k])});
   S.wz=w;nav("wizard");w._live=liveSnap(w)}
  /* Overview cards (Cycle Details, Reviewee, Reviewers, Overall Rating, Auto-assign) → the same editor section */
- if(sec!==undefined)setTimeout(()=>fcFocusSec(sec),150)}
+ if(sec!==undefined)setTimeout(()=>fcFocusSec(FC_CARD_SEC[sec]??sec),150)}
 /* Overview › section Edit: scroll the editor to that section, then flash a blue border on it
    (fades in, holds 500ms, fades out). The flash waits for the scroll to finish so it's seen where the eye lands. */
 function fcFocusSec(sec){const el=fcSecEl(sec);if(!el)return;if(sec>0&&document.activeElement&&document.activeElement.id==="wName")document.activeElement.blur();   // opened at another section: don't leave the cursor in Cycle namefcMark(sec);fcLock=Date.now()+1200;

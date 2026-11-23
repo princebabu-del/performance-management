@@ -4,7 +4,7 @@
    Container .dropdown__menu          1px #EAECF0 · 12px radius · 4px padding (options sit directly inside: reviewer roles, Who can reopen)
    With a list .dropdown__list   container padding 0; the list carries the 4px padding and scrolls
    Search .dropdown__search            its own block above the list: 8px 8px 4px padding, 36px input
-   Option .dropdown__option / .select__option   hugs its content (36px one-line) · 8px 12px padding · 8px radius · 2px apart
+   Option .dropdown__option / .select__option   hugs its content (36px one-line) · 8px 12px padding · 8px radius · no gap between options
      primary   .dropdown__primary         14/20 medium #101828
      secondary .dropdown__secondary         12/18 medium #667085 (tertiary), 2px under the primary line; links in it (Preview) semibold #2970FF
    Height                     7 options, then the list scrolls (--dd-row = one option's height; two-line lists use 56px)
@@ -17,9 +17,9 @@
 /* search: a container of its own above the list */
 .dropdown__search{padding:8px 8px 4px;flex:none}
 
-/* the list: 4px padding, 2px between options, 7 options tall, then scrolls under an overlay thumb */
-.dropdown__list{position:relative;padding:4px;gap:2px;display:flex;flex-direction:column;overflow-y:auto;overscroll-behavior:contain;
- max-height:calc(var(--dd-rows) * var(--dd-row) + (var(--dd-rows) - 1) * 2px + 8px);scrollbar-width:none}
+/* the list: 4px padding, no gap between options, 7 options tall, then scrolls under an overlay thumb */
+.dropdown__list{position:relative;padding:4px;gap:0;display:flex;flex-direction:column;overflow-y:auto;overscroll-behavior:contain;
+ max-height:calc(var(--dd-rows) * var(--dd-row) + 8px);scrollbar-width:none}
 .dropdown__list::-webkit-scrollbar{display:none}
 .dropdown__list>*{flex-shrink:0}   /* fixed-height scroller: rows keep their full height */
 .dropdown__list .dropdown__empty{padding:16px 12px}

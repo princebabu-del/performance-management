@@ -142,7 +142,7 @@ function fcCreate(){wzCollect();const w=W(),s=toISO(w.start),e=toISO(w.end),errs
 /* steps are gone: any old "go to step" link just scrolls to the reviewers card */
 wzGo=function(){wzCollect();render();const c=document.querySelectorAll(".section")[1];if(c)c.scrollIntoView({block:"start",behavior:"smooth"})};
 /* a brand-new cycle starts empty, like the design; drafts keep their values */
-startCycle=function(pattern){S.wz=newWz(pattern||"Quarterly crew check-in");Object.assign(S.wz,{name:"",start:"",end:"",recur:"",datesSet:false,ctype:"General Review",probSched:"end",probEvery:1,probTill:"probation",probTillN:12,projMode:"",projs:[]});nav("wizard")};
+startCycle=function(pattern){S.wz=newWz(pattern||"Quarterly crew check-in");Object.assign(S.wz,{name:"",start:"",end:"",recur:"",datesSet:false,rating:"No rating",ctype:"General Review",probSched:"end",probEvery:1,probTill:"probation",probTillN:12,projMode:"",projs:[]});nav("wizard")};
 const _editDraftFc=editDraft;editDraft=function(cid){_editDraftFc(cid);S.wz.editing=true;render()};
 /* full-page mode: hide the Lumber top nav while the editor is open */
 const _renderFc=render;render=function(...a){_renderFc(...a);document.body.classList.toggle("focusmode",S.view==="wizard")};

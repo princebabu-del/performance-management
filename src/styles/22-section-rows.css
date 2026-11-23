@@ -85,8 +85,8 @@ body.focusmode{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:graysc
 
 /* reviewer table cells: 16px left/right padding in every cell (header and rows), no column gap and no row padding.
    Each column is its old content width + 32px, so the fields inside keep their size (14 → 0 gaps, 16 → per-cell padding). */
-.editor__main .reviewer-table__row{column-gap:0;padding:0;min-width:1344px;
-  grid-template-columns:200px 136px 248px 288px 132px 160px 120px 60px}
+.editor__main .reviewer-table__row{column-gap:0;padding:0;min-width:1372px;
+  grid-template-columns:200px 136px 248px 288px 160px 160px 120px 60px}   /* View self-evaluation: 160px */
 .editor__main .reviewer-table__frame.noself .reviewer-table__row{min-width:1212px;grid-template-columns:200px 136px 248px 288px 160px 120px 60px}
 .editor__main .reviewer-table__row>*{box-sizing:border-box;padding-left:16px;padding-right:16px}
 .editor__main .reviewer-table__row>:first-child{margin-left:0}
@@ -145,7 +145,7 @@ body.focusmode{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:graysc
 .questionnaire-picker__menu .questionnaire-picker__check{margin-left:12px}
 
 
-/* checkbox cells (View self-eval, Reviewee can view, Anonymous): the checkbox sits at the exact vertical centre of the 44px row.
+/* checkbox cells (View self-review, Visible to reviewee, Anonymous): the checkbox sits at the exact vertical centre of the 44px row.
    Anonymous wraps its checkbox in a <span> (for the disabled hint), which otherwise put it on the text line, ~3px high. */
 .editor__main .reviewer-table__row--body>.c{line-height:0}
 .editor__main .reviewer-table__row--body>.c>span,.editor__main .reviewer-table__row--body>.c .reviewer-table__check{display:flex;align-items:center;justify-content:center}

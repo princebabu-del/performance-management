@@ -54,7 +54,7 @@ rxRating=function(w){if(!RX_FMTS.some(f=>f.k===w.rating))w.rating="Numeric 1–5
   <div class="setting-list"><div class="setting">${fcQ("Rating format",{id:"rxFmtQ",d:"One rating format or no rating for this cycle.",did:"rxFmtD"})}
    ${fcSel({id:"rxFmt",value:w.rating,options:RX_FMTS.map(o=>({v:o.k,t:RX_FMT_LBL[o.k]||o.n})),ph:"Select an option",pick:"rxFmtPick"}).replace('aria-haspopup="listbox"','aria-haspopup="listbox" aria-describedby="rxFmtD"')}
   </div></div><!--fc-rate-->
-  ${w.rating==="No rating"?banner("info",`<b>No overall rating.</b> Employees see the written feedback only, without a score.`):csScale(w.rating)}</section>`};
+  ${w.rating==="No rating"?banner("info",`Employees see the written feedback only, without a score.`):csScale(w.rating)}</section>`};
 /* Rating format pick (same single-select dropdown as Review type / Repeats, 30-single-select.js) */
 function rxFmtPick(v){if(v){W().rating=v;render()}}
 /* a row is {k, v} (plain text, escaped here) or {k, html}; note = HTML shown under the value */

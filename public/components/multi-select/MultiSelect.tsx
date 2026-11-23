@@ -35,7 +35,7 @@
  *                         No secondary text             With secondary text (`description`)
  *   ────────────────────  ────────────────────────────  ─────────────────────────────────────
  *   No search             options in the 4px menu,      options in the 4px menu,
- *                         36px rows, max 7 → 272px      56px rows, max 7 → 412px
+ *                         36px rows, max 7 → 260px      56px rows, max 7 → 400px
  *   Search                search block (8px 8px 4px)    search block (8px 8px 4px)
  *   (`searchPlaceholder`) + 4px list, 36px rows         + 4px list, 56px rows
  *   A list uses 56px rows as soon as any option has a description; an option without one keeps a single line.
@@ -55,8 +55,8 @@
  *   Link in it      Inter 12/18 semibold · #2970FF, e.g. "Preview" (opens the item without picking it)
  *   Option gap      2px
  *   Height          7 options, then vertical scroll.
- *                   max-height = 7 × row + 6 × 2px + 8px → 272px for one-line rows (36px),
- *                   412px for two-line rows (56px = 8 + 20 + 2 + 18 + 8)
+ *                   max-height = 7 × row + 8px → 260px for one-line rows (36px),
+ *                   400px for two-line rows (56px = 8 + 20 + 2 + 18 + 8)
  *   Scrollbar       native bar hidden. Thumb: 6px wide, 3px radius, 2px from the right border, 4px from top/bottom,
  *                   min 24px tall, #D0D5DD (#98A2B3 on hover / drag), z-index above the options, so it overlaps
  *                   their right edge. Shown only while the pointer is over the menu (or while dragging).
@@ -143,7 +143,7 @@ const MENU_TOKENS = {
     border: "#D0D5DD", focusBorder: "#2970FF", placeholder: "#98A2B3", icon: "#667085",
     clear: { size: 16, hit: 20, right: 10, gap: 8, color: "#667085" },   // × once there is text, text-tertiary
   },
-  list: { padding: 4, gap: 2, maxVisible: 7 },
+  list: { padding: 4, gap: 0, maxVisible: 7 },
   option: {
     minHeight: 36, twoLineHeight: 56, paddingY: 8, paddingX: 12, radius: 8, lineGap: 2,
     primary: { fontSize: 14, lineHeight: 20, fontWeight: 500, color: "#101828" },
