@@ -34,6 +34,14 @@ function fcTypePick(v){if(v)fcType(v)}
 function fcRepeatPick(v){const w=W(),was=w.recur;w.recur=v;if(!v){w.recurN="";if(w.errs)delete w.errs.recurN}render();
  if(v&&!was)setTimeout(()=>{const n=$("#fcRecurN");if(n)n.focus()},0)}
 function fcWhoPick(v){if(v)rxSetReviewee(v)}
+/* truncated value in any select-style field on this page (single-selects, Questionnaire, Cycle period): hovering the field shows
+   the full text in the shared tooltip (bubble above, pointer bottom center). Re-checked after every render and on resize. */
+function fcTruncTips(){if(S.view!=="wizard")return;
+ document.querySelectorAll(".editor__main :is(.select__value,.questionnaire-picker__trigger>span,.input--date-range>span)").forEach(v=>{
+  const f=v.closest("button");if(!f)return;const cut=v.scrollWidth>v.clientWidth+1;
+  if(cut){f.dataset.tip=v.textContent.trim();f.dataset.truncTip="1"}else if(f.dataset.truncTip){delete f.dataset.tip;delete f.dataset.truncTip}})}
+const _renderTrunc=render;render=function(...a){const r=_renderTrunc(...a);fcTruncTips();return r};
+addEventListener("resize",fcTruncTips);
 /* Auto-assign › group category (id aaCat<i>) */
 function aaCatPick(v,id){if(v)aaSetCat(+id.slice(5),v)}
 render();

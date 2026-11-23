@@ -10,36 +10,36 @@
 body.focusmode{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
 
 /* section nav: 240px wide. The page grid (nav | 900px cards | summary) is in 24-cycle-summary.css */
-.editor__nav{flex:0 0 240px;gap:4px}
+.editor__nav{flex:0 0 240px;gap:0}
 /* section nav (Figma Exploration – Lumber Web App 785:34389): text only, 14/500 #344054, 8×12 in, 8px corners, current on white */
-.editor__nav-item{gap:8px;padding:8px 12px;border-radius:8px}
+.editor__nav-item{gap:8px;padding:12px;border-radius:8px}
 .editor__nav-label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;font-weight:500;line-height:1.4;letter-spacing:.07px;color:#344054}
+.editor__nav-dot{flex:0 0 6px;width:6px;height:6px;border-radius:50%;background:var(--red)}
 
-.editor__main .form-section{border-radius:16px;gap:32px}
-.editor__main .form-section__title{color:#101828}
+.editor__main .section{border-radius:16px;gap:32px}
 
 /* the question column (PTO prototype V5 markup, fcQ in 13-focused-cycle-editor.js): question, optional description 2px under it */
-.setting__label{display:flex;flex-direction:column;gap:2px;min-width:0}
-.setting__title{font-size:14px;font-weight:600;line-height:1.4;letter-spacing:-.28px;color:#101828}
-.setting__description{box-sizing:border-box;font-size:12px;font-weight:500;line-height:1.4;color:#667085;text-wrap:pretty}
+.setting-label{display:flex;flex-direction:column;gap:2px;min-width:0}
+.setting-title{font-size:14px;font-weight:600;line-height:1.4;letter-spacing:-.28px;color:#101828}
+.setting-desc{box-sizing:border-box;font-size:12px;font-weight:500;line-height:1.4;color:#667085;text-wrap:pretty}
 
 /* fields: question left, everything else (input, errors, nested options) stacked in the answer column */
 .editor__main .setting-list{display:flex;flex-direction:column;gap:32px}
 .editor__main .setting-list>.setting{display:grid;grid-template-columns:240px minmax(0,1fr);column-gap:32px;row-gap:8px;align-items:start}
 .editor__main .setting-list>.setting>*{grid-column:2}
-.editor__main .setting-list>.setting>.setting__label{grid-column:1;grid-row:1}
+.editor__main .setting-list>.setting>.setting-label{grid-column:1;grid-row:1}
 /* the answer column (.setting__control, 27-section-rows.js): its parts stack 8px apart, independent of the question's height */
 .editor__main .setting-list>.setting>.setting__control{grid-column:2;grid-row:1;display:flex;flex-direction:column;align-items:stretch;gap:8px;min-width:0}
 /* a question alone sits level with the middle of its 44px field; one with a description, or answered with radios, starts at the top */
-.editor__main .setting-list>.setting>.setting__label:not(:has(.setting__description)){padding-top:12px}
-.editor__main .setting-list>.setting:has(>.setting__control>.choice-group:first-child)>.setting__label{padding-top:0}
+.editor__main .setting-list>.setting>.setting-label:not(:has(.setting-desc)){padding-top:12px}
+.editor__main .setting-list>.setting:has(>.setting__control>.choice-group:first-child)>.setting-label{padding-top:0}
 .editor__main .setting-list>.setting>.setting__control>.choice-group:first-child{margin-top:0}
 /* nested labels that keep the old style (Auto-assign › Exclude) */
 .editor__main .setting-list>.setting>.setting__control:has(>.rating-preview){gap:12px}   /* Rating format → scale: one 12px gap (the column's own gap, no margin) */
 /* half-width fields: (858 answer column − 24 gap) / 2 = 417px, shrinking on narrow screens */
-.editor__main #rxFmtWrap{width:min(100%,280px)}   /* same width as the Who is going to be reviewed? field */
-/* Review Type, Cycle Period and Reviewee: 280px wide (fits a full MM/DD/YYYY – MM/DD/YYYY range); "…" only as a fallback */
-.editor__main #fcTypeSelWrap,.editor__main #fcPeriodWrap,.editor__main #rxWhoWrap,.editor__main #fcRepeatsWrap{width:min(100%,280px)}   /* Repeats matches too */
+.editor__main #rxFmtWrap,.editor__main #rxSelfVisWrap,.editor__main #rxResultsWrap{width:min(100%,320px)}   /* same width as the Who is going to be reviewed? field */
+/* Review Type, Cycle Period and Reviewee: 320px wide (fits a full MM/DD/YYYY – MM/DD/YYYY range); "…" only as a fallback */
+.editor__main #fcTypeSelWrap,.editor__main #fcPeriodWrap,.editor__main #rxWhoWrap,.editor__main #fcRepeatsWrap{width:min(100%,320px)}   /* Repeats matches too */
 .editor__main #fcPeriod{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* Additional Notes: 80px tall (still resizable) */
 .editor__main #wDesc{height:80px;min-height:80px}
@@ -60,8 +60,8 @@ body.focusmode{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:graysc
 /* too narrow for both columns (beside the section nav, or on small screens): the answer goes under its question */
 @media (min-width:1001px) and (max-width:1080px),(max-width:760px){
   .editor__main .setting-list>.setting{grid-template-columns:minmax(0,1fr);row-gap:8px}
-  .editor__main .setting-list>.setting>*,.editor__main .setting-list>.setting>.setting__label{grid-column:1;grid-row:auto}
-  .editor__main .setting-list>.setting>.setting__label:not(:has(.setting__description)){padding-top:0}
+  .editor__main .setting-list>.setting>*,.editor__main .setting-list>.setting>.setting-label{grid-column:1;grid-row:auto}
+  .editor__main .setting-list>.setting>.setting-label:not(:has(.setting-desc)){padding-top:0}
 }
 /* nested options sit 4px under the option they belong to (the column / group gap is 16px / 12px, so pull them up) */
 .setting__options>:is(.sub-settings--column,.sub-settings,.auto-assign){margin-top:-12px}
@@ -115,7 +115,7 @@ body.focusmode{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:graysc
 /* reviewer table cell padding: text cells 16px · field cells (Weightage, Questionnaire, Due date) 4px · action cell 12px.
    Inside the fields the text sits 12px from the left edge and dropdown chevrons 12px from the right. */
 .editor__main .reviewer-table__row--body>:is(.reviewer-table__weight,.reviewer-table__questionnaire,.reviewer-table__due){padding-left:4px;padding-right:4px}
-.editor__main .reviewer-table__row>.reviewer-table__remove{padding-left:12px;padding-right:12px}
+.editor__main .reviewer-table__row>.reviewer-table__remove{padding-left:8px;padding-right:8px}
 .editor__main .percent-input input{padding:0 12px}
 .editor__main .reviewer-table__row .due-date__days{padding-left:12px}
 .editor__main .questionnaire-picker__trigger{padding-left:12px;padding-right:38px;background-position:right 12px center}
@@ -129,9 +129,11 @@ body.focusmode{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:graysc
    14/500 #101828 one-line name (… when long), #F9FAFB hover / keyboard focus, no blue fill on the chosen row, which ends in the
    standard 20px #2970FF check. Details line: 12px tertiary "Type · N questions · Preview" (medium), where Preview (blue semibold link) opens the
    questionnaire preview. Clicking anywhere else on the row picks it. */
-.questionnaire-picker__menu .questionnaire-picker__option{flex-shrink:0;gap:0;min-height:40px;padding:8px 10px;cursor:pointer}   /* flex-shrink:0 — the list is a fixed-height scroller; without it rows get squashed below their padding */
+.questionnaire-picker__menu .questionnaire-picker__option{flex-shrink:0;gap:0;padding:8px 10px;cursor:pointer}   /* flex-shrink:0 — the list is a fixed-height scroller; without it rows get squashed below their padding */
 .questionnaire-picker__menu .questionnaire-picker__option:hover,.questionnaire-picker__menu .questionnaire-picker__option:has(.questionnaire-picker__name-button:focus-visible){background:#F9FAFB}
 .questionnaire-picker__menu .questionnaire-picker__option:has(.questionnaire-picker__name-button:focus-visible){box-shadow:inset 0 0 0 2px rgba(41,112,255,.4)}
+/* the chosen questionnaire keeps a #F2F4F7 fill, also on hover and keyboard focus (same as the other dropdowns) */
+.questionnaire-picker__menu .questionnaire-picker__option.on,.questionnaire-picker__menu .questionnaire-picker__option.on:hover,.questionnaire-picker__menu .questionnaire-picker__option.on:has(.questionnaire-picker__name-button:focus-visible){background:#F2F4F7}
 .questionnaire-picker__menu .questionnaire-picker__text{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
 .questionnaire-picker__menu .questionnaire-picker__name-button,.questionnaire-picker__menu .questionnaire-picker__name-button.on{display:block;width:100%;min-width:0;padding:0;border-radius:0;background:none;text-align:left}
 .questionnaire-picker__menu .questionnaire-picker__name-button:focus-visible{outline:none}
@@ -142,8 +144,6 @@ body.focusmode{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:graysc
 .questionnaire-picker__preview:focus-visible{outline:2px solid var(--fc-blue);outline-offset:1px;border-radius:2px}
 .questionnaire-picker__menu .questionnaire-picker__check{margin-left:12px}
 
-/* "If someone doesn't have one of these reviewers…" note: regular-weight text, no emphasis */
-.split-note .lb-banner__text{font-weight:400}
 
 /* checkbox cells (View self-eval, Reviewee can view, Anonymous): the checkbox sits at the exact vertical centre of the 44px row.
    Anonymous wraps its checkbox in a <span> (for the disabled hint), which otherwise put it on the text line, ~3px high. */
@@ -194,3 +194,10 @@ body.focusmode{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:graysc
 
 /* Rating format: its menu opens 4px under the field */
 .editor__main #rxFmtWrap>.dropdown__menu{top:calc(100% + 4px)}
+/* Remove column stays pinned on the right while the table scrolls, with a 1px #EAECF0 stroke on its left */
+.reviewer-table__row>.reviewer-table__remove{position:sticky;right:0;z-index:2;align-self:stretch;background:#fff;box-shadow:inset 1px 0 0 #EAECF0}
+.reviewer-table__row--head>.reviewer-table__remove{background:#F9FAFB}
+/* left section list header: same container and text as the Cycle Summary header (.summary__header), no background */
+.editor__nav-header{padding:12px;font-size:12px;font-weight:600;line-height:1.35;letter-spacing:.08em;text-transform:uppercase;color:#344054}
+/* Which projects should be included? → Specific projects: the project multi-select fills the nested line's width */
+.project-scope__pick>.dropdown{flex:1 1 100%;min-width:0}

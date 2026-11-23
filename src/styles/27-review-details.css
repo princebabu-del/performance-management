@@ -12,7 +12,7 @@
 .cs-card .hd{min-height:0;padding:0;border-bottom:0;flex-wrap:nowrap}
 .cs-kv-list{gap:12px;padding:0}
 .cs-card .hd h3{margin:0;font-size:20px;font-weight:600;line-height:1.2;color:var(--text-primary)}
-.cs-kv-k{font-size:14px;font-weight:500;line-height:1.4;letter-spacing:-.28px;color:var(--text-tertiary)}
+.cs-kv-k{font-size:14px;font-weight:400;line-height:1.4;letter-spacing:-.28px;color:var(--text-tertiary)}
 .cs-kv-v{font-size:14px;font-weight:500;line-height:1.4;letter-spacing:-.28px;color:var(--text-primary)}
 
 /* Edit (section header): no border, 20px edit-02 icon + label, both secondary text color */
@@ -24,4 +24,111 @@
 
 /* tabs: same style as the Review Cycles tabs (shared rules in 25-listing-pages.css); the rule under them runs the full width of the header, as on Review Cycles */
 .cd-tabs{border-bottom:0}
-.cd-head{border-bottom:0}   /* the full-width rule now sits under .cd-tabbar (18-cycle-detail-layout.css) */
+/* header + tabs in one block, as on Review Cycles (.pagehead): 24px top, 32px sides, 24px from the title row to the tabs, no bottom
+   padding, full-width rule under the tabs. Sticky: its top is set by cdHeadStick() (17-cycle-detail-layout.js) so only the tab row stays pinned under the main nav. */
+.cd-head{padding-bottom:0;border-bottom:1px solid #EAECF0;position:sticky;top:0;z-index:15}
+
+/* Back to Review Cycles: tertiary gray button — no border, transparent, 40px tall, 14px side padding, 8px corners, 16/600 secondary text,
+   20px arrow; light gray fill on hover. Pulled left by its padding so the arrow lines up with the header content below. */
+.cd-back{box-sizing:border-box;height:40px;margin-left:-14px;padding:0 14px;gap:8px;border-radius:8px;
+  font-size:16px;font-weight:600;line-height:normal;letter-spacing:0;color:var(--text-secondary)}
+.cd-back img{display:block;width:20px;height:20px;flex:none}
+.cd-back:hover{background:#F9FAFB;text-decoration:none}
+.cd-back:active{background:#F2F4F7}
+.cd-back:focus-visible{outline:none;box-shadow:0 0 0 4px rgba(152,162,179,.14)}
+
+/* ---------- Employees tab: search, Filters and table match the Review Cycles landing page (25-listing-pages.css) ---------- */
+.cd-card{border:1px solid #EAECF0;border-radius:20px}
+/* search: 44px, 320px, 14px in, 8px to the 20px icon, #D0D5DD border; 16/500 #101828 text */
+.cd-tools .cd-srch{width:320px;height:44px;box-sizing:border-box;padding:0 14px;gap:8px;border:1px solid #D0D5DD;border-radius:8px;background:#fff;color:#667085}
+.cd-tools .cd-srch .i{width:20px;height:20px}
+.cd-tools .cd-srch input{height:20px;font-size:16px;font-weight:500;color:#101828}
+.cd-tools .cd-srch input::placeholder{color:#7D89B0;opacity:1}
+/* Filters: 44px secondary button, 20px in, 16/600 #344054, xs shadow */
+.cd-tools .cd-btn{height:44px;box-sizing:border-box;padding:0 20px;gap:8px;border:1px solid #D0D5DD;border-radius:8px;background:#fff;
+  font-size:16px;font-weight:600;line-height:normal;color:#344054;box-shadow:0 1px 2px rgba(16,24,40,.05)}
+.cd-tools .cd-btn:hover{background:#F9FAFB}
+.cd-tools .cd-btn .i{width:20px;height:20px}
+@media (max-width:900px){.cd-tools .cd-srch{width:100%}}
+
+/* table: 44px header row on #F9FAFB (14/500 #667085), 56px rows (14/500 #344054), 24px cell padding left/right */
+.cd-card .cd-tbl th{height:44px;padding:0 24px;box-sizing:border-box;background:#F9FAFB;border-right:0;border-top:1px solid #EAECF0;border-bottom:1px solid #EAECF0;
+  font-size:14px;font-weight:500;line-height:1.4;letter-spacing:-.28px;color:#667085}
+.cd-card .cd-tbl td{height:56px;padding:0 24px;box-sizing:border-box;border-top:0;border-bottom:1px solid #EAECF0;
+  font-size:14px;font-weight:500;line-height:1.4;letter-spacing:-.28px;color:#344054}
+.cd-card .cd-tbl td.tab-num,.cd-card .cd-tbl .cd-n,.cd-card .cd-tbl .cd-n-link{color:#344054}
+.cd-card .cd-tbl .cd-n-link{font-size:14px;font-weight:500;letter-spacing:-.28px}
+.cd-card .cd-tbl tr.click:hover td{background:#F9FAFB}
+/* checkbox column: 68px (24px either side of the 20px box) */
+.cd-card .cd-tbl th.cbx,.cd-card .cd-tbl td.cbx{width:68px;padding:0 24px;line-height:0}
+/* no pagination below: the last row sits on the card's rounded bottom */
+.cd-card>.tw:last-child tbody tr:last-child td{border-bottom:0}
+.cd-card>.tw:last-child tbody tr:last-child td:first-child{border-bottom-left-radius:19px}
+.cd-card>.tw:last-child tbody tr:last-child td:last-child{border-bottom-right-radius:19px}
+
+/* checkbox (Figma Checkbox md): 20px, 6px corners, #D0D5DD border; checked / indeterminate blue */
+.cd-card .cd-tbl input[type=checkbox]{appearance:none;-webkit-appearance:none;width:20px;height:20px;margin:0;vertical-align:middle;
+  border:1px solid #D0D5DD;border-radius:6px;background:#fff center/14px no-repeat;cursor:pointer;transition:background-color .12s,border-color .12s}
+.cd-card .cd-tbl input[type=checkbox]:hover{border-color:#98A2B3}
+.cd-card .cd-tbl input[type=checkbox]:checked{background-color:#2970FF;border-color:#2970FF;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M11.7 3.5 5.5 9.8 2.3 6.6' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
+.cd-card .cd-tbl input[type=checkbox]:indeterminate{background-color:#2970FF;border-color:#2970FF;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M2.9 7h8.2' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E")}
+.cd-card .cd-tbl input[type=checkbox]:focus-visible{outline:2px solid #2970FF;outline-offset:2px}
+
+/* sortable headers: the whole cell is the button (44px, 24px sides), #F2F4F7 on hover, 16px arrow only once sorted */
+.cd-card .cd-tbl th.ls-th{padding:0;cursor:pointer;transition:background-color .12s}
+.cd-card .cd-tbl th.ls-th:hover{background:#F2F4F7}
+.cd-card .cd-tbl th .ls-sort{display:flex;align-items:center;gap:4px;width:100%;height:42px;padding:0 24px;box-sizing:border-box;
+  font:inherit;letter-spacing:inherit;color:inherit;line-height:inherit}
+.cd-card .cd-tbl th .ls-sort:focus-visible{outline:2px solid #2970FF;outline-offset:-2px;border-radius:0}
+
+/* expand chevron: its own column, exactly the 20×20 icon — no cell padding, no box, no margins
+   (the checkbox cell's and Employee cell's own 24px padding space it from its neighbours) */
+.cd-tbl-fixed .c-chev{width:20px}
+.cd-card .cd-tbl th.cd-chev-c,.cd-card .cd-tbl td.cd-chev-c{width:20px;padding:0;line-height:0}
+.cd-card .cd-tbl td.cd-chev-c .cd-chev{display:block;width:20px;height:20px;margin:0;padding:0;border-radius:4px}
+.cd-card .cd-tbl td.cd-chev-c .cd-chev svg{display:block;width:20px;height:20px}
+.cd-card .cd-tbl td.cd-chev-c .cd-chev:hover{background:none;color:#101828}
+/* needs-attention dot: in the gutter left of the avatar, so names stay lined up with the header */
+.cd-card .cd-tbl td.cd-emp-c{position:relative}
+.cd-card .cd-tbl td.cd-emp-c>.rdot{position:absolute;left:10px;top:50%;margin:-4px 0 0}
+
+/* row actions: 40px ghost icon button (10px in, 8px corners), #475467 dots-vertical icon, #EAECF0 while hovered / open */
+.cd-card .cd-tbl .cd-kb{width:40px;height:40px;padding:10px;border:0;border-radius:8px;background:transparent;color:#475467}
+.cd-card .cd-tbl .cd-kb:hover,.cd-card .cd-tbl .cd-kb[aria-expanded="true"]{background:#EAECF0;color:#475467}
+.cd-card .cd-tbl .cd-kb:focus-visible{outline:2px solid #2970FF;outline-offset:0}
+.cd-card .cd-tbl .cd-kb svg.i{width:20px;height:20px;background:currentColor;
+  -webkit-mask:url(/assets/icons/dots-vertical.svg) center/20px 20px no-repeat;mask:url(/assets/icons/dots-vertical.svg) center/20px 20px no-repeat}
+.cd-card .cd-tbl .cd-kb svg.i>*{display:none}
+/* row menu (Figma 1263:61832): white, #EAECF0 border, 8px corners, xl shadow; items 8px in, 8px corners, 20px #344054 icons, 14/500 black */
+.cd-card .cd-tbl .kebab>.menu.cd-kb-menu{background:#fff;border:1px solid #EAECF0;border-radius:8px;padding:8px 0;min-width:200px;
+  box-shadow:0 20px 24px -4px rgba(16,24,40,.08),0 8px 8px -4px rgba(16,24,40,.03)}
+.cd-card .cd-tbl .cd-kb-menu button{width:calc(100% - 16px);margin:2px 8px;padding:8px;gap:8px;border-radius:8px;
+  font-size:14px;font-weight:500;line-height:normal;letter-spacing:0;color:#000}
+.cd-card .cd-tbl .cd-kb-menu button:hover{background:#F9FAFB}
+.cd-card .cd-tbl .cd-kb-menu button svg.i{width:20px;height:20px;color:#344054;stroke-width:1.5}
+.cd-card .cd-tbl .cd-kb-menu button.d,.cd-card .cd-tbl .cd-kb-menu button.d svg.i{color:#D92D20}
+
+/* pagination: 16px × 24px, 32px controls */
+.cd-card .pgfoot{padding:16px 24px;border-top:1px solid #EAECF0}
+.cd-card .pgfoot .pp{gap:8px;font-size:14px;font-weight:500;letter-spacing:-.28px;color:#344054}
+.cd-card .pgfoot .pp select{height:32px;min-width:74px;padding:0 8px 0 12px;border:1px solid #D0D5DD;border-radius:4px;font-size:16px;font-weight:500;color:rgba(0,0,0,.87)}
+.cd-card .pgfoot .pg{gap:4px}
+.cd-card .pgfoot .pg button,.cd-card .pgfoot .pg span{min-width:32px;height:32px;border-radius:4px;font-size:14px;font-weight:400;color:rgba(0,0,0,.87)}
+.cd-card .pgfoot .pg button.on{background:#F2F4F7;font-weight:400}
+.cd-card .pgfoot .pg button:disabled{color:#D0D5DD}
+
+/* header row: type tile, title block and actions (⋮ · Assign) centred vertically on one another.
+   Wide screens only — under 900px the row stacks (18-cycle-detail-layout.css) and keeps its left alignment. */
+@media (min-width:901px){
+  .cd-top{align-items:center}
+  .cd-acts{align-items:center}
+}
+.cd-info.cd-info--tile{align-items:center}
+
+/* nested reviewer rows: 56px, same as the employee rows above them */
+.cd-card .cd-tbl tr.cd-sub-row td{height:56px}
+
+/* employee name link: blue (with the underline) on hover — outranks the #344054 name color above */
+.cd-card .cd-tbl .cd-n-link:hover{color:var(--blue,#155EEF)}

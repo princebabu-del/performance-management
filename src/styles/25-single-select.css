@@ -18,7 +18,7 @@
 .due-date__from{flex:1;min-width:0}
 .due-date__from .select__trigger{height:36px;font-size:14px;padding:0 28px 0 10px;background-position:right 10px center;background-size:16px 16px}
 .due-date.bad .due-date__from .select__trigger{border-color:var(--red)}
-.due-date__from .select__menu{min-width:180px}
+.due-date__from .select__menu{min-width:200px}   /* list width 200px (set in rxPlacePops) */
 /* "Who is going to be reviewed?" before a role is picked: it is the last field on the page, so there is no room below; the list opens above the field, 4px gap */
 .select--up>.dropdown__menu{top:auto;bottom:calc(100% + 4px)}
 /* an option that can't be picked (e.g. a category already used in another auto-assign group): grayed, no hover */

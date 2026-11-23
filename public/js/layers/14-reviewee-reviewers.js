@@ -14,6 +14,11 @@ function rxInit(w){const x=w.rx||(w.rx={reviewee:"",revs:[],self:false,peers:fal
  if(!x.selfEdit)x.selfEdit={on:false};
  if(x.reopenWin===undefined){x.reopenWin="period";if(!(x.reopenMonths>=1))x.reopenMonths=3}
  if(x.reopenMonths===undefined)x.reopenMonths=3;
+ if(w.ctype==="Project Completion Review")x.peers=false;   // project reviews: no peer nomination
+ if(w.ctype&&w.ctype!=="General Review")x.reopen=false;   // New Hire / Project Completion reviews can't be reopened   // no reviewee role for project reviews (everyone on the project)
+ /* visibility is set per cycle now (moved out of Settings › Performance); new and older cycles start from the old company default */
+ if(!RX_SELFVIS.some(o=>o.v===x.selfVis))x.selfVis=RX_SELFVIS.some(o=>o.v===D.settings.selfVis)?D.settings.selfVis:"After reviewer submits";
+ if(!RX_RESULTS.some(o=>o.v===x.results))x.results=RX_RESULTS.some(o=>o.v===D.settings.results)?D.settings.results:"After cycle closes";
  if(!Array.isArray(x.reopenBy))x.reopenBy=["Admin"];
  x.reopenBy=[...new Set(x.reopenBy.map(o=>({Admins:"Admin","HR Managers":"HR Manager"})[o]||o).filter(o=>RX_REOPEN_BY.includes(o)))];RX_REOPEN_LOCKED.slice().reverse().forEach(r=>{if(!x.reopenBy.includes(r))x.reopenBy.unshift(r)});   // admins can always reopen
  return x}
@@ -44,6 +49,10 @@ function rxSync(w){const x=rxInit(w),r=rolesInit(w),has=k=>x.revs.includes(k),tp
 function rxClear(...ks){const e=W()&&W().errs;if(e)ks.forEach(k=>delete e[k])}
 function rxChanged(x){if(!x.wSet)rxSplitRows(x);rxClear("revs","weight");render()}
 /* workers don't review other workers; every other reviewee can get worker (upward) feedback */
+/* Project Completion Review: no peer nomination and no Auto-assign (reviewees come from the selected projects).
+   rxReady = a reviewee role is picked, so the rest of the form (Reviewers, Overall Rating, Auto-assign…) can show. */
+const rxAllInProject=w=>!!w&&w.ctype==="Project Completion Review";
+const rxReady=(w,x)=>!!x.reviewee;
 const rxRevOpts=x=>RX_ROLES.filter(r=>!(r==="Worker"&&x.reviewee==="Worker"));
 function rxSetReviewee(v){const x=rxInit(W());x.reviewee=v;rxClear("reviewee");x.revs=x.revs.filter(r=>rxRevOpts(x).includes(r));
  Object.keys(x.rows).forEach(k=>{if(rxIsRole(k)&&["t2","t4","t5"].includes(x.rows[k].tpl))x.rows[k].tpl=rxDefTpl(x,k)});
@@ -88,7 +97,9 @@ document.addEventListener("mousedown",e=>{if(RXP.id&&!e.target.closest(".dropdow
 document.addEventListener("mousedown",e=>{if(S.view!=="wizard")return;const a=document.activeElement;if(!a||a===document.body||!a.closest(".editor"))return;
  if(e.target.closest("input,textarea,select,button,label,a,[tabindex],.dropdown,.dropdown__menu,.datepicker,.input"))return;a.blur()});
 /* dropdowns inside the horizontally scrolling reviewer table are position:fixed — place them under their field */
-function rxPlacePops(){document.querySelectorAll(".reviewer-table__scroll .dropdown__menu").forEach(p=>{const r=p.closest(".dropdown").getBoundingClientRect(),w=Math.max(r.width,280);
+/* list widths in the reviewer table: Questionnaire 320px, Due date ("after assignment / before cycle end") 200px, others at least 280px */
+const rxPopW=(p,r)=>p.closest(".reviewer-table__questionnaire")?320:p.closest(".reviewer-table__due")?200:Math.max(r.width,280);
+function rxPlacePops(){document.querySelectorAll(".reviewer-table__scroll .dropdown__menu").forEach(p=>{const r=p.closest(".dropdown").getBoundingClientRect(),w=rxPopW(p,r);
  p.style.width=w+"px";p.style.left=Math.max(16,Math.min(r.left,innerWidth-w-16))+"px";
  p.style.top=(fcPopUp(r,p.offsetHeight,6)?r.top-p.offsetHeight-4:r.bottom+6)+"px"})}
 /* every dropdown list / calendar opens below its field, unless it doesn't fit below the field on screen and there's more room above
@@ -133,7 +144,8 @@ function rxTplField(x,k){const r=rxRow(x,k),id=`tpl:${k}`,open=RXP.id===id,t=T(r
  </div>`}
 /* ---- cards ---- */
 /* section heading only: section descriptions were removed (questions carry their own descriptions) */
-const rxHd=t=>`<div class="form-section__header"><h2 class="form-section__title">${t}</h2></div>`;
+/* section heading: just the text, no wrapper, no margins (styles: .section-hd, 15-focused-editor.css) */
+const rxHd=t=>`<h2 class="section-hd">${t}</h2>`;
 /* number stepper: two small grey stacked chevron buttons inside the right edge of a number field.
    They step the input (respecting min/max) and fire its own oninput, so each field keeps its handler. */
 const rxStepB=`<span class="number-stepper__buttons"><button type="button" tabindex="-1" aria-label="Increase" onmousedown="event.preventDefault()" onclick="rxStep(this,1)"><img src="/assets/chevron-down.svg" class="up" width="12" height="12" alt=""></button><button type="button" tabindex="-1" aria-label="Decrease" onmousedown="event.preventDefault()" onclick="rxStep(this,-1)"><img src="/assets/chevron-down.svg" width="12" height="12" alt=""></button></span>`;
@@ -167,7 +179,7 @@ function rxDueCell(w,k,r){rxDueMig(r);r.due=rxDueISO(w,r);
 function rxHead(sv){const H=[["Reviewer"],["Weightage (%)"],["Questionnaire"],["Due date"]];
  if(sv)H.push(["View self-eval","c","Reviewers can view the reviewee's self-evaluation"]);
  H.push(["Reviewee can view","c","The reviewee can view this reviewer's review"],["Anonymous","c reviewer-table__anonymous"]);
- return `<div class="reviewer-table__row reviewer-table__row--head" aria-hidden="true">${H.map(([t,c,tip],i)=>`<div class="reviewer-table__heading ${c||""}" ${tip?`data-tip="${esc(tip)}"`:""}><span class="reviewer-table__heading-text">${t}</span><span class="ls-rz reviewer-table__resizer" onmousedown="rxRzStart(event,${i})"></span></div>`).join("")}<div></div></div>`}
+ return `<div class="reviewer-table__row reviewer-table__row--head" aria-hidden="true">${H.map(([t,c,tip],i)=>`<div class="reviewer-table__heading ${c||""}" ${tip?`data-tip="${esc(tip)}"`:""}><span class="reviewer-table__heading-text">${t}</span><span class="ls-rz reviewer-table__resizer" onmousedown="rxRzStart(event,${i})"></span></div>`).join("")}<div class="reviewer-table__remove"></div></div>`}
 /* column widths after a drag, per layout (with / without the View self-eval column); kept for the session */
 const RX_COL_MIN=60;
 function rxColApply(){document.querySelectorAll(".editor__main .reviewer-table__frame").forEach(g=>{const key=g.classList.contains("noself")?"noself":"self",W=(S.rxColW||{})[key],sc=g.querySelector(".reviewer-table__scroll");
@@ -196,7 +208,7 @@ function rxTable(w,x){const K=rxKeys(x),t=rxTotal(x),sv=x.self,s=toISO(w.start),
    ${sv?`<div class="c ${self?"na":""}">${self?na:rxCk(r.seeSelf,`rxRowSet('${k}','seeSelf',this.checked)`,"Can view self-evaluation")}</div>`:""}
    <div class="c ${self?"na":""}">${self?na:rxCk(r.revSees,`rxRevSees('${k}',this.checked)`,`Reviewee can view ${rxName(k)}'s review`)}</div>
    <div class="reviewer-table__anonymous c ${self?"na":""}">${self?na:`<span ${r.revSees?"":`title="Only available when the reviewee can view this review"`}>${rxCk(r.anon,`rxRowSet('${k}','anon',this.checked)`,"Keep anonymous").replace('type="checkbox"',`type="checkbox" ${r.revSees?"":"disabled"}`)}</span>`}</div>
-   <div class="reviewer-table__remove"><button type="button" class="remove-button" aria-label="Remove ${rxName(k)}" title="Remove" onclick="rxRemove('${k}')"><span class="remove-button__icon" aria-hidden="true"></span></button></div></div>`}).join("");
+   <div class="reviewer-table__remove"><button type="button" class="remove-button" aria-label="Remove ${rxName(k)}" data-tip="Remove" data-tip-pos="top-end" onclick="rxRemove('${k}')"><span class="remove-button__icon" aria-hidden="true"></span></button></div></div>`}).join("");
  return `<div class="reviewer-table"><div class="reviewer-table__frame ${sv?"":"noself"}"><div class="reviewer-table__scroll">
   ${rxHead(sv)}
   ${rows}</div>
@@ -206,16 +218,21 @@ function rxTable(w,x){const K=rxKeys(x),t=rxTotal(x),sv=x.self,s=toISO(w.start),
  ${banner("info","If someone doesn't have one of these reviewers, that reviewer's weightage is split evenly across their other reviewers.",{cls:"split-note"})}</div>`}
 /* Settings › Performance › Review defaults apply to every cycle. When this table turns on
    "View self-eval" or "Reviewee can view", say when that actually happens and where to change it. */
+/* Reviewer sees self-evaluation / Reviewee sees results: per-cycle choices (values kept from the old company settings) */
+const RX_SELFVIS=[{v:"After reviewer submits",t:"After the reviewer submits"},{v:"During review",t:"While the reviewer is reviewing"},{v:"Hidden until cycle end",t:"After the cycle ends"}];
+const RX_RESULTS=[{v:"After cycle closes",t:"After the cycle closes"},{v:"As soon as their reviews are in",t:"As soon as their reviews are in"},{v:"Never",t:"Never"}];
+function rxVisPick(v,id){if(!v)return;const x=rxInit(W());if(id==="rxSelfVis")x.selfVis=v;else x.results=v;render()}
 const RX_SELFVIS_TXT={"After reviewer submits":"after they submit their own review","Hidden until cycle end":"only after the cycle ends","During review":"while their review is in progress"};
 const RX_RESULTS_TXT={"After cycle closes":"after the cycle closes","As soon as their reviews are in":"as soon as their reviews are in"};
 /* leaving the editor: keep the cycle as a draft so nothing is lost */
 function rxGoSettings(){wzSave(true);nav("settings");toast("Cycle saved as a draft.")}
-function rxDefaultsNote(x,K){const st=D.settings,others=K.filter(k=>k!=="Self").map(k=>rxRow(x,k)),lines=[];
+function rxDefaultsNote(){return ""}   // visibility is now chosen in this cycle (Reviewers section), so no "change it in settings" note
+function rxDefaultsNoteOld(x,K){const st=D.settings,others=K.filter(k=>k!=="Self").map(k=>rxRow(x,k)),lines=[];
  if(x.self&&others.some(r=>r.seeSelf))lines.push(`Reviewers can view the self-evaluation <b>${RX_SELFVIS_TXT[st.selfVis]||esc(String(st.selfVis).toLowerCase())}</b>.`);
  if(others.some(r=>r.revSees))lines.push(st.results==="Never"?`Reviewees <b>don't see</b> their results.`:`Reviewees see their results <b>${RX_RESULTS_TXT[st.results]||esc(String(st.results).toLowerCase())}</b>.`);
   return `<div id="rxDefNote">${lines.length?banner("info",`${lines.join(" ")} This applies to all cycles and can only be changed in settings. <button type="button" class="inline-link" onclick="rxGoSettings()">Go to Performance settings</button>`,{cls:"defaults-note"}):""}</div>`}
-/* ---- Employees: who's being reviewed (role + self-eval / peer options) and optional auto-assignment by group ---- */
-function rxEmployees(w,x){
+/* ---- Peer nomination row (Reviewers section, above the reviewer table): on/off + how many peers ---- */
+function rxPeerOpt(w,x){
  const peerErr=fcErr(w,"peerMax");
  /* edits to a submitted self-evaluation follow Reviewers › Allow edits after submission (no separate option here) */
  const selfNest="";
@@ -223,49 +240,58 @@ function rxEmployees(w,x){
    <div class="inline-fields">${fcSel({id:"rxPeerMode",value:x.peerMode,options:[{v:"count",t:"Specific count"},{v:"any",t:"Unlimited"}],ph:"Select an option",pick:"rxPeerMode",cls:"reopen-settings__select"})}
     ${x.peerMode==="count"?`<span class="number-stepper number-stepper--fluid"><input class="input input--number ${peerErr?"bad":""}" id="rxPeerMax" type="number" inputmode="numeric" min="1" max="50" step="1" value="${x.peerMax||1}" aria-label="Maximum peers they can nominate" onkeydown="if(['-','+','e','E','.',','].includes(event.key))event.preventDefault()" oninput="rxPeerMaxIn(this)" onblur="rxPeerMaxOut(this)">${rxStepB}</span><span class="choice-item__text">peers</span>`:""}</div>
    ${fcMsg(w,"peerMax")}</div></div>`:"";
- return `<section class="form-section">${rxHd("Reviewee","Choose which role is being reviewed and how reviewees join this cycle.")}
+ return rxOpt(x.peers,"rxPeersSet(this.checked)","Peer nomination","Reviewees nominate peers for their manager to approve.",peerNest)}
+/* ---- Employees: who's being reviewed (role + self-eval / peer options) and optional auto-assignment by group ---- */
+function rxEmployees(w,x){
+ return `<section class="section">${rxHd("Reviewee","Choose which role is being reviewed and how reviewees join this cycle.")}
   <div class="setting-list">
    ${rxProjects(w)}
    <div class="setting">${fcQ("Who is going to be reviewed?"+FC_REQ,{id:"rxWhoQ"})}
     ${fcSel({id:"rxWho",value:x.reviewee||"",options:[...RX_ROLES].reverse().map(r=>({v:r,t:r})),ph:"Select a role",pick:"fcWhoPick",bad:fcErr(w,"reviewee"),cls:x.reviewee?"":"select--up"}).replace('aria-haspopup="listbox"','aria-haspopup="listbox" aria-required="true"')}${fcMsg(w,"reviewee")}
     ${x.reviewee?`<label class="choice-item choice--self-eval"><input class="checkbox sm" type="checkbox" ${x.self?"checked":""} onchange="rxSet('self',this.checked)"><span>Allow self-evaluation</span></label>`:""}
    </div>
-   ${x.reviewee?`${rxOpt(x.peers,"rxPeersSet(this.checked)","Peer nomination","Reviewees nominate peers for their manager to approve.",peerNest)}
+   ${rxReady(w,x)?`   <div class="setting">${fcQ("Reviewee sees results",{id:"rxResultsQ",d:"When reviewees can see their reviews and rating.",did:"rxResultsD"})}
+    ${fcSel({id:"rxResults",value:x.results,options:RX_RESULTS.map(o=>({v:o.v,t:o.t})),ph:"Select an option",pick:"rxVisPick"}).replace('aria-haspopup="listbox"','aria-haspopup="listbox" aria-describedby="rxResultsD"')}</div>
    ${rxOpt(x.creds,"W().rx.creds=this.checked","Credentials","Show reviewee's licenses and certifications on the review.")}`:""}
   </div>
-</section>`}   // Peer nomination and Credentials: ordinary rows of the form (32px apart, like every field), shown once a reviewee role is picked
+</section>`}   // Reviewee sees results and Credentials: ordinary rows of the form (32px apart, like every field), shown once a reviewee role is picked
 
 /* ---- Project Completion Review: which projects the cycle covers (all, or a picked list). Reuses the reviewer multi-select pattern. ---- */
 const rxProjList=()=>Object.keys(ORG.project).sort();
-/* one multi-select; "Select all" (first option) picks every project. All picked = projMode "all", otherwise "specific". */
-function rxProjSync(w){const L=rxProjList();w.projs=L.filter(p=>w.projs.includes(p));w.projMode=w.projs.length===L.length?"all":"specific"}
-function rxProjAll(on){const w=W();w.projs=on?[...rxProjList()]:[];rxProjSync(w);rxClear("projs");render();const c=$("#rxProjAll");if(c)c.focus({preventScroll:true})}
+/* All projects / Specific projects (radio group). "Specific projects" opens a project multi-select on a nested line under it. */
+function rxProjSync(w){const L=rxProjList();w.projs=L.filter(p=>w.projs.includes(p))}
+function rxProjMode(v){const w=W();w.projMode=v;rxClear("projMode");
+ if(v==="specific"&&w.projs.length===rxProjList().length)w.projs=[];   // old "all ticked" data starts empty
+ rxClear("projs");RXP.id=null;render();const r=document.querySelector(`input[name="projMode"][value="${v}"]`);if(r)r.focus({preventScroll:true})}
 function rxProjPick(i,on){const w=W(),v=rxProjList()[i];w.projs=w.projs.filter(p=>p!==v);if(on)w.projs.push(v);rxProjSync(w);rxClear("projs");render();const c=$("#rxProj"+i);if(c)c.focus({preventScroll:true})}
-function rxProjField(w){const open=RXP.id==="projs",L=rxProjList(),sel=L.filter(p=>w.projs.includes(p)),all=sel.length===L.length&&L.length>0;
- const tags=all?`<span class="chip">All projects<button type="button" class="chip__remove" aria-label="Clear all projects" onclick="rxProjAll(false)">×</button></span>`
-  :sel.length?sel.map(p=>`<span class="chip">${esc(p)}<button type="button" class="chip__remove" aria-label="Remove ${esc(p)}" onclick="rxProjPick(${L.indexOf(p)},false)">×</button></span>`).join(""):`<span class="multiselect__placeholder">Select projects</span>`;
+function rxProjField(w){const open=RXP.id==="projs",L=rxProjList(),sel=L.filter(p=>w.projs.includes(p));
+ const tags=sel.length?sel.map(p=>`<span class="chip">${esc(p)}<button type="button" class="chip__remove" aria-label="Remove ${esc(p)}" onclick="rxProjPick(${L.indexOf(p)},false)">×</button></span>`).join(""):`<span class="multiselect__placeholder">Select projects</span>`;
  return `<div class="dropdown"><div class="input multiselect ${fcErr(w,"projs")?"bad":""} ${open?"open":""}" onclick="rxOpen('projs',event)">${tags}
-   <button type="button" class="dropdown__trigger multiselect__toggle" data-for="projs" id="rxProjs" aria-haspopup="true" aria-expanded="${open}" aria-label="Choose projects${all?", all selected":sel.length?`, ${sel.length} selected`:""}"></button></div>
+   <button type="button" class="dropdown__trigger multiselect__toggle" data-for="projs" id="rxProjs" aria-haspopup="true" aria-expanded="${open}" aria-label="Choose projects${sel.length?`, ${sel.length} selected`:""}"></button></div>
   ${open?`<div class="dropdown__menu" data-for="projs" role="group" aria-label="Projects"><div class="dropdown__list">
-   <label class="dropdown__option dropdown__option--all"><input class="checkbox" type="checkbox" id="rxProjAll" ${all?"checked":""} onchange="rxProjAll(this.checked)"><span>Select all</span></label>
    ${L.map((p,i)=>`<label class="dropdown__option"><input class="checkbox" type="checkbox" id="rxProj${i}" ${w.projs.includes(p)?"checked":""} onchange="rxProjPick(${i},this.checked)"><span>${esc(p)}</span></label>`).join("")}</div></div>`:""}</div>`}
 function rxProjects(w){if(w.ctype!=="Project Completion Review")return"";fcTypeInit(w);
- if(w.projMode==="all"&&w.projs.length!==rxProjList().length)w.projs=[...rxProjList()];   // old "All projects" choice → every project ticked
- return `<div class="setting">${fcQ("Which projects should be included?",{id:"rxProjL"})}${rxProjField(w)}${fcMsg(w,"projs")}</div>`}
+ const rad=(v,t)=>`<label class="choice-item"><input class="radio" type="radio" name="projMode" value="${v}" ${w.projMode===v?"checked":""} onchange="rxProjMode('${v}')"><span>${t}</span></label>`;
+ return `<div class="setting">${fcQ("Which projects should be included?"+FC_REQ,{id:"rxProjL"})}
+  <div class="choice-group project-scope"><div class="choice-list" role="radiogroup" aria-labelledby="rxProjL" aria-required="true"${fcErr(w,"projMode")?' aria-invalid="true"':""}>${rad("all","All projects")}${rad("specific","Specific projects")}</div>
+  ${w.projMode==="specific"?`<div class="sub-settings project-scope__pick">${rxProjField(w)}</div>`:""}</div>${fcMsg(w,"projMode")}${fcMsg(w,"projs")}</div>`}
 /* ---- Reviewers: reviewer roles (multi-select) → reviewer table ---- */
 function rxReviewers(w,x){
- return `<section class="form-section">${rxHd("Reviewers","Choose who reviews each employee and how much each reviewer's feedback counts.")}
+ /* settings under the table; the block is left out when it would be empty, so the section adds no gap for it */
+ const after=`   ${rxKeys(x).length?rxOpt(x.revEdit.on,"rxEditSet('revEdit','on',this.checked)","Editing submissions",`Reviewers can edit a submission until it's due, or until the cycle ends if there's no due date.`):""}
+   ${x.self?`<div class="setting">${fcQ("Reviewer sees self-evaluation",{id:"rxSelfVisQ",d:"When reviewers can read the reviewee's self-evaluation.",did:"rxSelfVisD"})}
+    ${fcSel({id:"rxSelfVis",value:x.selfVis,options:RX_SELFVIS.map(o=>({v:o.v,t:o.t})),ph:"Select an option",pick:"rxVisPick"}).replace('aria-haspopup="listbox"','aria-haspopup="listbox" aria-describedby="rxSelfVisD"')}</div>`:""}`.trim();
+ return `<section class="section">${rxHd("Reviewers","Choose who reviews each employee and how much each reviewer's feedback counts.")}
   <div class="setting-list">
    <div class="setting">${fcQ("Who should review them?"+FC_REQ,{for:"rxRevs",d:"Set each reviewer's weightage, questionnaire and due date.",did:"rxRevsD"})}${rxRevsField(w,x)}${fcMsg(w,"revs")}</div>
+   ${rxAllInProject(w)?"":rxPeerOpt(w,x)}
   </div>
   ${rxTable(w,x)}
-  <div class="setting-list">
-   ${rxOpt(x.revEdit.on,"rxEditSet('revEdit','on',this.checked)","Editing submission",`Reviewers can edit a submission until it's due, or until the cycle ends if there's no due date.`)}
-  </div>
+  ${after?`<div class="setting-list">${after}</div>`:""}
 </section>`}
 /* checkbox setting: an ordinary .setting row (question + description left; short checkbox label right, nested settings
    under it). It must sit directly in a .setting-list so fcWrapAnswers (27-section-rows.js) moves .setting__options into the answer column. */
-const RX_OPT_SHORT={"Editing submission":"Allow edits after submission","Auto-assign cycle":"Allow",
+const RX_OPT_SHORT={"Editing submissions":"Allow edits after submission","Auto-assign cycle":"Allow",
  "Credentials":"Include credentials in review","Cycle reopening":"Allow reopening after the end date",
  "Self-evaluation":"Allow","Peer nomination":"Allow"};
 let rxRowN=0;
@@ -362,11 +388,11 @@ const RX_FMT_LBL={"Stars":"Stars (1–5)","Numeric 1–5 with definitions":"Numb
 const RX_FMTS=[...RATING_FMT,{k:"No rating",n:"No rating"}];
 function rxRating(w){if(!RX_FMTS.some(f=>f.k===w.rating))w.rating="Numeric 1–5 with definitions";const none=w.rating==="No rating",star=w.rating==="Stars",lv=(star&&D.settings.starLevels)||D.settings.levels;
  const badge=i=>star?`<span class="rating-stars" aria-label="${i+1} of 5 stars">${[0,1,2,3,4].map(j=>`<span class="${j<=i?"on":""}">★</span>`).join("")}</span>`:`<span class="rating-badge n${i+1}">${i+1}</span>`;
- return `<section class="form-section">${rxHd("Overall Rating","One overall rating format for everyone in this cycle, or no overall rating. Questionnaires can still ask their own questions.")}
+ return `<section class="section">${rxHd("Overall Rating","One overall rating format for everyone in this cycle, or no overall rating. Questionnaires can still ask their own questions.")}
   <div class="setting-list"><div class="setting">${fcQ("Rating format",{for:"rxFmt"})}
    <select class="input input--select" id="rxFmt" onchange="W().rating=this.value;render()">${RX_FMTS.map(o=>`<option value="${o.k}" ${o.k===w.rating?"selected":""}>${RX_FMT_LBL[o.k]||o.n}</option>`).join("")}</select>
 </div></div>
-  ${none?banner("info",`<b>No overall rating for this cycle.</b> Reviewers only answer the questionnaire, and employees see the written feedback without a score. Questionnaires can still ask their own rating questions.`)
+  ${none?banner("info",`<b>No overall rating.</b> Employees see the written feedback only, without a score.`)
    :banner("info",`<b class="rating-scale__heading">What employees see</b>${lv.map((l,i)=>`<span class="rating-scale__row">${badge(i)}<span class="rating-scale__label">${esc(l)}</span></span>`).join("")}`,{cls:"rating-scale"})}</section>`}
 /* ---- Review Settings: rating format, credentials, edits after submission, reopening, auto-assign ---- */
 /* Who can reopen: admins, HR managers and every manager role (no Foreman / Worker). */
@@ -394,11 +420,11 @@ function rxReopenOpt(w,x){const badM=fcErr(w,"reopenMonths"),per=x.reopenWin==="
  return rxOpt(x.reopen,"W().rx.reopen=this.checked;rxClear('reopenMonths','reopenBy');render()","Cycle reopening","Reopen the cycle after the end date to collect late or missed reviews.",reopen)}
 /* ---- Overall Rating card: the rating format (rxRating's final version is built in later layers), minus that card's frame and heading ---- */
 function rxSettings(w,x){
- const rating=rxRating(w).replace(/^\s*<section class="form-section"[^>]*>\s*<div class="form-section__header">[\s\S]*?<\/div>/,"").replace(/<\/section>\s*$/,"");
- return `<section class="form-section">${rxHd("Overall Rating")}
+ const rating=rxRating(w).replace(/^\s*<section class="section"[^>]*>\s*<h2 class="section-hd">[\s\S]*?<\/h2>/,"").replace(/<\/section>\s*$/,"");
+ return `<section class="section">${rxHd("Overall Rating")}
   ${rating}</section>`}
 /* ---- Auto-assign card: its own section, after Overall Rating ---- */
-const rxAutoAssign=(w,x)=>`<section class="form-section">${rxHd("Auto-assign")}
+const rxAutoAssign=(w,x)=>`<section class="section">${rxHd("Assignment")}
   ${aaBody(w,x)}</section>`;
 /* ---- top bar (Figma Exploration – Lumber Web App 785:34380): Exit | title on the left, Save as Draft + Create on the right.
    Styles: src/styles/23-cycle-header.css. The Edit flow (16-edit-cycle.js) swaps the actions for Cancel / Save. ---- */
@@ -415,24 +441,30 @@ V.wizard=()=>{
  const edit=!!w.editing;
  return `<div class="editor">
   ${fcHeader(fcTitle(w))}
-  <div class="editor__body">${fcSteps()}<div class="editor__main">${fcSections([fcDetails(w),rxEmployees(w,x),...(x.reviewee?[rxReviewers(w,x),rxSettings(w,x),rxAutoAssign(w,x)]:[])])}</div></div>
+  <div class="editor__body">${fcSteps()}<div class="editor__main">${fcSections([fcDetails(w),rxEmployees(w,x),...(rxReady(w,x)?[rxReviewers(w,x),rxSettings(w,x),...(rxAllInProject(w)?[]:[rxAutoAssign(w,x)])]:[])])}</div></div>
  </div>`};
 /* ---- left section nav (Figma Exploration – Lumber Web App 785:34389): one step per card, text only, click to scroll, highlights the card in view ---- */
-const FC_SECS=["Cycle Details","Reviewee","Reviewers","Overall Rating","Auto-assign"];
+const FC_SECS=["Cycle Details","Reviewee","Reviewers","Overall Rating","Assignment"];
 let fcOn=0;
 /* each card gets an id for the nav (no numbering: Figma Exploration – Lumber Web App 785:34389) */
-const fcSections=cards=>cards.map((c,i)=>c.replace('<section class="form-section"',`<section class="form-section" id="fcSec${i}"`)).join("");
+/* each card's id is its section name (left nav, Overview › Edit and the scroll highlight find cards by it) */
+const FC_SEC_IDS=["cycle-details","reviewee","reviewers","overall-rating","assignment"];
+const fcSecEl=i=>document.getElementById(FC_SEC_IDS[i]);
+const fcSections=cards=>cards.map((c,i)=>c.replace('<section class="section"',`<section class="section" id="${FC_SEC_IDS[i]}"`)).join("");
 /* the nav lists only the cards on the page: Reviewers, Overall Rating and Additional Settings appear once a reviewee role is picked */
-const fcSecCount=()=>{const w=W();return w&&rxInit(w).reviewee?FC_SECS.length:2};
-const fcSteps=()=>`<nav class="editor__nav" aria-label="Sections">${FC_SECS.slice(0,fcSecCount()).map((t,i)=>`<button type="button" class="editor__nav-item ${i===fcOn?"on":""}" ${i===fcOn?'aria-current="step"':""} onclick="fcJump(${i})"><span class="editor__nav-label">${t}</span></button>`).join("")}</nav>`;
+/* Auto-assign is left out for Project Completion Reviews (everyone on the project is reviewed), so the nav stops at Overall Rating */
+const fcSecCount=()=>{const w=W();return w&&rxReady(w,rxInit(w))?(rxAllInProject(w)?FC_SECS.length-1:FC_SECS.length):2};
+const fcSteps=()=>`<nav class="editor__nav" aria-label="Sections"><div class="editor__nav-header" aria-hidden="true">Sections</div>${FC_SECS.slice(0,fcSecCount()).map((t,i)=>`<button type="button" class="editor__nav-item ${i===fcOn?"on":""}" ${i===fcOn?'aria-current="step"':""} onclick="fcJump(${i})"><span class="editor__nav-label">${t}</span></button>`).join("")}</nav>`;
 function fcMark(i){if(i===fcOn&&document.querySelector(".editor__nav-item.on"))return;fcOn=i;document.querySelectorAll(".editor__nav-item").forEach((b,j)=>{b.classList.toggle("on",j===i);j===i?b.setAttribute("aria-current","step"):b.removeAttribute("aria-current")})}
-function fcJump(i){const c=document.getElementById("fcSec"+i);if(!c)return;fcMark(i);fcLock=Date.now()+700;c.scrollIntoView({block:"start",behavior:"smooth"})}
+function fcJump(i){const c=fcSecEl(i);if(!c)return;fcMark(i);fcLock=Date.now()+700;c.scrollIntoView({block:"start",behavior:"smooth"})}
 let fcLock=0;
 addEventListener("scroll",()=>{if(S.view!=="wizard"||Date.now()<fcLock)return;const top=(document.querySelector(".editor__header")||{}).offsetHeight||0;
- const cards=FC_SECS.map((_,i)=>document.getElementById("fcSec"+i)).filter(Boolean);if(!cards.length)return;
+ const cards=FC_SECS.map((_,i)=>fcSecEl(i)).filter(Boolean);if(!cards.length)return;
  const atEnd=innerHeight+scrollY>=document.documentElement.scrollHeight-2;
  let i=0;cards.forEach((c,j)=>{if(c.getBoundingClientRect().top<=top+120)i=j});fcMark(atEnd?cards.length-1:i)},{passive:true});
-const _navFc=nav;nav=function(v,...a){if(v==="wizard")fcOn=0;return _navFc(v,...a)};
+/* opening the editor (new cycle, draft or edit) puts the cursor in Cycle name, at the end of any name already there */
+function fcFocusName(){const n=$("#wName");if(!n)return;n.focus({preventScroll:true});const e=n.value.length;try{n.setSelectionRange(e,e)}catch(_){}}
+const _navFc=nav;nav=function(v,...a){const was=S.view;if(v==="wizard")fcOn=0;const r=_navFc(v,...a);if(v==="wizard"&&was!=="wizard")setTimeout(fcFocusName,0);return r};
 fcCreate=function(){wzCollect();RXP.id=null;const w=W(),x=rxInit(w),s=toISO(w.start),e=toISO(w.end),errs={},K=rxKeys(x),t=rxTotal(x);
  if(!w.name.trim())errs.name="Enter a cycle name";
  if(w.ctype==="General Review"&&(!s||!e))errs.period="Select a cycle period";
@@ -442,13 +474,14 @@ fcCreate=function(){wzCollect();RXP.id=null;const w=W(),x=rxInit(w),s=toISO(w.st
   if(w.ctype==="New Hire Review"&&w.probTill==="period"&&!(w.probTillN>=1&&w.probTillN<=36))errs.probTillN="Enter 1 to 36 months after the start date";
   else if(w.ctype==="New Hire Review"&&w.probTill==="period"&&w.probEvery>=1&&w.probTillN<w.probEvery)errs.probTillN="The period must be at least as long as the interval";
   if(w.ctype==="Project Completion Review"&&!(w.projTillN>=1&&w.projTillN<=36))errs.projTillN="Enter 1 to 36 months after the completion date"}
+ if(w.ctype==="Project Completion Review"&&!w.projMode)errs.projMode="Select which projects to include";
  if(w.ctype==="Project Completion Review"&&w.projMode==="specific"&&!(w.projs||[]).length)errs.projs="Select at least one project";
- if(!x.reviewee)errs.reviewee="Choose who is going to be reviewed";
+ if(!rxReady(w,x))errs.reviewee="Select who is going to be reviewed";
  if(!K.length)errs.revs="Pick at least one reviewer, or include a self-evaluation";
  else if(t!==100)errs.weight=`Weightage must add up to 100%. It's ${t}% now.`;
  const lateDue=K.filter(k=>rxDueBad(w,rxRow(x,k)));
  if(lateDue.length)errs.due=`Due date${lateDue.length>1?"s":""} for ${lateDue.map(rxName).join(", ")} must fall within the cycle period (${rxCycleLen(w)} days)`;
- const aa=aaInit(x);if(aa.on&&aa.mode==="groups"&&(!aaLive(aa).length||aa.groups.some(g=>!g.by||!g.vals.length)))errs.autoVals="Pick a category and at least one value for each group, or remove the empty group";
+ const aa=aaInit(x);if(!rxAllInProject(w)&&aa.on&&aa.mode==="groups"&&(!aaLive(aa).length||aa.groups.some(g=>!g.by||!g.vals.length)))errs.autoVals="Pick a category and at least one value for each group, or remove the empty group";
  if(x.peers&&x.peerMode==="count"&&!(x.peerMax>=1&&x.peerMax<=50))errs.peerMax="Enter 1 to 50 peers, or choose Unlimited";
  if(x.reopen){if(x.reopenWin==="period"&&!(x.reopenMonths>=1&&x.reopenMonths<=24))errs.reopenMonths="Enter 1 to 24 months";
   if(!x.reopenBy.length)errs.reopenBy="Pick at least one role who can reopen the cycle"}
@@ -460,7 +493,12 @@ const fcCopy=v=>Array.isArray(v)?[...v]:v;
 const FC_TYPE_KEYS=["recurN","ctype","probSched","probEvery","probTill","probTillN","projTillN","projMode","projs"];
 const _wzSaveRx=wzSave;wzSave=function(...a){_wzSaveRx(...a);const w=W(),c=w&&w.id&&C(w.id);if(!c)return;if(w.rx)c.rx=JSON.parse(JSON.stringify(w.rx));FC_TYPE_KEYS.forEach(k=>c[k]=fcCopy(w[k]))};
 const _editDraftRx=editDraft;editDraft=function(cid){_editDraftRx(cid);const c=C(cid);if(!c||!S.wz)return;if(c.rx)S.wz.rx=JSON.parse(JSON.stringify(c.rx));FC_TYPE_KEYS.forEach(k=>{if(c[k]!=null)S.wz[k]=fcCopy(c[k])});render()};
-const _renderRxCols=render;render=function(...a){_renderRxCols(...a);if(S.view==="wizard")rxColApply()};
+/* sidebar red dot: a section whose card shows an inline error (unfilled mandatory field) gets an 8px red dot at the
+   right end of its nav item; re-synced after every render and after edits, since some fixes clear errors without a render */
+function fcNavDots(){if(S.view!=="wizard")return;document.querySelectorAll(".editor__nav-item").forEach((b,i)=>{const c=fcSecEl(i),bad=!!(c&&c.querySelector(".error-text")),d=b.querySelector(".editor__nav-dot");
+ if(bad&&!d)b.insertAdjacentHTML("beforeend",'<span class="editor__nav-dot" aria-label="Has required fields to fill"></span>');else if(!bad&&d)d.remove()})}
+["input","change","click"].forEach(t=>document.addEventListener(t,()=>setTimeout(fcNavDots),true));
+const _renderRxCols=render;render=function(...a){_renderRxCols(...a);if(S.view==="wizard"){rxColApply();fcNavDots()}};
 addEventListener("resize",()=>{if(S.view==="wizard")rxColApply()});
 
 /* header title: the cycle name once it's filled (new cycles, drafts and live edits alike); while the name is empty,

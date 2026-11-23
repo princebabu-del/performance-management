@@ -16,9 +16,9 @@ function cycEdit(cid,sec){const c=C(cid);if(!c)return;
  if(sec!==undefined)setTimeout(()=>fcFocusSec(sec),150)}
 /* Overview › section Edit: scroll the editor to that section, then flash a blue border on it
    (fades in, holds 500ms, fades out). The flash waits for the scroll to finish so it's seen where the eye lands. */
-function fcFocusSec(sec){const el=document.getElementById("fcSec"+sec);if(!el)return;fcMark(sec);fcLock=Date.now()+1200;
+function fcFocusSec(sec){const el=fcSecEl(sec);if(!el)return;if(sec>0&&document.activeElement&&document.activeElement.id==="wName")document.activeElement.blur();   // opened at another section: don't leave the cursor in Cycle namefcMark(sec);fcLock=Date.now()+1200;
  const top=Math.max(0,el.getBoundingClientRect().top+scrollY-(parseFloat(getComputedStyle(el).scrollMarginTop)||0));
- const flash=()=>{const c=document.getElementById("fcSec"+sec);if(!c)return;c.classList.add("is-flash");setTimeout(()=>{const d=document.getElementById("fcSec"+sec);if(d)d.classList.remove("is-flash")},500+200)};
+ const flash=()=>{const c=fcSecEl(sec);if(!c)return;c.classList.add("is-flash");setTimeout(()=>{const d=fcSecEl(sec);if(d)d.classList.remove("is-flash")},500+200)};
  if(Math.abs(scrollY-top)<2)return flash();
  let done=false;const go=()=>{if(done)return;done=true;removeEventListener("scrollend",go);flash()};
  addEventListener("scrollend",go,{once:true});setTimeout(go,900);   // fallback where scrollend isn't supported

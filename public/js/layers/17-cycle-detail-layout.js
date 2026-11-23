@@ -30,7 +30,7 @@ V.cycle=()=>{
  S.tab=CD_TAB_ALIAS[S.tab]||S.tab;
  const ps=D.packets.filter(p=>p.cid===c.id),live=ps.filter(p=>p.exc!=="Removed");
  const calN=ps.filter(p=>p.st==="In calibration"||p.st==="Manager submitted").length;
- const tabs=[["overview","Overview"],["people","Employees",live.length]];if(c.calib)tabs.push(["calibration","Outlier check",calN||""]);tabs.push(["audit","Audit Log"]);
+ const tabs=[["overview","Overview"],["people","Employees",live.length]];if(c.calib&&typeof FEATURES!=="undefined"&&FEATURES.outlier)tabs.push(["calibration","Outlier check",calN||""]);   // hidden for now: Scenarios › Features › Outlier check (off by default)if(typeof FEATURES!=="undefined"&&FEATURES.audit)tabs.push(["audit","Audit Log"]);   // hidden for now: Scenarios › Features › Audit Log (off by default)
  if(!tabs.some(t=>t[0]===S.tab))S.tab="overview";
  const attn=live.filter(needsAttn),per=clPeriod(c);
  const rep=clRepeats(c);
@@ -46,14 +46,18 @@ V.cycle=()=>{
     <p class="cd-desc">${sub.map(esc).join('<span class="cd-dot" aria-hidden="true"> • </span>')}</p></div></div>
    <div class="cd-acts">${c.status==="Paused"?`<button type="button" class="cd-btn" onclick="cycResume('${c.id}')">Resume</button>`:""}${cycCanReopen(c)?`<button type="button" class="cd-btn" onclick="cycReopen('${c.id}')">${ic("undo")} Reopen</button>`:""}${cycKebab(c)}${canAssign?`<button type="button" class="cd-btn p" onclick="assignCycle('${c.id}')">${ic("useradd")} Assign</button>`:""}</div>
   </div>
+  ${tabBar(tabs.map(t=>({id:t[0],label:t[1],count:t[2]===""?undefined:t[2]})),{active:S.tab,label:"Cycle sections",cls:"cd-tabs",onSelect:id=>`nav('cycle',{cid:'${c.id}',tab:'${id}',quick:'All'})`})}
  </div>
- <div class="cd-tabbar">${tabBar(tabs.map(t=>({id:t[0],label:t[1],count:t[2]===""?undefined:t[2]})),{active:S.tab,label:"Cycle sections",cls:"cd-tabs",onSelect:id=>`nav('cycle',{cid:'${c.id}',tab:'${id}',quick:'All'})`})}</div>
  <div class="cd-body">${body}</div></div>`};
 /* stage progress as stat cards */
 const cdStats=c=>`<div class="cd-stats">${stageCounts(c).map(s=>`<div class="cd-stat ${s.st||""}"><div class="cd-stat-k">${s.st==="done"?"✓ ":""}${esc(s.n)}${s.st==="cur"?'<span class="cd-now">Current</span>':""}</div>
  <div class="cd-stat-v">${s.t?`${s.d}<span>/${s.t}</span>`:"—"}</div><div class="cd-stat-d">${cdMDY(s.s,c)} – ${cdMDY(s.e,c)}</div></div>`).join("")}</div>`;
+/* sortable header, same markup as the Review Cycles table (lsTh in app.js): the whole cell is the button, and the arrow
+   (down = A–Z, up = Z–A) only shows once this column is sorted */
+/* Questionnaire sorts by the number shown in the group row: distinct questionnaires across that employee's reviewers (none → last) */
+EMP_SORT.Questionnaire=p=>{const c=C(p.cid),n=c?new Set(cdRevs(c,p).map(r=>r.tpl).filter(Boolean)).size:0;return n||null};
 function cdSortTh(k,label){const s=S.empSort,on=s&&s.k===k,dir=on?(s.dir>0?"ascending":"descending"):"none";
- return `<th aria-sort="${dir}"><button type="button" class="th-sort ${on?"on":""}" data-k="${k}" onclick="empSort('${k}')">${label}<svg class="th-sort-i" viewBox="0 0 12 12" aria-hidden="true"><path class="up ${on&&s.dir>0?"on":""}" d="M6 2 9 5H3z"/><path class="dn ${on&&s.dir<0?"on":""}" d="M6 10 3 7h6z"/></svg></button></th>`}
+ return `<th class="ls-th" aria-sort="${dir}"><button type="button" class="th-sort ls-sort" data-k="${k}" onclick="empSort('${k}')">${label}${on?`<svg class="ls-sort-i" viewBox="0 0 20 20" aria-hidden="true">${LS_ARROW[s.dir>0?"1":"-1"]}</svg>`:""}</button></th>`}
 /* Employees table: one collapsible group per reviewee. The group row is the reviewee (chevron · attention dot · avatar · name)
    with the packet's overall due date, status and next step; expanding it shows one row per reviewer, in the cycle's reviewer order
    (Settings › Reviewers): role · reviewer · due · that reviewer's status · remind. Needs-attention states are yellow. */
@@ -89,7 +93,7 @@ function cdRevRemove(id,role,name){const p=PK(id),self=role==="Reviewee";
    toast(`${name} removed from ${E(p.eid).name}'s review.`,()=>{Object.assign(p,JSON.parse(snap));log(p,"Reviewer removal undone","g");render(true)})}})}
 /* questionnaire cell: questionnaire name + eye (opens it in the side drawer, "View Questionnaire" tooltip) */
 function cdTplCell(id){const t=id&&T(id);if(!t)return '<span class="dim">—</span>';
- return `<div class="cd-tpl"><span class="cd-n cd-tpl-n">${esc(t.name)}</span><span class="hint cs-q-tip" onclick="event.stopPropagation()"><button type="button" class="cs-rv-eye" aria-label="View questionnaire ${esc(t.name)}" onclick="previewTpl('${t.id}')">${ic("eye")}</button><span class="hint__box" role="tooltip">View Questionnaire</span></span></div>`}
+ return `<div class="cd-tpl"><span class="cd-n cd-tpl-n">${esc(t.name)}</span><span class="cs-q-tip" onclick="event.stopPropagation()"><button type="button" class="cs-rv-eye" aria-label="Preview template ${esc(t.name)}" data-tip="Preview Template" onclick="previewTpl('${t.id}')">${ic("eye")}</button></span></div>`}
 /* a role nobody fills: Remove drops it from this reviewee's review (undo from the toast) */
 function cdRoleSkip(id,role){const p=PK(id);p.skip=[...(p.skip||[]),role];if(/Manager/.test(role))p.noReviewer=false;log(p,`${role} not required for this review`,"a");render(true);
  toast(`${role} removed from ${E(p.eid).name}'s review.`,()=>{p.skip=p.skip.filter(r=>r!==role);if(/Manager/.test(role)&&!(p.mgr&&p.mgr.by))p.noReviewer=true;log(p,"Role removal undone","g");render(true)})}
@@ -115,7 +119,8 @@ function cdDueSum(c,p,R){if(!R.length)return'<span class="dim">No due date</span
 function cdEmpGroup(c,p){const e=E(p.eid),at=needsAttn(p),open=S.empOpen.has(p.id),R=cdRevs(c,p),gid="eg"+p.id;
  const allDone=R.length&&R.every(r=>r.by&&CD_REV_DONE.has(r.st)),q=s=>esc(s).replace(/'/g,"\\'");
  const head=`<tr class="click cd-grp ${S.sel.has(p.id)?"sel":""}" onclick="cdEmpToggle(${p.id})"><td class="cbx" onclick="event.stopPropagation()"><input type="checkbox" aria-label="Select ${esc(e.name)}" ${S.sel.has(p.id)?"checked":""} onchange="this.checked?S.sel.add(${p.id}):S.sel.delete(${p.id});render()"></td>
-  <td><div class="cd-who"><span class="rdot" style="visibility:${at?"visible":"hidden"}" ${at?'title="Needs attention"':""}></span><button type="button" class="cd-chev ${open?"open":""}" aria-expanded="${open}" aria-controls="${gid}" aria-label="${open?"Hide":"Show"} reviewers for ${esc(e.name)}" onclick="event.stopPropagation();cdEmpToggle(${p.id})"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7.5 5l5 5-5 5"/></svg></button>${cdAv(e.name)}<div style="min-width:0"><button type="button" class="cd-n cd-n-link" title="View employee profile" onclick="event.stopPropagation();openProfile(${e.id},'Performance & Skills','${c.id}')">${esc(e.name)}</button><div class="cd-s">${e.code?"#"+esc(e.code):"—"}</div></div></div></td>
+  <td class="cd-chev-c"><button type="button" class="cd-chev ${open?"open":""}" aria-expanded="${open}" aria-controls="${gid}" aria-label="${open?"Hide":"Show"} reviewers for ${esc(e.name)}" onclick="event.stopPropagation();cdEmpToggle(${p.id})"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7.5 5l5 5-5 5"/></svg></button></td>
+  <td class="cd-emp-c">${at?'<span class="rdot" title="Needs attention"></span>':""}<div class="cd-who">${cdAv(e.name)}<div style="min-width:0"><button type="button" class="cd-n cd-n-link" title="View employee profile" onclick="event.stopPropagation();openProfile(${e.id},'Performance & Skills','${c.id}')">${esc(e.name)}</button><div class="cd-s">${e.code?esc(e.code):"—"}</div></div></div></td>
   <td><span class="cd-n tab-num" title="${R.length} reviewer${R.length===1?"":"s"}">${R.length}</span></td>
   <td>${(n=>`<span class="cd-n tab-num" title="${n} questionnaire${n===1?"":"s"}">${n}</span>`)(new Set(R.map(r=>r.tpl).filter(Boolean)).size)}</td>
   <td class="tab-num">${cdDueSum(c,p,R)}</td>
@@ -125,7 +130,7 @@ function cdEmpGroup(c,p){const e=E(p.eid),at=needsAttn(p),open=S.empOpen.has(p.i
  return head+R.map((r,i)=>{const items=[];
    if(r.by&&!CD_REV_DONE.has(r.st))items.push(["send","Send reminder",r.role==="Reviewee"?`actRemind([${p.id}])`:`cdRemind(${p.id},'${q(r.by)}')`]);
    items.push(["x","Remove",r.missing?`cdRoleSkip(${p.id},'${q(r.role)}')`:`cdRevRemove(${p.id},'${q(r.role)}','${q(r.by)}')`,1]);
-  return `<tr class="cd-sub-row${r.missing?" is-missing":""}${i===R.length-1?" last":""}" ${i?"":`id="${gid}"`}><td class="cbx"></td><td></td>
+  return `<tr class="cd-sub-row${r.missing?" is-missing":""}${i===R.length-1?" last":""}" ${i?"":`id="${gid}"`}><td class="cbx"></td><td class="cd-chev-c"></td><td></td>
   <td>${r.by?`<div class="cd-who">${cdAv(r.by)}<div style="min-width:0"><div class="cd-n">${esc(r.by)}</div><div class="cd-s">${esc(r.role)}</div></div></div>`:`<div class="cd-who"><span class="cd-av cd-av-empty" aria-hidden="true">${ic("user")}</span><div style="min-width:0"><div class="cd-miss">Not assigned</div><div class="cd-s">${esc(r.role)}</div></div></div>`}</td>
   <td>${cdTplCell(r.tpl)}</td>
   <td class="tab-num">${CD_REV_DONE.has(r.st)?'<span class="dim">—</span>':(cdRevDue(c,p,r)||'<span class="dim">No due date</span>')}</td>
@@ -173,11 +178,11 @@ cycPeople=function(c,ps,attn){
  return `
 
  <div class="cd-card">
-  <div class="cd-tools"><div class="cd-tools-l">${btnGroup(Q.map(q=>({id:q,label:q,count:cnt(q),tone:q==="Needs attention"&&cnt(q)?"warning":"neutral"})),{active:S.quick,label:"Show employees",size:"lg",onSelect:q=>`S.quick='${q}';S.sel=new Set();render()`})}${sel.length?cdBulkBar(sel,selP):""}</div>
+  <div class="cd-tools"><div class="cd-tools-l">${btnGroup(Q.map(q=>({id:q,label:q,count:cnt(q)})),{active:S.quick,label:"Show employees",variant:"segmented",onSelect:q=>`S.quick='${q}';S.sel=new Set();render()`})}${sel.length?cdBulkBar(sel,selP):""}</div>
    <div class="cd-tools-r"><label class="cd-srch">${ic("search")}<input id="rq" placeholder="Search employees" aria-label="Search employees" value="${esc(S.q)}" oninput="S.q=this.value;render();const i=$('#rq');i.focus();i.setSelectionRange(i.value.length,i.value.length)"></label>
    <button type="button" class="cd-btn" onclick="openFilters()">${ic("filter")} Filters${fCount()?` · ${fCount()}`:""}</button></div></div>
 
-  ${rows.length?`<div class="tw"><table class="tbl cd-tbl cd-tbl-fixed"><colgroup><col class="c-cbx"><col class="c-emp"><col class="c-rev"><col class="c-tpl"><col class="c-due"><col class="c-st"><col class="c-act"></colgroup><thead><tr><th class="cbx"><input type="checkbox" aria-label="Select all" ${sel.length&&sel.length===rows.length?"checked":""} ${sel.length&&sel.length<rows.length?'data-indet="1" aria-checked="mixed"':""} onchange="S.sel=new Set(this.checked&&!this.hasAttribute('data-indet')?[${rows.map(p=>p.id)}]:[]);render()"></th>${cdSortTh("Employee","Employee")}${cdSortTh("Reviewer","Reviewer")}<th>Questionnaire</th>${cdSortTh("Due","Due Date")}${cdSortTh("Status","Status")}<th class="cd-act"><span class="cd-vh">Actions</span></th></tr></thead><tbody>
+  ${rows.length?`<div class="tw"><table class="tbl cd-tbl cd-tbl-fixed"><colgroup><col class="c-cbx"><col class="c-chev"><col class="c-emp"><col class="c-rev"><col class="c-tpl"><col class="c-due"><col class="c-st"><col class="c-act"></colgroup><thead><tr><th class="cbx"><input type="checkbox" aria-label="Select all" ${sel.length&&sel.length===rows.length?"checked":""} ${sel.length&&sel.length<rows.length?'data-indet="1" aria-checked="mixed"':""} onchange="S.sel=new Set(this.checked&&!this.hasAttribute('data-indet')?[${rows.map(p=>p.id)}]:[]);render()"></th><th class="cd-chev-c"><span class="cd-vh">Expand</span></th>${cdSortTh("Employee","Employee")}${cdSortTh("Reviewer","Reviewer")}${cdSortTh("Questionnaire","Questionnaire")}${cdSortTh("Due","Due Date")}${cdSortTh("Status","Status")}<th class="cd-act"><span class="cd-vh">Actions</span></th></tr></thead><tbody>
   ${pgRows(rows,pk).map(p=>cdEmpGroup(c,p)).join("")}
   </tbody></table></div>${pgFoot(rows.length,pk)}`:`<div class="empty"><b>No employees here</b><button class="link" onclick="S.quick='All';S.q='';S.flt.cycle={};render()">Show all employees</button></div>`}
  </div>`};
@@ -212,3 +217,12 @@ openPacket=function(id){const p=PK(id),e=E(p.eid),start=x=>cycDates(cycOf(x))[0]
   foot:`${p.exc==="Removed"?`<button class="btn" onclick="actRestore(${p.id})">Restore</button>`:`<button class="btn d" onclick="actRemove([${p.id}])">Remove</button>`}<span style="flex:1"></span><button class="btn" onclick="toast('PDF downloaded.')">${ic("down","s")} PDF</button><button class="btn p" onclick="closeLayer()">Done</button>`});
  S.pkOpen=id};
 render();
+
+/* Header + tabs are one block (.cd-head), like the Review Cycles page header. The block is sticky, pulled up by the height of
+   everything above the tab row, so while the page scrolls the title slides under the main nav and only the tab row stays pinned
+   beneath it. cdHeadStick() measures that offset after each render and on resize. */
+function cdHeadStick(){const h=document.querySelector(".cd-head"),t=h&&h.querySelector(".cd-tabs");if(!h||!t)return;
+ const nav=document.querySelector(".lt-bar"),navH=nav&&getComputedStyle(nav).display!=="none"?nav.offsetHeight:0;
+ h.style.top=(navH-t.offsetTop)+"px"}
+const _renderStick=render;render=function(...a){const r=_renderStick(...a);if(S.view==="cycle")cdHeadStick();return r};
+addEventListener("resize",()=>{if(S.view==="cycle")cdHeadStick()});

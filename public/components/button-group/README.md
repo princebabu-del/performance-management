@@ -38,6 +38,7 @@ btnGroup(
 | `label` | `aria-label` for the group |
 | `size` | `md` (40px, default) or `lg` (44px, to line up with 44px search fields and buttons) |
 | `max` | Counts above this show as `max+` (default 99) |
+| `variant` | `bordered` (default) or `segmented`: gray track with the selected button raised in white (Figma Employee-Onboarding 9768:54864). Always 44px; `size` doesn't apply |
 | `cls`, `id` | Extra class names / element id |
 
 States, colours and accessibility are documented in `ButtonGroup.tsx`.

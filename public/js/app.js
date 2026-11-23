@@ -1381,7 +1381,9 @@ function wzReview(w,pool,iss){
 }
 
 /* ---------- SETTINGS (lean) ---------- */
-const POLS=[["Review defaults","Every cycle uses these. Change them here to change them for all cycles.",[["selfVis","Reviewer sees self review",["After reviewer submits","Hidden until cycle end","During review"]],["results","Reviewee sees results",["After cycle closes","As soon as their reviews are in","Never"]]]]];
+/* Review defaults (Reviewer sees self review, Reviewee sees results) moved into each cycle: New Review Cycle > Reviewers */
+const POLS=[];
+const POLS_OLD=[["Review defaults","Every cycle uses these. Change them here to change them for all cycles.",[["selfVis","Reviewer sees self review",["After reviewer submits","Hidden until cycle end","During review"]],["results","Reviewee sees results",["After cycle closes","As soon as their reviews are in","Never"]]]]];
 V.settings=()=>{
  const st=D.settings,SN=["Time Tracking","Expenses","Payroll","Onboarding","HR","Performance","Company Info","API Integration","Form I-9","Org Chart"];
  const MSG=[["Review to Complete","Sent to a reviewer when a review opens.","Your {cycleName} review for {employeeName} is ready. Open: {link} · Due {dueDate}"],["Self Review Ready","Sent to an employee when their self review opens.","Your {cycleName} is ready. Takes about 3 minutes. Open: {link} · Due {dueDate}"],["Reminder","Sent before the due date to anyone with an open review.","Reminder: your {cycleName} review is due {dueDate}. Open: {link}"],["Results Ready","Sent when results are shared.","Your {cycleName} results are ready. Please confirm you received them: {link}"]];
@@ -1561,7 +1563,7 @@ V.write=()=>{
  const ro=locked;const q=myTodos(),ix=q.findIndex(i=>i.p.id===p.id&&i.kind===w.kind);
  const an=answered(p,w.kind),expired=e.certs.filter(x=>x.s==="expired");
  const last=D.packets.find(x=>x.cid==="c6"&&x.eid===e.id);
- const sv=D.settings.selfVis,selfVisible=p.self.st==="Submitted"&&(sv==="During review"||(sv==="After reviewer submits"&&submitted)||c.status==="Closed");
+ const sv=(typeof csRx==="function"&&csRx(c).selfVis)||D.settings.selfVis,selfVisible=p.self.st==="Submitted"&&(sv==="During review"||(sv==="After reviewer submits"&&submitted)||c.status==="Closed");
  return `<div class="crumb"><a onclick="nav('myreviews')">My Reviews</a> › <span>${esc(e.name)}</span></div>
  <div class="ph"><div><div class="row"><h1>${esc(e.name)}</h1>${submitted?pill("Submitted"):an.done?'<span class="pill b">Draft</span>':""}</div><div class="sub">${it?it.label:"Review"} · ${esc(c.name)} · ${submitted?"submitted":"due "+(((c.phases||[]).find(ph=>/manager/i.test(ph.n))||{}).e||"Oct 30")}</div></div>
  <div class="row">${ix>=0&&q.length>1?`<span class="dim sm">${ix+1} of ${q.length} to do</span><button class="btn s" aria-label="Previous" ${ix>0?"":"disabled"} onclick="wrGo(${ix-1})">‹</button><button class="btn s" aria-label="Next" ${ix<q.length-1?"":"disabled"} onclick="wrGo(${ix+1})">›</button>`:""}<button class="btn" onclick="openProfile(${e.id},'Performance')">${ic("user","s")} View Profile</button></div></div>

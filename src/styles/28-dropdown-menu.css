@@ -4,14 +4,14 @@
    Container .dropdown__menu          1px #EAECF0 · 12px radius · 4px padding (options sit directly inside: reviewer roles, Who can reopen)
    With a list .dropdown__list   container padding 0; the list carries the 4px padding and scrolls
    Search .dropdown__search            its own block above the list: 8px 8px 4px padding, 36px input
-   Option .dropdown__option / .select__option   min 40px · 8px 12px padding · 8px radius · 2px apart
+   Option .dropdown__option / .select__option   hugs its content (36px one-line) · 8px 12px padding · 8px radius · 2px apart
      primary   .dropdown__primary         14/20 medium #101828
      secondary .dropdown__secondary         12/18 medium #667085 (tertiary), 2px under the primary line; links in it (Preview) semibold #2970FF
    Height                     7 options, then the list scrolls (--dd-row = one option's height; two-line lists use 56px)
    Scrollbar                  native bar hidden; .dropdown__scrollbar (32-dropdown-scroll.js) is drawn over the options' right edge,
                               6px wide, 2px from the border, and only shows while the pointer is over the menu */
 
-.dropdown__menu{padding:4px;--dd-rows:7;--dd-row:40px}
+.dropdown__menu{padding:4px;--dd-rows:7;--dd-row:36px}
 .dropdown__menu:has(>.dropdown__list){padding:0}
 
 /* search: a container of its own above the list */

@@ -9,6 +9,7 @@
      opts.label        aria-label for the group
      opts.size         "md" (40px, default) | "lg" (44px)
      opts.max          counts above this show as "max+" (default 99)
+     opts.variant      "bordered" (default) | "segmented" (gray track, white raised selected button — Figma Employee-Onboarding 9768:54864)
      opts.cls, opts.id extra class names / element id
    ===== */
 const BGRP_TONES=["neutral","info","warning","danger"];
@@ -22,4 +23,4 @@ function btnGroup(items,opts={}){
    `${t.disabled?" disabled":""}${js&&!t.disabled&&!on?` onclick="${e(js)}"`:""}>`+
    `<span class="lb-bgrp__label">${e(t.label)}</span>`+
    `${n===""?"":`<span class="lb-bgrp__badge${tone==="neutral"?"":" lb-bgrp__badge--"+tone}">${e(n)}</span>`}</button>`};
- return `<div class="lb-bgrp${opts.size==="lg"?" lb-bgrp--lg":""}${opts.cls?" "+opts.cls:""}"${opts.id?` id="${opts.id}"`:""} role="group"${opts.label?` aria-label="${e(opts.label)}"`:""}>${items.map(btn).join("")}</div>`}
+ return `<div class="lb-bgrp${opts.size==="lg"?" lb-bgrp--lg":""}${opts.variant==="segmented"?" lb-bgrp--segmented":""}${opts.cls?" "+opts.cls:""}"${opts.id?` id="${opts.id}"`:""} role="group"${opts.label?` aria-label="${e(opts.label)}"`:""}>${items.map(btn).join("")}</div>`}

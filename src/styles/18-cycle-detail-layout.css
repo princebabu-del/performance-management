@@ -4,7 +4,7 @@
 @media (max-width:900px){.cd{--cd-pad:16px}}
 
 /* sub header: "← Back to Review Cycles" link (Figma LMS 1051:14724) */
-.cd-sub{display:flex;align-items:center;padding:8px 32px;background:#fff;border-bottom:1px solid var(--cd-g300)}
+.cd-sub{display:flex;align-items:center;padding:8px 32px;background:#fff}
 .cd-back{display:inline-flex;align-items:center;gap:8px;padding:4px 0;border:0;background:none;cursor:pointer;font:inherit;font-size:16px;font-weight:600;line-height:1.2;letter-spacing:-.32px;color:var(--cd-g700);border-radius:6px}
 .cd-back:hover{text-decoration:underline}
 .cd-back:focus-visible{outline:2px solid var(--cd-blue);outline-offset:2px}
@@ -36,14 +36,11 @@
 /* tabs */
 /* section tabs use the shared Tabs component (public/components/tabs); this only adds the divider under the row */
 .cd-tabs{border-bottom:1px solid var(--cd-g200)}
-/* the tab row sits in its own bar (outside .cd-head) so it can stay pinned under the 68px main nav (.lt-bar) while the page scrolls */
-.cd-head{padding-bottom:24px}
-.cd-tabbar{position:sticky;top:68px;z-index:15;background:#fff;padding:0 32px;border-bottom:1px solid #EAECF0}
-@media (max-width:900px){.cd-tabbar{padding-left:16px;padding-right:16px}}
+/* the tab row is inside .cd-head; the whole block is sticky so the tabs stay pinned under the main nav (27-review-details.css · cdHeadStick) */
 
 /* body */
-.cd-body{padding:16px 32px 0;display:flex;flex-direction:column;gap:16px}
-@media (max-width:900px){.cd-body{padding:16px 16px 0}}
+.cd-body{padding:16px 32px;display:flex;flex-direction:column;gap:16px}
+@media (max-width:900px){.cd-body{padding:16px}}
 .cd-body>.warn{margin:0}
 
 /* stat cards (one per stage) */

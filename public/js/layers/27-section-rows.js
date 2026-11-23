@@ -13,7 +13,7 @@ const _rxRatingRows=rxRating;rxRating=function(w){const h=_rxRatingRows(w),M="</
    rating scale, nested options…) stack under each other inside it instead of sharing grid rows with the question,
    so a long question or description never pushes them apart. Runs after each render (moving nodes keeps their handlers). */
 function fcWrapAnswers(){document.querySelectorAll(".editor__main .setting-list>.setting").forEach(f=>{if(f.querySelector(":scope>.setting__control"))return;
- const kids=[...f.children].filter(c=>!c.classList.contains("setting__label"));if(!kids.length)return;
+ const kids=[...f.children].filter(c=>!c.classList.contains("setting-label"));if(!kids.length)return;
  const a=document.createElement("div");a.className="setting__control";kids.forEach(c=>a.appendChild(c));f.appendChild(a)})}
 const _renderAns=render;render=function(...a){const r=_renderAns(...a);fcWrapAnswers();return r};
 render();

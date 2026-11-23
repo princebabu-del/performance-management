@@ -39,6 +39,7 @@ function tipPlace(el,pos){
 
 function tipShow(el){
  if(el.closest(".kebab")&&el.closest(".kebab").querySelector(".menu"))return tipHide();
+ if(el.getAttribute("aria-expanded")==="true")return tipHide();   // its own dropdown / calendar is open
  clearTimeout(tipWait);tipWaitFor=null;tipFor=el;
  let pos=TIP_POS.includes(el.dataset.tipPos)?el.dataset.tipPos:"top";
  tipEl.querySelector(".lb-tip__bubble").textContent=el.dataset.tip;

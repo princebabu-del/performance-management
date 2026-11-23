@@ -28,3 +28,18 @@
 .lb-bgrp__badge--info{background:#EFF4FF;color:#2563EB}
 .lb-bgrp__badge--warning{background:#FEF0C7;color:#B54708;font-weight:600}
 .lb-bgrp__badge--danger{background:#FEE4E2;color:#B42318;font-weight:600}
+
+/* ---- Segmented variant (opts.variant "segmented"): Figma Employee-Onboarding 9768:54864 "Horizontal tabs".
+   Track: 44px, #F2F4F7 fill, 1px #EAECF0 border, 8px corners, 4px in, 2px between buttons.
+   Button: fills the track's height, 12px side padding, 6px corners, 8px to the badge, 14/600 #344054, no dividers.
+   Selected: white with the sm shadow. Badge: #F9FAFB, 1px #EAECF0, 16px corners, 2px × 8px, 12/500 #344054 (multiply blend). */
+.lb-bgrp--segmented{box-sizing:border-box;height:44px;align-items:center;gap:2px;padding:4px;border:1px solid #EAECF0;border-radius:8px;background:#F2F4F7}
+.lb-bgrp--segmented .lb-bgrp__btn{box-sizing:border-box;height:100%;padding:0 12px;gap:8px;border-radius:6px;background:transparent;
+ font-size:14px;font-weight:600;line-height:normal;color:#344054}
+.lb-bgrp--segmented .lb-bgrp__btn+.lb-bgrp__btn{border-left:0}
+.lb-bgrp--segmented .lb-bgrp__btn:hover:not(.is-selected):not(:disabled){background:rgba(255,255,255,.6);color:#344054}
+.lb-bgrp--segmented .lb-bgrp__btn.is-selected{background:#FFFFFF;color:#344054;box-shadow:0 1px 3px rgba(16,24,40,.1),0 1px 2px rgba(16,24,40,.06)}
+.lb-bgrp--segmented .lb-bgrp__btn:focus-visible{outline:2px solid #2970FF;outline-offset:0}
+.lb-bgrp--segmented .lb-bgrp__badge,
+.lb-bgrp--segmented .lb-bgrp__btn.is-selected .lb-bgrp__badge:not([class*="--"]){min-width:0;height:auto;max-width:100px;padding:2px 8px;border:1px solid #EAECF0;border-radius:16px;
+ overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;font-weight:500;line-height:normal;background:#F9FAFB;color:#344054;mix-blend-mode:multiply}

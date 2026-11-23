@@ -9,6 +9,9 @@ const USERS=[
  ["payroll","Payroll admin","Priya Shah · view-only cycle status and results"]
 ];
 const STATES=[[true,"Empty","Brand-new company, no review cycles yet"],[false,"Filled","Company with running review cycles"]];
+/* feature switches for things that are built but hidden for now. Off by default; kept for the session (a reload resets them, like the rest of the demo) */
+window.FEATURES=window.FEATURES||{outlier:false,audit:false};
+const FLAGS=[["outlier","Outlier check","Review Details page › Outlier check tab (cycles with calibration)"],["audit","Audit Log","Review Details page › Audit Log tab"]];
 const isMac=/Mac|iPhone|iPad/.test(navigator.platform||navigator.userAgent);
 const KEY=(isMac?"⌘":"Ctrl")+" /";
 let open=false;
@@ -27,6 +30,10 @@ function opt(on,label,sub,act,disabled){
  return `<button type="button" class="scn-opt${on?" on":""}" role="radio" aria-checked="${on}" ${disabled?`disabled aria-disabled="true"`:""} data-act="${act}">
   <span class="scn-radio" aria-hidden="true"></span><span class="scn-txt"><b>${esc(label)}</b><span>${esc(sub)}</span></span></button>`;
 }
+function chk(on,label,sub,act){
+ return `<button type="button" class="scn-opt${on?" on":""}" role="checkbox" aria-checked="${on}" data-act="${act}">
+  <span class="scn-check" aria-hidden="true"></span><span class="scn-txt"><b>${esc(label)}</b><span>${esc(sub)}</span></span></button>`;
+}
 function draw(){
  const R=(S&&S.role)||"admin",adm=R==="admin";
  panel.innerHTML=`<div class="scn-hd"><div><h2 id="scnTitle">Prototype scenarios</h2><div class="scn-kbd">Toggle with <kbd>${KEY}</kbd></div></div>
@@ -35,6 +42,7 @@ function draw(){
   <section><h3 id="scnU">User</h3><div role="radiogroup" aria-labelledby="scnU">${USERS.map(([r,l,s])=>opt(R===r,l,s,"role:"+r)).join("")}</div></section>
   <section><h3 id="scnS">State</h3><div role="radiogroup" aria-labelledby="scnS">${STATES.map(([n,l,s])=>opt(!!S.newCo===n,l,s,"state:"+n,n&&!adm)).join("")}</div>
    ${adm?"":`<p class="scn-note">The empty state is only available for Admin.</p>`}</section>
+  <section><h3 id="scnF">Features</h3><div role="group" aria-labelledby="scnF">${FLAGS.map(([k,l,s])=>chk(!!FEATURES[k],l,s,"flag:"+k)).join("")}</div></section>
  </div>
  <div class="scn-ft"><button type="button" class="btn scn-reset" data-act="reset">Reset demo</button></div>`;
 }
@@ -51,6 +59,7 @@ panel.addEventListener("click",e=>{
  if(a==="close")return setOpen(false,true);
  if(a==="role"){if(v!==S.role)setRole(v)}
  else if(a==="state"){const n=v==="true";if(n!==!!S.newCo){setMode(n);toast(n?"Showing the empty state.":"Showing the filled state.")}}
+ else if(a==="flag"){FEATURES[v]=!FEATURES[v];render();toast(`${(FLAGS.find(f=>f[0]===v)||[,v])[1]} ${FEATURES[v]?"shown":"hidden"}.`)}
  else if(a==="reset")resetDemo();
  if(open)draw();
 });

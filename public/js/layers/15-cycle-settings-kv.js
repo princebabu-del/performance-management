@@ -50,11 +50,11 @@ const csRatingKey=r=>r==="Stars"?"Stars":/^(No rating|Written answers only)$/.te
 const csRatingNote=c=>csScale(csRatingKey(c.rating||(c.wz||{}).rating||""));
 /* editor › Overall Rating: same card, with the scale row in place of the blue "What employees see" banner */
 rxRating=function(w){if(!RX_FMTS.some(f=>f.k===w.rating))w.rating="Numeric 1–5 with definitions";
- return `<section class="form-section">${rxHd("Overall Rating","One overall rating format for everyone in this cycle, or no overall rating. Questionnaires can still ask their own questions.")}
+ return `<section class="section">${rxHd("Overall Rating","One overall rating format for everyone in this cycle, or no overall rating. Questionnaires can still ask their own questions.")}
   <div class="setting-list"><div class="setting">${fcQ("Rating format",{id:"rxFmtQ",d:"One rating format or no rating for this cycle.",did:"rxFmtD"})}
    ${fcSel({id:"rxFmt",value:w.rating,options:RX_FMTS.map(o=>({v:o.k,t:RX_FMT_LBL[o.k]||o.n})),ph:"Select an option",pick:"rxFmtPick"}).replace('aria-haspopup="listbox"','aria-haspopup="listbox" aria-describedby="rxFmtD"')}
   </div></div><!--fc-rate-->
-  ${w.rating==="No rating"?banner("info",`<b>No overall rating for this cycle.</b> Reviewers only answer the questionnaire, and employees see the written feedback without a score. Questionnaires can still ask their own rating questions.`):csScale(w.rating)}</section>`};
+  ${w.rating==="No rating"?banner("info",`<b>No overall rating.</b> Employees see the written feedback only, without a score.`):csScale(w.rating)}</section>`};
 /* Rating format pick (same single-select dropdown as Review type / Repeats, 30-single-select.js) */
 function rxFmtPick(v){if(v){W().rating=v;render()}}
 /* a row is {k, v} (plain text, escaped here) or {k, html}; note = HTML shown under the value */
@@ -69,15 +69,19 @@ function csSections(c){const x=csRx(c),type=clType(c),rev=clReviewee(c),rep=clRe
  const details=[csRow("Cycle Name",c.name),csRow("Review Type",type)];
  if(type==="General Review")details.push(csRow("Cycle Period",per==="—"?c.period:per),csRow("Repeats",rep==="—"?"":rep,csRepeatLink(c)));
  else details.push(csRow("Review Schedule",clProbSched(c)));
- details.push(csRow("Cycle reopening",reopen),{k:"Additional Notes",html:cdDescBlock(c)});
+ if(type==="General Review")details.push(csRow("Cycle reopening",reopen));
+ details.push({k:"Additional Notes",html:cdDescBlock(c)});
  const revRows=csReviewerRows(c,x);
- if(revRows.length)revRows.push(csRow("Editing submission",x.revEdit&&x.revEdit.on?"Allowed until the due date, or the cycle end date if there's no due date":"Not allowed"));
+ if(revRows.length&&type!=="Project Completion Review")revRows.unshift(csRow("Peer nomination",peerTxt));   // Peer nomination sits in Reviewers, above the reviewer table
+ const visT=(L,v)=>(L.find(o=>o.v===v)||{}).t||v;
+ if(revRows.length&&x.self)revRows.push(csRow("Reviewer sees self-evaluation",visT(RX_SELFVIS,x.selfVis||D.settings.selfVis)));
+ if(revRows.length)revRows.push(csRow("Editing submissions",x.revEdit&&x.revEdit.on?"Allowed until the due date, or the cycle end date if there's no due date":"Not allowed"));
  return [
   ["Cycle Details",details],
-  ["Reviewee",[...(type==="Project Completion Review"?[csRow("Projects",clProjects(c))]:[]),csRow("Who is reviewed",rev),csRow("Self-evaluation",x.self?"Allowed":"Not allowed"),csRow("Peer nomination",peerTxt),csRow("Credentials",x.creds?"Shown on the review":"Not included")]],
+  ["Reviewee",[...(type==="Project Completion Review"?[csRow("Projects",clProjects(c))]:[]),csRow("Who is reviewed",rev),csRow("Self-evaluation",x.self?"Allowed":"Not allowed"),csRow("Reviewee sees results",visT(RX_RESULTS,x.results||D.settings.results)),csRow("Credentials",x.creds?"Shown on the review":"Not included")]],
   ["Reviewers",revRows],
   ["Overall Rating",[{k:"Rating Format",html:csRatingNote(c)}]],
-  ["Auto-assign",[{k:"Auto-assign",html:csAutoAssign(x,rev)||"Off"}]]]}
+  ...(type==="Project Completion Review"?[]:[["Assignment",[{k:"Auto-assign",html:csAutoAssign(x,rev)||"Off"}]]])]}
 /* Reviewers: everything set in the editor's reviewer table, per reviewer —
    Reviewers (role names) · Weightage (donut + legend on the right) · Questionnaire (each questionnaire with a View eye → side drawer, reviewers using it below) · View Reviewee's evaluation · Reviewee sees reviews from (Anonymous in brackets) · Edits after submission. */
 function csDueText(c,r){r={...r};rxDueMig(r);if(r.dueN===""||r.dueN==null)return"No due date";const n=+r.dueN,d=`${n} day${n===1?"":"s"}`;
