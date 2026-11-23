@@ -2,6 +2,8 @@
 :root{
   color-scheme:light;
   --top:#4B4B4B; --top-on:#1F1F1F;
+  /* Gray text colors (design system): primary #101828 · secondary #344054 · tertiary #667085 (descriptions, help) · inverse #FFFFFF */
+  --text-primary:#101828; --text-secondary:#344054; --text-tertiary:#667085; --text-inverse:#FFFFFF;
   --bg:#F3F4F6; --surface:#FFFFFF; --sub:#F9FAFB; --head:#EBECEF;
   --line:#E5E7EB; --line2:#D1D5DB;
   --ink:#111827; --ink2:#374151; --mute:#6B7280; --desc:#6B7FA3;

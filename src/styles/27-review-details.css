@@ -1,0 +1,27 @@
+/* ===== Review Details page (cycle detail › Overview). Markup: 17-cycle-detail-layout.js (header), 15-cycle-settings-kv.js (sections). ===== */
+
+/* header sub-line (Reviewee • Cycle type • Period / schedule • Created by … on …): secondary text */
+.cd-desc{color:var(--text-secondary)}
+
+/* header kebab (⋮): its menu opens 4px under the 44px button */
+.cd-acts .kebab>.menu{top:calc(100% + 4px)}
+
+/* section cards: one block, no rule under the header — 24px in all round, 24px from the header to the rows, rows 12px apart
+   (200px key column, 12px to the value, from 17-cycle-detail.css). Heading and values primary, keys tertiary */
+.cs-card.card{display:flex;flex-direction:column;gap:24px;padding:24px}
+.cs-card .hd{min-height:0;padding:0;border-bottom:0;flex-wrap:nowrap}
+.cs-kv-list{gap:12px;padding:0}
+.cs-card .hd h3{margin:0;font-size:20px;font-weight:600;line-height:1.2;color:var(--text-primary)}
+.cs-kv-k{font-size:14px;font-weight:500;line-height:1.4;letter-spacing:-.28px;color:var(--text-tertiary)}
+.cs-kv-v{font-size:14px;font-weight:500;line-height:1.4;letter-spacing:-.28px;color:var(--text-primary)}
+
+/* Edit (section header): no border, 20px edit-02 icon + label, both secondary text color */
+.cs-edit{flex:none;display:inline-flex;align-items:center;gap:8px;height:32px;margin-right:-8px;padding:0 8px;border:0;border-radius:8px;background:none;cursor:pointer;
+  font-family:var(--f);font-size:14px;font-weight:600;line-height:1.4;color:var(--text-secondary)}
+.cs-edit-i{display:block;flex:none;width:20px;height:20px}
+.cs-edit:hover{background:#F9FAFB}
+.cs-edit:focus-visible{outline:2px solid #2970FF;outline-offset:0}
+
+/* tabs: same style as the Review Cycles tabs (shared rules in 25-listing-pages.css); the rule under them runs the full width of the header, as on Review Cycles */
+.cd-tabs{border-bottom:0}
+.cd-head{border-bottom:0}   /* the full-width rule now sits under .cd-tabbar (18-cycle-detail-layout.css) */

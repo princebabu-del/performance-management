@@ -56,43 +56,67 @@ const clRating=c=>{const r=c.rating||(c.wz||{}).rating||"";return r==="Stars"?"S
 const CL_SEED_CREATED={c1:["2026-09-15","Rachel Kim"],c2:["2026-06-16","Rachel Kim"],c3:["2025-12-10","Dana Whitfield"],c4:["2026-03-02","Rachel Kim"],c6:["2026-03-17","Rachel Kim"],c7:["2026-11-02","Rachel Kim"],c9:["2026-10-20","Rachel Kim"],c10:["2026-10-28","Dana Whitfield"],c5:["2026-08-14","Rachel Kim"],c8:["2025-12-16","Rachel Kim"]};
 function clStamp(c){if(c.createdISO)return c;const seed=CL_SEED_CREATED[c.id],d=new Date();
  [c.createdISO,c.createdBy]=seed||[`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`,"Rachel Kim"];return c}
-/* Review Cycles table columns. Created Date and Created By are optional and hidden by default; turn them on from Columns.
-   Rows are a fixed 56px: every cell is one line, and text that doesn't fit is cut with "…" (full text on hover). t = escaped text. */
+/* Review Cycles table columns. Created By and Created Date show by default (same as Questionnaires); turn any off from Columns.
+   Rows are a fixed 56px: every cell is one line, and text that doesn't fit is cut with "…" (full text on hover). t = escaped text.
+   sv = the value the column sorts by (lsSorted / lsTh in app.js). */
+/* Active, Scheduled and Closed show the same columns, but an auto-sized table fits each column to the rows on screen, so
+   widths changed from tab to tab. clSizer adds an invisible row (tfoot, visibility:collapse — takes no space, still sizes
+   columns) holding each column's longest value across all three tabs plus room for the widest actions (two 40px buttons),
+   so every column is the same width on all three. Drafts has its own columns and isn't sized this way. */
+const clSizer=cols=>{if(clDraftTab())return"";const pool=D.cycles.filter(c=>!["Draft","Archived"].includes(c.status));if(!pool.length)return"";
+ const len=(x,c)=>String(x.sv?x.sv(c)??"":"").length;
+ return `<tfoot class="cl-sizer" aria-hidden="true"><tr><td class="cbx"></td>${cols.map(x=>x.td(pool.reduce((a,b)=>len(x,b)>len(x,a)?b:a),0,false)).join("")}<td class="act"><span class="cl-sizer-act"></span></td></tr></tfoot>`};
+const clSortVal=(c,k)=>{const x=clCols().find(x=>x.k===k);return x&&x.sv?x.sv(c):""};
 const clT=t=>`<span class="cl-t" title="${t}">${t}</span>`;
 const CL_COLS=[
- {k:"name",l:"Cycle Name",lock:true,td:c=>`<td>${clT(esc(c.name))}</td>`},
- {k:"type",l:"Cycle Type",td:c=>`<td>${clT(esc(clType(c)))}</td>`},
- {k:"period",l:"Cycle Period",td:c=>`<td>${clT(esc(clType(c)!=="General Review"?clSchedWindow(c):clPeriod(c)))}</td>`},
- {k:"repeats",l:"Repeats",td:c=>`<td>${clT(esc(clType(c)!=="General Review"?clSchedEvery(c):clRepeats(c)))}</td>`},
- {k:"reviewee",l:"Reviewee",td:c=>`<td>${clT(esc(clReviewee(c)))}</td>`},
- {k:"reviewers",l:"Number of Reviewers",num:true,td:c=>`<td class="num">${clReviewers(c)}</td>`},
- {k:"rating",l:"Rating System",td:c=>`<td>${clT(esc(clRating(c)))}</td>`},
- {k:"created",l:"Created Date",off:true,td:c=>`<td class="nw">${isoMDY(clStamp(c).createdISO)}</td>`},
- {k:"createdBy",l:"Created By",off:true,td:c=>`<td>${clT(esc(clStamp(c).createdBy))}</td>`}];
-/* visible columns, in the user's order (S.cycOrder, set by dragging in the Columns dropdown — layer 21). Locked columns stay first. */
-const clOrder=()=>{const all=CL_COLS.map(x=>x.k),o=Array.isArray(S.cycOrder)?S.cycOrder.filter(k=>all.includes(k)):[];
- const rest=[...o,...all.filter(k=>!o.includes(k))],lock=CL_COLS.filter(x=>x.lock).map(x=>x.k);return [...lock,...rest.filter(k=>!lock.includes(k))]};
-const clColsOn=()=>{if(!Array.isArray(S.cycCols))S.cycCols=CL_COLS.filter(x=>!x.off).map(x=>x.k);return clOrder().map(k=>CL_COLS.find(x=>x.k===k)).filter(x=>x.lock||S.cycCols.includes(x.k))};
+ {k:"name",l:"Cycle Name",lock:true,sv:c=>c.name,td:c=>`<td>${clT(esc(c.name))}</td>`},
+ {k:"type",l:"Cycle Type",sv:c=>clType(c),td:c=>`<td>${clT(esc(clType(c)))}</td>`},
+ {k:"period",l:"Cycle Period",sv:c=>clType(c)!=="General Review"?clSchedWindow(c):clPeriod(c),td:c=>`<td>${clT(esc(clType(c)!=="General Review"?clSchedWindow(c):clPeriod(c)))}</td>`},
+ {k:"repeats",l:"Repeats",sv:c=>clType(c)!=="General Review"?clSchedEvery(c):clRepeats(c),td:c=>`<td>${clT(esc(clType(c)!=="General Review"?clSchedEvery(c):clRepeats(c)))}</td>`},
+ {k:"reviewee",l:"Reviewee",sv:c=>clReviewee(c),td:c=>`<td>${clT(esc(clReviewee(c)))}</td>`},
+ {k:"reviewers",l:"Number of Reviewers",num:true,sv:c=>Number(clReviewers(c))||0,td:c=>`<td class="num">${clReviewers(c)}</td>`},
+ {k:"rating",l:"Rating System",sv:c=>clRating(c),td:c=>`<td>${clT(esc(clRating(c)))}</td>`},
+ {k:"createdBy",l:"Created By",sv:c=>clStamp(c).createdBy,td:c=>`<td>${clT(esc(clStamp(c).createdBy))}</td>`},
+ {k:"created",l:"Created Date",sv:c=>clStamp(c).createdISO,td:c=>`<td class="nw">${isoMDY(clStamp(c).createdISO)}</td>`}];
+/* Drafts tab: Cycle Name · Cycle Type · Last Modified By · Last Modified Date. Last modified falls back to created
+   until the draft is saved again (wzSave stamps modBy / modISO, layer 31). */
+const clMod=c=>{clStamp(c);return {by:c.modBy||c.createdBy,iso:c.modISO||c.createdISO}};
+const CL_DRAFT_COLS=[CL_COLS[0],CL_COLS[1],
+ {k:"modBy",l:"Last Modified By",sv:c=>clMod(c).by,td:c=>`<td>${clT(esc(clMod(c).by))}</td>`},
+ {k:"modified",l:"Last Modified Date",sv:c=>clMod(c).iso,td:c=>`<td class="nw">${isoMDY(clMod(c).iso)}</td>`}];
+const clDraftTab=()=>S.view==="cycles"&&S.cycTab==="Drafts"&&!(typeof PR==="function"&&PR());
+const clCols=()=>clDraftTab()?CL_DRAFT_COLS:CL_COLS;
+/* visible columns, in the user's order (set by dragging in the Columns dropdown — layer 21). Locked columns stay first.
+   The Drafts tab keeps its own choices (S.cycColsD / S.cycOrderD) apart from the other tabs (S.cycCols / S.cycOrder). */
+const clOrder=()=>{const C_=clCols(),so=S[clDraftTab()?"cycOrderD":"cycOrder"],all=C_.map(x=>x.k),o=Array.isArray(so)?so.filter(k=>all.includes(k)):[];
+ const rest=[...o,...all.filter(k=>!o.includes(k))],lock=C_.filter(x=>x.lock).map(x=>x.k);return [...lock,...rest.filter(k=>!lock.includes(k))]};
+const clColsOn=()=>{const C_=clCols(),key=clDraftTab()?"cycColsD":"cycCols";if(!Array.isArray(S[key]))S[key]=C_.filter(x=>!x.off).map(x=>x.k);
+ return clOrder().map(k=>C_.find(x=>x.k===k)).filter(x=>x.lock||S[key].includes(x.k))};
 V.cycles=()=>{
  const tabs=[["Active",c=>["Active","Paused"].includes(c.status)],["Scheduled",c=>c.status==="Scheduled"],["Drafts",c=>c.status==="Draft"],["Closed",c=>c.status==="Closed"]];
  if(!tabs.some(t=>t[0]===S.cycTab))S.cycTab="Active";
- const list=D.cycles.filter(tabs.find(t=>t[0]===S.cycTab)[1]).filter(c=>!S.q||c.name.toLowerCase().includes(S.q.toLowerCase())),cols=clColsOn();
  D.cycles.forEach(clStamp);
+ let rows=D.cycles.filter(tabs.find(t=>t[0]===S.cycTab)[1]).filter(c=>!S.q||c.name.toLowerCase().includes(S.q.toLowerCase()));
+ if(typeof lsFilterRows==="function")rows=lsFilterRows("cycles",rows);   // Filters drawer (layers/31-listing-filters.js)
+ const list=lsSorted("cycles",rows,clSortVal),cols=clColsOn();
  const sel=[...S.sel].filter(id=>list.some(c=>c.id===id)),all=list.length&&sel.length===list.length,some=sel.length&&!all;
- return `<div class="ph"><div><h1>Review Cycles</h1></div><button class="btn p" onclick="startCycle()">${ic("plus")} New Review Cycle</button></div>
+ return `<div class="ph"><div><h1>Review Cycles</h1></div><button class="btn p" onclick="startCycle()">${ic("plus")} Add Review Cycle</button></div>
  ${tabBar(tabs.map(t=>({id:t[0],label:t[0],count:D.cycles.filter(t[1]).length})),{active:S.cycTab,label:"Review cycle status",onSelect:id=>`nav('cycles',{cycTab:'${id}'})`})}
- <div class="card">${toolbar(`<div class="cl-tools-l"><label class="srch">${ic("search")}<input id="cq" placeholder="Search review cycles" value="${esc(S.q)}" oninput="S.q=this.value;render();const i=$('#cq');i.focus();i.setSelectionRange(i.value.length,i.value.length)"></label>${sel.length?bulkBar(sel.length,clBulkActs(S.cycTab,sel)):""}</div>`)}
- ${list.length?`<div class="tw"><table class="tbl cyctbl"><thead><tr><th class="cbx"><input type="checkbox" aria-label="Select all cycles" ${all?"checked":""} ${some?'data-indet="1" aria-checked="mixed"':""} onchange="S.sel=new Set(this.checked&&!this.hasAttribute('data-indet')?[${list.map(c=>`'${c.id}'`)}]:[]);S.menu=null;render()"></th>${cols.map(x=>`<th${x.num?' class="num"':""}>${x.l}</th>`).join("")}<th class="act"></th></tr></thead><tbody>${pgRows(list,"cycles-"+S.cycTab).map(c=>{const n=D.packets.filter(p=>p.cid===c.id&&p.exc!=="Removed").length,draft=c.status==="Draft";
-  const act=draft?`<button class="link" onclick="editDraft('${c.id}')">Continue setup</button>`:c.status==="Closed"?"":`<button class="link" onclick="assignCycle('${c.id}')">Assign</button>`;
+ <div class="card">${list.length||S.q||fltOn("cycles")?toolbar(`<div class="cl-tools-l"><label class="srch">${ic("search")}<input id="cq" placeholder="Search review cycles" value="${esc(S.q)}" oninput="S.q=this.value;render();const i=$('#cq');i.focus();i.setSelectionRange(i.value.length,i.value.length)"></label>${sel.length?bulkBar(sel.length,clBulkActs(S.cycTab,sel)):""}</div>`):""}
+ ${list.length?`<div class="tw"><table class="tbl cyctbl"><thead><tr><th class="cbx"><input type="checkbox" aria-label="Select all cycles" ${all?"checked":""} ${some?'data-indet="1" aria-checked="mixed"':""} onchange="S.sel=new Set(this.checked&&!this.hasAttribute('data-indet')?[${list.map(c=>`'${c.id}'`)}]:[]);S.menu=null;render()"></th>${cols.map(x=>lsTh("cycles",x.k,x.l,x.num?"num":"")).join("")}<th class="act"></th></tr></thead><tbody>${pgRows(list,"cycles-"+S.cycTab).map(c=>{const n=D.packets.filter(p=>p.cid===c.id&&p.exc!=="Removed").length,draft=c.status==="Draft";
+  const act=draft?`<button type="button" class="cd-tert" onclick="editDraft('${c.id}')">Continue setup</button>`:c.status==="Closed"?(cycCanReopen(c)?`<button type="button" class="cd-tert" onclick="cycReopen('${c.id}')">Reopen</button>`:""):`<button class="btn ghost s" aria-label="Assign review cycle" data-tip="Assign Review Cycle" onclick="assignCycle('${c.id}')">${ic("userplus")}</button>`;
   const on=S.sel.has(c.id);
   return `<tr class="click ${S.hl===c.id?"hl":""} ${on?"sel":""}" onclick="${draft?`editDraft('${c.id}')`:`nav('cycle',{cid:'${c.id}',tab:'overview'})`}"><td class="cbx" onclick="event.stopPropagation()"><input type="checkbox" aria-label="Select ${esc(c.name)}" ${on?"checked":""} onchange="this.checked?S.sel.add('${c.id}'):S.sel.delete('${c.id}');S.menu=null;render()"></td>${cols.map(x=>x.td(c,n,draft)).join("")}
-  <td class="act" onclick="event.stopPropagation()"><div class="cyc-act">${act}${cycleMenu(c)}</div></td></tr>`}).join("")}</tbody></table></div>${pgFoot(list.length,"cycles-"+S.cycTab)}`:clEmpty()}</div>`};
+  <td class="act" onclick="event.stopPropagation()"><div class="cyc-act">${act}${cycleMenu(c,false,true)}</div></td></tr>`}).join("")}</tbody>${clSizer(cols)}</table></div>${pgFoot(list.length,"cycles-"+S.cycTab)}`:clEmpty()}</div>`};
 /* empty table: the Overview card empty state (heading + gray description), no button. A search with no hits gets its own message. */
 const CL_EMPTY={Active:["No active cycles","Cycles show up here once they start. Scheduled cycles move here on their start date."],
  Scheduled:["No scheduled cycles","Cycles with a future start date wait here until they begin."],
  Drafts:["No drafts","Cycles saved as a draft show up here so you can finish setting them up."],
  Closed:["No closed cycles yet","Results appear here after a cycle closes."]};
-const clEmpty=()=>S.q?emptyState("No cycles match your search",`Nothing in ${esc(S.cycTab)} matches “${esc(S.q)}”. Try a different name or check the other tabs.`):emptyState(...(CL_EMPTY[S.cycTab]||CL_EMPTY.Active));
+const fltOn=view=>Object.values((S.flt||{})[view]||{}).some(v=>Array.isArray(v)?v.length:v&&(v.from||v.to));   // any filter applied (lists or date ranges)
+const clEmpty=()=>S.q?emptyState("No cycles match your search",`Nothing in ${esc(S.cycTab)} matches “${esc(S.q)}”. Try a different name or check the other tabs.`)
+ :fltOn("cycles")?emptyState("No cycles match your filters",`Nothing in ${esc(S.cycTab)} matches the selected filters. Try resetting a filter or check the other tabs.`)
+ :emptyState(...(CL_EMPTY[S.cycTab]||CL_EMPTY.Active));
 /* Questionnaires table empty state: same pattern as review cycles (heading + gray description, no button).
    A search or filter with no hits gets its own message. */
 const TPL_EMPTY={Active:["No active questionnaires","Published questionnaires show up here, ready to use in your review cycles."],
@@ -100,7 +124,7 @@ const TPL_EMPTY={Active:["No active questionnaires","Published questionnaires sh
  Favorites:["No favorites yet","Star a questionnaire to keep it here for quick access."],
  Drafts:["No drafts","Questionnaires saved as a draft show up here so you can finish them."],
  Archive:["No archived questionnaires","Questionnaires in use are archived instead of deleted, so history stays intact."]};
-const tplEmpty=()=>{const f=(S.flt||{}).templates||{},flt=Object.values(f).some(v=>v&&v.length);
+const tplEmpty=()=>{const flt=fltOn("templates");
  return S.q?emptyState("No questionnaires match your search",`Nothing in ${esc(S.tplTab)} matches “${esc(S.q)}”. Try a different name or check the other tabs.`)
   :flt?emptyState("No questionnaires match your filters",`Nothing in ${esc(S.tplTab)} matches the selected filters. Try clearing a filter or check the other tabs.`)
   :emptyState(...(TPL_EMPTY[S.tplTab]||TPL_EMPTY.Active))};

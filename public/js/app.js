@@ -46,9 +46,10 @@ const P={
  useradd:'<circle cx="9" cy="8" r="4"/><path d="M2 21c1-4 4-6 7-6 2 0 3.5.6 4.5 1.5M19 14v6M16 17h6"/>',
  hist:'<path d="M3 12a9 9 0 103-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/>',
  flow:'<rect x="3" y="3" width="6" height="6" rx="1"/><rect x="15" y="15" width="6" height="6" rx="1"/><path d="M6 9v4a2 2 0 002 2h7"/>',
+ trash:'<path d="M16 6V5.2C16 4.0799 16 3.51984 15.782 3.09202C15.5903 2.71569 15.2843 2.40973 14.908 2.21799C14.4802 2 13.9201 2 12.8 2H11.2C10.0799 2 9.51984 2 9.09202 2.21799C8.71569 2.40973 8.40973 2.71569 8.21799 3.09202C8 3.51984 8 4.0799 8 5.2V6M10 11.5V16.5M14 11.5V16.5M3 6H21M19 6V17.2C19 18.8802 19 19.7202 18.673 20.362C18.3854 20.9265 17.9265 21.3854 17.362 21.673C16.7202 22 15.8802 22 14.2 22H9.8C8.11984 22 7.27976 22 6.63803 21.673C6.07354 21.3854 5.6146 20.9265 5.32698 20.362C5 19.7202 5 18.8802 5 17.2V6"/>',   // Figma trash-01 (delete actions)
  archive:'<rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v10a1 1 0 001 1h12a1 1 0 001-1V9M10 13h4"/>'
 };
-const ic=(n,c="")=>`<svg class="i ${c}" viewBox="0 0 24 24" aria-hidden="true">${P[n]||""}</svg>`;
+const ic=(n,c="")=>`<svg class="i ${c}" data-i="${n}" viewBox="0 0 24 24" aria-hidden="true">${P[n]||""}</svg>`;
 const initials=n=>n.split(" ").map(x=>x[0]).slice(0,2).join("");
 const AV_COL=["#2F6FDE","#0EA5E9","#16A34A","#D97706","#7C3AED","#DB2777","#0F766E","#B45309","#4B5563"];
 const av=(n,sz=30)=>`<span class="avatar" style="width:${sz}px;height:${sz}px;font-size:${Math.round(sz*.38)}px;background:${AV_COL[[...n].reduce((a,c)=>a+c.charCodeAt(0),0)%AV_COL.length]}">${initials(n)}</span>`;
@@ -428,6 +429,22 @@ const pgFoot=(n,key="t")=>{if(n<=PG_MIN)return"";const s=pgState(key),last=pgCla
  const nums=last<=7?[...Array(last)].map((_,i)=>i+1):[...new Set([1,s.p-1,s.p,s.p+1,last].filter(p=>p>=1&&p<=last))].sort((a,b)=>a-b).flatMap((p,i,a)=>i&&p-a[i-1]>1?["…",p]:[p]);
  return `<div class="pgfoot"><div class="pp"><select aria-label="Rows per page" onchange="S.pg['${k}']={p:1,size:+this.value};render()">${PG_SIZES.map(z=>`<option ${z===s.size?"selected":""}>${z}</option>`).join("")}</select> per page<span class="dim sm">${(s.p-1)*s.size+1}–${Math.min(n,s.p*s.size)} of ${n}</span></div>
  <nav class="pg" aria-label="Pagination"><button type="button" aria-label="Previous page" ${s.p>1?"":"disabled"} onclick="${go(s.p-1)}">‹</button>${nums.map(p=>p==="…"?`<span>…</span>`:`<button type="button" class="${p===s.p?"on":""}" ${p===s.p?'aria-current="page"':""} onclick="${go(p)}">${p}</button>`).join("")}<button type="button" aria-label="Next page" ${s.p<last?"":"disabled"} onclick="${go(s.p+1)}">›</button></nav></div>`};
+/* Sortable listing tables (Review Cycles, Questionnaires). Until a header is clicked, rows are in name order A–Z and
+   no arrow shows. S.lsort[view] = {k, dir} once applied: dir 1 = A–Z (arrow down), -1 = Z–A (arrow up).
+   Clicking the sorted column flips it; clicking another column starts it at A–Z. The implicit default counts as
+   applied A–Z, so the first click on the name column flips it to Z–A. Empty values always sort last.
+   val(row, key) returns the raw value for a column; dates written MM/DD/YYYY sort by date. */
+const LS_ARROW={"1":'<path d="M10 4.167v11.666m0 0L15.833 10M10 15.833L4.167 10"/>',"-1":'<path d="M10 15.833V4.167m0 0L4.167 10M10 4.167L15.833 10"/>'};
+const lsKey=v=>{if(v==null)return"";if(typeof v==="number")return v;const s=String(v).trim(),m=s.match(/^(\d{2})\/(\d{2})\/(\d{4})/);return m?m[3]+m[1]+m[2]+s.slice(10):s};
+const lsCmp=(a,b)=>{const x=lsKey(a),y=lsKey(b);return typeof x==="number"&&typeof y==="number"?x-y:String(x).localeCompare(String(y),undefined,{numeric:true,sensitivity:"base"})};
+const lsState=(view,def)=>(S.lsort||{})[view]||{k:def,dir:1};
+function lsSorted(view,rows,val,def="name"){const s=lsState(view,def);
+ return [...rows].sort((a,b)=>{const x=val(a,s.k),y=val(b,s.k),ex=lsKey(x)==="",ey=lsKey(y)==="";if(ex!==ey)return ex?1:-1;return s.dir*lsCmp(x,y)||lsCmp(val(a,def),val(b,def))})}
+function lsTh(view,k,label,cls="",def="name"){const s=(S.lsort||{})[view],on=!!s&&s.k===k,cur=lsState(view,def),dir=cur.k===k?cur.dir:0;
+ return `<th class="ls-th${cls?" "+cls:""}" data-view="${view}" data-k="${k}" aria-sort="${dir>0?"ascending":dir<0?"descending":"none"}"><button type="button" class="th-sort ls-sort" onclick="lsSortBy('${view}','${k}','${def}')">${label}${on?`<svg class="ls-sort-i" viewBox="0 0 20 20" aria-hidden="true">${LS_ARROW[s.dir]}</svg>`:""}</button><span class="ls-rz" role="separator" aria-orientation="vertical" aria-label="Resize ${label} column" onmousedown="lsRzStart(event,'${view}','${k}')"></span></th>`}
+function lsSortBy(view,k,def="name"){const L=S.lsort||(S.lsort={}),s=lsState(view,def);L[view]={k,dir:s.k===k?-s.dir:1};
+ Object.keys(S.pg||{}).filter(key=>key.startsWith(view)||key.startsWith("pr-"+view)).forEach(key=>S.pg[key].p=1);   // back to page 1
+ render()}
 const toolbar=(search,extra="")=>`<div class="tools">${search}<div class="row">${extra}<button class="btn" onclick="colMenu(event)">${ic("cols")} Columns</button><button class="btn" onclick="openFilters()">${ic("filter")} Filters${fCount()?` · ${fCount()}`:""}</button></div></div>`;
 function colMenu(e){e.stopPropagation();openModal(`<h3>Columns</h3><p class="dim" style="margin:0 0 10px">Choose which columns show in this table.</p>${["Employee","Crew · job site","Self","Manager review","Rating","Status","Next step"].map(c=>`<label class="opt"><input type="checkbox" checked> ${c}</label>`).join("")}<div class="mf"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn p" onclick="closeModal();toast('Columns saved for you.')">Apply</button></div>`,380)}
 const V={};
@@ -533,18 +550,17 @@ function cycleMenu(c,big,noReopen){
  const id="cm"+c.id+(big?"b":"");
  const items=[];
  if(["Scheduled","Active","Paused"].includes(c.status))items.push(["edit","Edit",`cycEdit('${c.id}')`]);
- if(c.status==="Draft")items.push(["edit","Continue setup",`editDraft('${c.id}')`]);
- else if(!["Active","Paused","Closed"].includes(c.status))items.push(["eye","Open",`nav('cycle',{cid:'${c.id}',tab:'overview'})`]);
+ if(!["Draft","Active","Paused","Closed"].includes(c.status))items.push(["eye","Open",`nav('cycle',{cid:'${c.id}',tab:'overview'})`]);
  if(!noReopen&&c.status==="Closed"&&typeof cycCanReopen==="function"&&cycCanReopen(c))items.push(["undo","Reopen",`cycReopen('${c.id}')`]);   // active cycles open from the row click, so no Open item
  if(c.status==="Active"){items.push(["send","Send reminders",`cycRemind('${c.id}')`]);if(typeof clType!=="function"||clType(c)==="General Review")items.push(["clock","Extend a phase",`cycExtend('${c.id}')`]);items.push(["pause","Pause cycle",`cycPause('${c.id}')`])}   // probation period and project end cycles have no cycle period to extend
  if(c.status==="Paused")items.push(["play","Resume cycle",`cycResume('${c.id}')`]);
- items.push(["copy","Duplicate",`cycDup('${c.id}')`]);
- if(["Closed"].includes(c.status))items.push(["archive","Archive",`cycArchive('${c.id}')`]);
+ if(!["Draft","Closed"].includes(c.status))items.push(["copy","Duplicate",`cycDup('${c.id}')`]);   // drafts can't be duplicated; closed cycles aren't either
  if(c.status==="Archived")items.push(["undo","Restore",`cycRestore('${c.id}')`]);
  const danger=[];
  if(c.status==="Active"||c.status==="Paused")danger.push(["check","Close cycle",`cycClose('${c.id}')`],["x","Cancel cycle",`cycCancel('${c.id}')`]);
- if(c.status==="Draft"||c.status==="Scheduled")danger.push(["x",c.status==="Draft"?"Delete draft":"Cancel launch",`cycCancel('${c.id}')`]);
- return `<div class="kebab"><button class="btn ${big?"":"ghost s"}" aria-label="More actions" onclick="toggleMenu('${id}',event)">${big?"More ":""}${ic("more")}</button>${S.menu===id?`<div class="menu">${items.map(i=>`<button onclick="S.menu=null;${i[2]}">${ic(i[0],"s")} ${i[1]}</button>`).join("")}${danger.length?"<hr>"+danger.map(i=>`<button class="d" onclick="S.menu=null;${i[2]}">${ic(i[0],"s")} ${i[1]}</button>`).join(""):""}</div>`:""}</div>`;
+ if(c.status==="Draft"||c.status==="Scheduled")danger.push([c.status==="Draft"?"trash":"x",c.status==="Draft"?"Delete":"Cancel launch",`cycCancel('${c.id}')`]);
+ if(!items.length&&!danger.length)return "";   // nothing to offer (e.g. a closed cycle whose Reopen is a button): no More options button
+ return `<div class="kebab"><button class="btn ${big?"":"ghost s"}" aria-label="${big?"More actions":"More options"}" ${big?"":'data-tip="More Options"'} onclick="toggleMenu('${id}',event)">${big?"More ":""}${ic("more")}</button>${S.menu===id?`<div class="menu">${items.map(i=>`<button onclick="S.menu=null;${i[2]}">${ic(i[0],"s")} ${i[1]}</button>`).join("")}${danger.length?(items.length?"<hr>":"")+danger.map(i=>`<button class="d" onclick="S.menu=null;${i[2]}">${ic(i[0],"s")} ${i[1]}</button>`).join(""):""}</div>`:""}</div>`;
 }
 function cycRemind(cid){const ps=D.packets.filter(p=>p.cid===cid&&p.exc!=="Removed"&&(["Not started","In progress","Submitted","Manager in progress"].includes(p.st)||p.exc==="Overdue"));
  openModal(`<h3>Send reminders</h3><p class="dim" style="margin:0 0 12px">Only people with an open review are reminded. Field workers get a text; office staff get app and email.</p>
@@ -770,7 +786,7 @@ function fTog(k,v,on){const d=S.fDraft;d[k]=d[k]||[];d[k]=on?[...d[k],v]:d[k].fi
 function openFilters(cat){S.flt=S.flt||{};const cats=FCATS[S.view]||FCATS.cycle;const keys=Object.keys(cats);
  if(!S.fDraft)S.fDraft=JSON.parse(JSON.stringify(S.flt[S.view]||{}));S.fCat=cat||(keys.includes(S.fCat)?S.fCat:keys[0]);const d=S.fDraft;
  const keep=S.fDraft;
- openDrawer({title:"Filters",w:820,bodyCls:"nopad",body:`<div class="fpane"><div class="fcat">${keys.map(k=>`<button class="${k===S.fCat?"on":""}" onclick="openFilters('${k}')">${k}${(d[k]||[]).length?`<span class="cntpill n">${d[k].length}</span>`:""}</button>`).join("")}</div><div class="fopt">${cats[S.fCat]().map(v=>`<label class="opt" style="font-size:16px"><input type="checkbox" value="${esc(v)}" ${(d[S.fCat]||[]).includes(v)?"checked":""} onchange="fTog('${S.fCat}',this.value,this.checked)"> ${esc(v)}</label>`).join("")}</div></div>`,
+ openDrawer({title:"Filters",w:640,bodyCls:"nopad",body:`<div class="fpane"><div class="fcat">${keys.map(k=>`<button class="${k===S.fCat?"on":""}" onclick="openFilters('${k}')">${k}${(d[k]||[]).length?`<span class="cntpill n">${d[k].length}</span>`:""}</button>`).join("")}</div><div class="fopt"><div class="lf-opts">${cats[S.fCat]().map(v=>`<label class="opt"><input type="checkbox" value="${esc(v)}" ${(d[S.fCat]||[]).includes(v)?"checked":""} onchange="fTog('${S.fCat}',this.value,this.checked)"> ${esc(v)}</label>`).join("")}</div></div></div>`,
   foot:`<button class="btn" onclick="S.fDraft={};openFilters()">Reset</button><button class="btn p" onclick="S.flt[S.view]=S.fDraft;S.fDraft=null;closeLayer();render();toast('Filters applied.')">Apply</button>`});
  S.fDraft=keep;
 }
@@ -968,31 +984,64 @@ V.templates=()=>{
  const tabs=S.newCo?["Starter","Favorites","Drafts","Archive"]:["Active","Favorites","Drafts","Archive"];
  const map={Active:"Active",Starter:"Starter",Drafts:"Draft",Archive:"Archived"};
  if(!tabs.includes(S.tplTab))S.tplTab=tabs[0];
- const f=(S.flt||{}).templates||{};
  let list=S.tplTab==="Favorites"?D.templates.filter(t=>t.fav&&t.status!=="Draft"):D.templates.filter(t=>t.status===map[S.tplTab]);
- if(f.Type&&f.Type.length)list=list.filter(t=>f.Type.includes(t.type));
- if(f.Language&&f.Language.includes("Spanish"))list=list.filter(t=>t.langs.includes("ES"));
+ if(typeof lsFilterRows==="function")list=lsFilterRows("templates",list);   // Filters drawer (layers/31-listing-filters.js)
  if(S.q)list=list.filter(t=>t.name.toLowerCase().includes(S.q.toLowerCase()));
+ list=lsSorted("templates",list,tplSortVal);
  const cnt=t=>t==="Favorites"?D.templates.filter(x=>x.fav&&x.status!=="Draft").length:D.templates.filter(x=>x.status===map[t]).length;
- return `<div class="ph"><div><h1>Questionnaires</h1></div><button class="btn p" onclick="newTemplate()">${ic("tpl")} Add Questionnaire</button></div>
+ return `<div class="ph"><div><h1>Questionnaires</h1></div><button class="btn p" onclick="newTemplate()">${ic("plus")} Add Questionnaire</button></div>
  ${tabBar(tabs.map(t=>({id:t,label:t,count:cnt(t)})),{active:S.tplTab,label:"Questionnaire status",onSelect:t=>`S.tplTab='${t}';render()`})}
  ${S.newCo&&S.tplTab==="Starter"?`<div class="note" style="margin-bottom:14px">Starter questionnaires are built for construction crews and offices, in English and Spanish. Preview one and save it to finish step 3 of setup.</div>`:""}
- <div class="card">${toolbar(`<label class="srch">${ic("search")}<input id="tq" placeholder="Search questionnaires" value="${esc(S.q)}" oninput="S.q=this.value;render();const i=$('#tq');i.focus();i.setSelectionRange(i.value.length,i.value.length)"></label>`)}
- ${list.length?`<div class="tw"><table class="tbl tpltbl"><thead><tr><th class="cbx"><input type="checkbox" aria-label="Select all"></th><th>Template Name</th><th>Questions</th><th>Created By</th><th>Created Date ↓</th><th>Used in Review Cycles</th><th class="act"><span class="cd-vh">Actions</span></th></tr></thead><tbody>${list.map(t=>{
-  const cycs=t.used.map(C).filter(Boolean);
-  const used=cycs.length?`<span title="${esc(cycs.map(c=>c.name).join(", "))}">${esc(cycs[0].name)}${cycs.length>1?` <span class="dim">+${cycs.length-1} more</span>`:""}</span>`:'<span class="dim">-</span>';
-  return `<tr class="click" onclick="openBuilder('${t.id}')"><td class="cbx" onclick="event.stopPropagation()"><input type="checkbox" aria-label="Select ${esc(t.name)}"></td><td><span class="b" style="font-weight:500">${esc(t.name)}</span>${t.langs.includes("ES")?' <span class="tag">EN · ES</span>':""}</td>
-  <td class="tab-num">${t.q}</td><td>${t.starter?"Lumber":"Anshika R."}</td><td class="tab-num">${t.created||"09/"+(10+t.id.length*3)+"/2026"}</td>
-  <td>${used}</td>
-  <td class="act" onclick="event.stopPropagation()"><div class="tpl-act">${t.status==="Draft"?"":`<button class="btn ghost s ${t.fav?"fav":""}" aria-label="${t.fav?"Remove from favorites":"Add to favorites"}" title="${t.fav?"Remove from favorites":"Add to favorites"}" aria-pressed="${!!t.fav}" onclick="T('${t.id}').fav=!T('${t.id}').fav;render()">${ic("star")}</button>`}${tplMenu(t)}</div></td></tr>`}).join("")}</tbody></table></div>${pgFoot(list.length)}`:tplEmpty()}</div>`;
+ <div class="card">${list.length||S.q||fltOn("templates")?toolbar(`<label class="srch">${ic("search")}<input id="tq" placeholder="Search questionnaires" value="${esc(S.q)}" oninput="S.q=this.value;render();const i=$('#tq');i.focus();i.setSelectionRange(i.value.length,i.value.length)"></label>`):""}
+ ${list.length?`<div class="tw"><table class="tbl tpltbl"><thead><tr><th class="cbx"><input type="checkbox" aria-label="Select all"></th>${tplColsOn().map(x=>lsTh("templates",x.k,x.l)).join("")}<th class="act"></th></tr></thead><tbody>${list.map(t=>{
+  return `<tr class="click" onclick="openBuilder('${t.id}')"><td class="cbx" onclick="event.stopPropagation()"><input type="checkbox" aria-label="Select ${esc(t.name)}"></td>${tplColsOn().map(x=>x.td(t)).join("")}
+  <td class="act" onclick="event.stopPropagation()"><div class="tpl-act">${t.status==="Draft"?`<button type="button" class="cd-tert" onclick="openBuilder('${t.id}')">Continue setup</button>`:t.status==="Archived"?`<button type="button" class="cd-tert" onclick="tplEnable('${t.id}')">Enable</button>`:`<button class="btn ghost s ${t.fav?"fav":""}" aria-label="${t.fav?"Remove from favourites":"Add to favourites"}" data-tip="${t.fav?"Remove from Favourites":"Add to Favourites"}" aria-pressed="${!!t.fav}" onclick="T('${t.id}').fav=!T('${t.id}').fav;render()">${ic("star")}</button>`}${tplMenu(t)}</div></td></tr>`}).join("")}</tbody>${tplSizer(tplColsOn())}</table></div>${pgFoot(list.length)}`:tplEmpty()}</div>`;
 };
+/* Questionnaires table: Created By / Created Date shown in the table, and the value each column sorts by */
+const tplBy=t=>t.starter?"Lumber":"Anshika R.";
+const TPL_LANG={EN:"English",ES:"Español"};
+const tplLangs=t=>(t.langs||[]).map(l=>TPL_LANG[l]||l).join(", ");
+/* last modified: who (modBy, else the creator) and when (upd: "Oct 11, 2026" or "Today", else the created date) */
+const tplMod=t=>{const n=new Date(),today=`${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,"0")}-${String(n.getDate()).padStart(2,"0")}`;
+ const c=tplCreated(t).split("/");return {by:t.modBy||tplBy(t),iso:t.upd==="Today"?today:(toISO(t.upd)||`${c[2]}-${c[0]}-${c[1]}`)}};
+const tplCreated=t=>t.created||"09/"+(10+t.id.length*3)+"/2026";
+/* Questionnaires table columns, shown / hidden and reordered from the Columns dropdown (layer 21), like Review Cycles.
+   Name is locked first. S.tplCols = visible keys, S.tplOrder = the user's order (Drafts tab: S.tplColsD / S.tplOrderD). */
+const TPL_COLS=[
+ {k:"name",l:"Name",lock:true,td:t=>`<td><span class="b" style="font-weight:500">${esc(t.name)}</span></td>`},
+ {k:"q",l:"Questions",td:t=>`<td class="tab-num">${t.q}</td>`},
+ {k:"langs",l:"Languages",td:t=>`<td>${esc(tplLangs(t))}</td>`},   // replaces the old "EN · ES" tag next to the name
+ {k:"by",l:"Created By",td:t=>`<td>${tplBy(t)}</td>`},
+ {k:"created",l:"Created Date",td:t=>`<td class="tab-num">${tplCreated(t)}</td>`},
+ {k:"used",l:"Used in Review Cycles",td:t=>{const cycs=t.used.map(C).filter(Boolean);
+  /* first cycle, then the rest as a gray "+N" badge whose tooltip lists them */
+  return `<td>${cycs.length?`<span title="${esc(cycs[0].name)}">${esc(cycs[0].name)}</span>${cycs.length>1?` <span class="lp-more" tabindex="0" data-tip="${esc(cycs.slice(1).map(c=>c.name).join(", "))}">+${cycs.length-1}</span>`:""}`:'<span class="dim">-</span>'}</td>`}}];
+/* Drafts tab: Name · Last Modified By · Last Modified Date */
+const TPL_DRAFT_COLS=[TPL_COLS[0],
+ {k:"modBy",l:"Last Modified By",td:t=>`<td>${esc(tplMod(t).by)}</td>`},
+ {k:"modified",l:"Last Modified Date",td:t=>`<td class="tab-num">${isoMDY(tplMod(t).iso)}</td>`}];
+const tplDraftTab=()=>S.tplTab==="Drafts";
+const tplCols=()=>tplDraftTab()?TPL_DRAFT_COLS:TPL_COLS;
+const tplOrder=()=>{const C_=tplCols(),so=S[tplDraftTab()?"tplOrderD":"tplOrder"],all=C_.map(x=>x.k),o=Array.isArray(so)?so.filter(k=>all.includes(k)):[];
+ const rest=[...o,...all.filter(k=>!o.includes(k))],lock=C_.filter(x=>x.lock).map(x=>x.k);return [...lock,...rest.filter(k=>!lock.includes(k))]};
+const tplColsOn=()=>{const C_=tplCols(),key=tplDraftTab()?"tplColsD":"tplCols";if(!Array.isArray(S[key]))S[key]=C_.map(x=>x.k);
+ return tplOrder().map(k=>C_.find(x=>x.k===k)).filter(x=>x.lock||S[key].includes(x.k))};
+/* Active, Favorites and Archive share the same columns: like Review Cycles (clSizer, layer 12), an invisible sizing row
+   holds each column's longest value across those tabs plus room for the widest actions (two 40px buttons), so every
+   column is the same width on all three. Drafts has its own columns and isn't sized this way. */
+const tplSizer=cols=>{if(tplDraftTab())return"";const pool=D.templates.filter(t=>t.status!=="Draft");if(!pool.length)return"";
+ const len=(x,t)=>String(tplSortVal(t,x.k)??"").length;
+ return `<tfoot class="cl-sizer" aria-hidden="true"><tr><td class="cbx"></td>${cols.map(x=>x.td(pool.reduce((a,b)=>len(x,b)>len(x,a)?b:a))).join("")}<td class="act"><span class="cl-sizer-act"></span></td></tr></tfoot>`};
+const tplSortVal=(t,k)=>k==="name"?t.name:k==="q"?t.q:k==="langs"?tplLangs(t):k==="modBy"?tplMod(t).by:k==="modified"?tplMod(t).iso:k==="by"?tplBy(t):k==="created"?tplCreated(t):k==="used"?((t.used.map(C).filter(Boolean)[0]||{}).name||""):"";
 function assignTpl(id){const t=T(id);if(t.status==="Draft"){toast("Publish this questionnaire before assigning it.");openBuilder(id);return}
  const pat=t.id==="t7"?"90-day new hire":t.id==="t6"?"Annual":"Quarterly crew check-in";S.wz=newWz(pat);const w=S.wz;const ty=t.type==="Self + Manager"?"Manager":t.type;if(!w.tpl.some(r=>r.id===id)){const r=w.tpl.find(r=>r.t===ty);if(r)r.id=id;else w.tpl.push({g:t.aud,t:ty,id})}w.types[ty]=true;nav("wizard");toast(`${t.name} added. Pick who to review next.`)}
-function tplMenu(t){const id="tm"+t.id,draft=t.status==="Draft";
- const items=[["edit","Edit",`openBuilder('${t.id}')`]];
- if(t.status==="Archived")items.push(["undo","Enable",`t_set('${t.id}','Active')`]);else if(!draft)items.push(["archive","Archive",`tplArchive('${t.id}')`]);
- const danger=draft?[["x","Delete draft",`tplDelete('${t.id}')`]]:[];   // drafts were never used in a cycle, so they're deleted instead of archived
- return `<div class="kebab"><button class="btn ghost s" aria-label="More actions" onclick="toggleMenu('${id}',event)">${ic("more")}</button>${S.menu===id?`<div class="menu">${items.map(i=>`<button onclick="S.menu=null;${i[2]}">${ic(i[0],"s")} ${i[1]}</button>`).join("")}${danger.length?"<hr>"+danger.map(i=>`<button class="d" onclick="S.menu=null;${i[2]}">${ic(i[0],"s")} ${i[1]}</button>`).join(""):""}</div>`:""}</div>`}
+function tplMenu(t){const id="tm"+t.id,draft=t.status==="Draft",arch=t.status==="Archived";
+ /* drafts: Continue setup is the row's button · archived: Enable is the row's button, and there's no Edit */
+ const items=[];
+ if(!draft&&!arch)items.push(["edit","Edit",`openBuilder('${t.id}')`],["archive","Archive",`tplArchive('${t.id}')`]);
+ const danger=draft?[["trash","Delete",`tplDelete('${t.id}')`]]:[];   // drafts were never used in a cycle, so they're deleted instead of archived
+ if(!items.length&&!danger.length)return "";
+ return `<div class="kebab"><button class="btn ghost s" aria-label="More options" data-tip="More Options" onclick="toggleMenu('${id}',event)">${ic("more")}</button>${S.menu===id?`<div class="menu">${items.map(i=>`<button onclick="S.menu=null;${i[2]}">${ic(i[0],"s")} ${i[1]}</button>`).join("")}${danger.length?"<hr>"+danger.map(i=>`<button class="d" onclick="S.menu=null;${i[2]}">${ic(i[0],"s")} ${i[1]}</button>`).join(""):""}</div>`:""}</div>`}
 function tplArchive(id){const t=T(id),live=t.used.map(C).filter(c=>c&&["Active","Paused","Scheduled"].includes(c.status));
  reasonModal({title:"Archive questionnaire?",desc:`${esc(t.name)} moves to the Archive tab and can't be added to new review cycles. You can enable it again at any time.`,
   affected:live.length?`In use by ${live.length} review cycle${live.length>1?"s":""}. ${live.length>1?"They":"It"} keep${live.length>1?"":"s"} working with this questionnaire.`:"",
@@ -1262,7 +1311,7 @@ function startCycle(pattern){S.wz=newWz(pattern||"Quarterly crew check-in");nav(
 function wzPattern(k){const name=W().name,keep=W().id;S.wz=newWz(k);S.wz.id=keep;render()}
 function wzIssues(){
  const w=W(),pool=wzCount(),out=[];
- if(!w.name.trim())out.push({b:1,step:0,t:"Add a cycle name",fix:[["Go to step 1","wzGo(0)"]]});
+ if(!w.name.trim())out.push({b:1,step:0,t:"Enter a cycle name",fix:[["Go to step 1","wzGo(0)"]]});
  if(!pool.length)out.push({b:1,step:0,t:"No one matches who is reviewed",fix:[["Edit who","wzGo(0)"]]});
  if(!Object.values(w.types).some(Boolean))out.push({b:1,step:1,t:"Turn on at least one review",fix:[["Go to reviews","wzGo(1)"]]});
  const nr=pool.filter(e=>e.name==="Hector Cruz"||e.name==="Omar Haddad");

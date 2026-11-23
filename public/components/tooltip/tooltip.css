@@ -1,0 +1,26 @@
+/* Tooltip (spec: Tooltip.tsx · runtime: tooltip.js · Figma Tooltip 4759:29052)
+   #101828 bubble, 12px medium white text, 8px 12px padding, 8px radius, lg drop shadow.
+   16×8.5 pointer, overlapping the bubble by 2.5px, 4px from the element. Keep in sync with TOOLTIP_TOKENS in Tooltip.tsx. */
+.lb-tip{position:fixed;top:0;left:0;z-index:1500;pointer-events:none;display:flex;flex-direction:column;align-items:flex-start;
+ filter:drop-shadow(0 12px 8px rgba(16,24,40,.08)) drop-shadow(0 4px 3px rgba(16,24,40,.03))}
+.lb-tip[hidden]{display:none}
+.lb-tip__bubble{max-width:320px;background:#101828;color:#fff;padding:8px 12px;border-radius:8px;font:500 12px/1.5 var(--f,Inter,sans-serif);letter-spacing:.12px;white-space:nowrap;text-align:center}
+
+/* pointer: the SVG points down; it's rotated for the other sides. Its offset along the edge is set by tooltip.js */
+.lb-tip__arrow{position:relative;display:block;flex:none;width:16px;height:8.5px;margin-top:-2.5px}
+.lb-tip__arrow img{position:absolute;left:50%;top:50%;width:16px;height:8.5px;transform:translate(-50%,-50%)}
+/* bubble above the element (top*): pointer under it, pointing down — the default */
+/* bubble below (bottom*): pointer above it, pointing up */
+.lb-tip[data-pos^="bottom"]{flex-direction:column-reverse}
+.lb-tip[data-pos^="bottom"] .lb-tip__arrow{margin:0 0 -2.5px}
+.lb-tip[data-pos^="bottom"] .lb-tip__arrow img{transform:translate(-50%,-50%) rotate(180deg)}
+/* bubble left of the element: pointer on its right, pointing right */
+.lb-tip[data-pos="left"]{flex-direction:row}
+.lb-tip[data-pos="left"] .lb-tip__arrow{width:8.5px;height:16px;margin:0 0 0 -2.5px}
+.lb-tip[data-pos="left"] .lb-tip__arrow img{transform:translate(-50%,-50%) rotate(-90deg)}
+/* bubble right of the element: pointer on its left, pointing left */
+.lb-tip[data-pos="right"]{flex-direction:row-reverse}
+.lb-tip[data-pos="right"] .lb-tip__arrow{width:8.5px;height:16px;margin:0 -2.5px 0 0}
+.lb-tip[data-pos="right"] .lb-tip__arrow img{transform:translate(-50%,-50%) rotate(90deg)}
+/* no pointer */
+.lb-tip[data-arrow="none"] .lb-tip__arrow{display:none}

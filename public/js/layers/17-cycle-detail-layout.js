@@ -34,8 +34,8 @@ V.cycle=()=>{
  if(!tabs.some(t=>t[0]===S.tab))S.tab="overview";
  const attn=live.filter(needsAttn),per=clPeriod(c);
  const rep=clRepeats(c);
- /* header: name + status badge, then one secondary line (period • reviewee • created by), then the description */
- const rv=clReviewee(c),sub=[clType(c),clType(c)!=="General Review"?clProbSched(c):per==="—"?c.period:per,rv==="—"?"":rv,`Created by ${c.createdBy} on ${isoMDY(c.createdISO)}`].filter(Boolean);
+ /* header: name + status badge, then one secondary line (reviewee • cycle type • period / schedule • created by and on) */
+ const rv=clReviewee(c),sub=[rv==="—"?"":rv,clType(c),clType(c)!=="General Review"?clProbSched(c):per==="—"?c.period:per,`Created by ${c.createdBy} on ${isoMDY(c.createdISO)}`].filter(Boolean);
  const canAssign=!["Closed","Archived","Draft"].includes(c.status);
  const body=S.tab==="people"?cycPeople(c,ps,attn):S.tab==="calibration"?cycCalibration(c,ps):S.tab==="audit"?cycAudit(c):cycSettings(c,ps);
  return `<div class="cd">
@@ -46,8 +46,8 @@ V.cycle=()=>{
     <p class="cd-desc">${sub.map(esc).join('<span class="cd-dot" aria-hidden="true"> • </span>')}</p></div></div>
    <div class="cd-acts">${c.status==="Paused"?`<button type="button" class="cd-btn" onclick="cycResume('${c.id}')">Resume</button>`:""}${cycCanReopen(c)?`<button type="button" class="cd-btn" onclick="cycReopen('${c.id}')">${ic("undo")} Reopen</button>`:""}${cycKebab(c)}${canAssign?`<button type="button" class="cd-btn p" onclick="assignCycle('${c.id}')">${ic("useradd")} Assign</button>`:""}</div>
   </div>
-  ${tabBar(tabs.map(t=>({id:t[0],label:t[1],count:t[2]===""?undefined:t[2]})),{active:S.tab,label:"Cycle sections",cls:"cd-tabs",onSelect:id=>`nav('cycle',{cid:'${c.id}',tab:'${id}',quick:'All'})`})}
  </div>
+ <div class="cd-tabbar">${tabBar(tabs.map(t=>({id:t[0],label:t[1],count:t[2]===""?undefined:t[2]})),{active:S.tab,label:"Cycle sections",cls:"cd-tabs",onSelect:id=>`nav('cycle',{cid:'${c.id}',tab:'${id}',quick:'All'})`})}</div>
  <div class="cd-body">${body}</div></div>`};
 /* stage progress as stat cards */
 const cdStats=c=>`<div class="cd-stats">${stageCounts(c).map(s=>`<div class="cd-stat ${s.st||""}"><div class="cd-stat-k">${s.st==="done"?"✓ ":""}${esc(s.n)}${s.st==="cur"?'<span class="cd-now">Current</span>':""}</div>

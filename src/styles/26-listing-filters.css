@@ -1,0 +1,98 @@
+/* Filters drawer for the listing tables (layers/31-listing-filters.js) */
+
+/* options pane header: "N selected" (14px medium) on the left, the category's Reset as a link button (14px semibold) on the right */
+.lf-pane{gap:16px}
+.lf-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0;padding:0 8px}   /* 8px sides: lines up with the option rows' 8px padding */
+.lf-n{font-size:14px;font-weight:500;line-height:20px;color:#344054}
+.lf-reset{margin-left:auto;border:0;background:none;padding:0;font:600 14px/20px var(--f);color:#2970FF;cursor:pointer}
+.lf-reset:hover:not(:disabled){text-decoration:underline;text-underline-offset:2px}
+.lf-reset:focus-visible{outline:2px solid #2970FF;outline-offset:2px;border-radius:2px}
+.lf-reset:disabled{color:#98A2B3;cursor:default}
+/* Option rows: checkbox / radio + label (Figma Prince's Cauldron 5215:22364). Checkbox sm: 16px, 4px radius, #D0D5DD border,
+   2px down so it centres on the first text line; 8px gap; label 14px medium #101828, 140% line height, -2% tracking.
+   Radio: same size and colours as a circle. Picked = #2970FF fill with a white check / dot. Used in every Filters drawer. */
+.fpane .fopt .opt{display:flex;align-items:flex-start;gap:8px;font-size:14px;font-weight:500;line-height:20px;letter-spacing:-0.28px;color:#101828;cursor:pointer}
+.fpane .fopt .opt input:is([type=checkbox],[type=radio]){appearance:none;-webkit-appearance:none;width:16px;height:16px;margin:2px 0 0;flex-shrink:0;
+ border:1px solid #D0D5DD;background:#fff center no-repeat;cursor:pointer;transition:background-color .12s,border-color .12s}
+.fpane .fopt .opt input[type=checkbox]{border-radius:4px;background-size:12px}
+.fpane .fopt .opt input[type=radio]{border-radius:50%;background-size:6px}
+.fpane .fopt .opt input:is([type=checkbox],[type=radio]):hover{border-color:#98A2B3}
+.fpane .fopt .opt input:is([type=checkbox],[type=radio]):checked{background-color:#2970FF;border-color:#2970FF}
+.fpane .fopt .opt input[type=checkbox]:checked{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M10 3 4.5 8.5 2 6' fill='none' stroke='%23fff' stroke-width='1.667' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
+.fpane .fopt .opt input[type=radio]:checked{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 6 6'%3E%3Ccircle cx='3' cy='3' r='3' fill='%23fff'/%3E%3C/svg%3E")}
+.fpane .fopt .opt input:is([type=checkbox],[type=radio]):focus-visible{outline:2px solid #2970FF;outline-offset:2px}
+
+/* ---------- date range selector (Figma 4631:14697) ----------
+   From / To: 44px, 14px side padding, #D0D5DD border (#2970FF on the active one), 16px medium, placeholder #98A2B3, 20px calendar icon.
+   Calendar: month row (8px icon buttons, 16px semibold #344054), Mo–Su header (14px medium), 40px day cells (14px regular #344054;
+   outside the month #667085; today #F2F4F7 medium; picked #2970FF white medium), days in between on a #EFF4FF band. */
+.lf-dr{display:flex;flex-direction:column;gap:16px;min-width:0;padding:0 8px}   /* 8px sides: lines up with "N selected" */
+.lf-dr-in{display:flex;gap:12px}
+.lf-dr-f{flex:1 1 0;min-width:0;display:flex;align-items:center;gap:8px;height:44px;box-sizing:border-box;padding:0 14px;border:1px solid #D0D5DD;border-radius:8px;background:#fff;cursor:text}
+.lf-dr-f.on{border-color:#2970FF}
+.lf-dr-f input{flex:1 1 0;width:0;min-width:0;border:0;outline:0;padding:0;background:none;font:500 16px/20px var(--f);color:#000}
+.lf-dr-f input::placeholder{color:#98A2B3;opacity:1}
+.lf-dr-f img{flex-shrink:0}
+.lf-cal{display:flex;flex-direction:column;gap:4px}
+.lf-cal-m{display:flex;align-items:center;justify-content:space-between}
+/* header month + year: each a button (16px semibold #344054), gray background on hover / while its picker is open */
+.lf-cal-t{display:flex;align-items:center;gap:2px}
+.lf-cal-lbl{border:0;background:none;padding:4px 6px;border-radius:6px;font:600 16px/24px var(--f);color:#344054;cursor:pointer}
+.lf-cal-lbl:hover,.lf-cal-lbl.on{background:#F2F4F7}
+.lf-cal-lbl:focus-visible{outline:2px solid #2970FF;outline-offset:0}
+/* month / year picker: 3 x 4 grid, 40px pills, 14px; current one blue like a picked day */
+.lf-cal-mg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding-top:8px}
+.lf-cal-pk{height:40px;border:0;border-radius:20px;background:none;font:500 14px/1 var(--f);color:#344054;cursor:pointer}
+.lf-cal-pk:hover{background:#F9FAFB}
+.lf-cal-pk.sel,.lf-cal-pk.sel:hover{background:#2970FF;color:#fff}
+.lf-cal-pk:focus-visible{outline:2px solid #2970FF;outline-offset:1px}
+.lf-cal-nav{display:inline-grid;place-content:center;padding:8px;border:0;border-radius:8px;background:none;cursor:pointer}
+.lf-cal-nav:hover{background:#F9FAFB}
+.lf-cal-nav:focus-visible{outline:2px solid #2970FF;outline-offset:0}
+.lf-cal-g{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));row-gap:2px}
+.lf-cal-h{height:40px;display:grid;place-content:center;font-size:14px;font-weight:500;color:#344054}
+.lf-cal-c{height:40px;display:grid;place-items:center}
+.lf-cal-c.band{background:#EFF4FF}
+.lf-cal-c.band:nth-child(7n+1){border-radius:20px 0 0 20px}
+.lf-cal-c.band:nth-child(7n){border-radius:0 20px 20px 0}
+.lf-cal-c.b-start{background:linear-gradient(to right,transparent 50%,#EFF4FF 50%)}
+.lf-cal-c.b-end{background:linear-gradient(to left,transparent 50%,#EFF4FF 50%)}
+.lf-cal-d{width:100%;max-width:40px;height:40px;border:0;border-radius:20px;background:none;font:400 14px/1 var(--f);color:#344054;cursor:pointer}
+.lf-cal-c.out .lf-cal-d{color:#667085}
+.lf-cal-d:hover{background:#F9FAFB}
+.lf-cal-d.today{background:#F2F4F7;font-weight:500}
+.lf-cal-d.sel,.lf-cal-d.sel:hover{background:#2970FF;color:#fff;font-weight:500}
+.lf-cal-d:focus-visible{outline:2px solid #2970FF;outline-offset:1px}
+
+/* ---------- Filters drawer layout (every Filters drawer): 640px wide (set in openFilters), 24px header,
+   280px category column with 12px padding, options pane with 24px top/bottom and 16px left/right padding, 16px between items ---------- */
+.drawer:has(.fpane) .dh{padding:24px}
+.fpane{grid-template-columns:280px minmax(0,1fr)}
+.fpane .fcat{padding:12px;gap:0}
+.fpane .fopt{padding:24px 16px;gap:16px}
+@media (max-width:640px){.fpane{grid-template-columns:1fr}}
+
+/* Filters drawer opens by sliding in from the right (same motion as the employee profile panel) */
+.dbg.lf-enter{animation:ep-fade .24s ease-out both}
+.dbg.lf-enter .drawer{animation:ep-push .32s cubic-bezier(.22,1,.36,1) both}
+@media (prefers-reduced-motion:reduce){.dbg.lf-enter,.dbg.lf-enter .drawer{animation:none}}
+/* category items: 12px padding all round · option rows (checkbox containers): 8px padding all round, no margin */
+.fpane .fcat button,.fpane .fcat button.on{height:44px;box-sizing:border-box;align-items:center;padding:12px;font-size:14px;font-weight:500;line-height:20px;color:#344054}
+.fpane .fopt .opt{padding:8px;margin:0}
+/* selected-count badge on a category: subtle blue */
+.fpane .fcat .cntpill.n{background:#EFF4FF;border-color:#D1E0FF;color:#155EEF;font-size:12px;line-height:18px;padding:0 8px}
+/* option row hover: light gray background over the row's 8px padding */
+.fpane .fopt .opt{border-radius:8px;transition:background-color .12s}
+.fpane .fopt .opt:hover{background:#F9FAFB}
+/* all checkbox options sit in one container with no gap between rows (each row's 8px padding spaces them) */
+.lf-opts{display:flex;flex-direction:column;gap:0}
+/* the options pane's single column can't grow past the pane (date picker, long labels) */
+.fpane .fopt{grid-template-columns:minmax(0,1fr)}
+
+/* Delete confirmation (Figma 1342:27783): red featured icon + red Delete button on the shared .fc-dlg dialog */
+.fc-dlg-ic.del{background:#FEE4E2;border-color:#FEF3F2}
+.fc-btn.danger{background:#D92D20;border-color:#D92D20;color:#fff;font-weight:600;box-shadow:0 1px 2px rgba(16,24,40,.05)}
+.fc-btn.danger:hover{background:#B42318;border-color:#B42318}
+.fc-btn.danger:focus-visible{outline:2px solid #D92D20;outline-offset:2px}
+.fc-dlg-a .fc-btn{font-weight:600}
+.del-dlg-d p+p{margin-top:14px}   /* delete dialog: the "Note that…" line is its own paragraph */

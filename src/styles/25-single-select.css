@@ -1,0 +1,28 @@
+/* New Review Cycle single-select dropdown (Review Type, Repeats, Who is going to be reviewed?) — markup: 30-single-select.js.
+   Field: the 44px .fc-inp/.fc-sel look (chevron right), value ellipsed. Popup: the reviewer multi-select's .rx-pop with
+   .rx-mo rows, no checkboxes; the chosen row ends in a 20px #2970FF check. */
+.fc-ss-btn{display:flex;align-items:center;min-width:0;margin:0;font-family:var(--f);cursor:pointer}
+.fc-ss-btn.open{border-color:var(--fc-blue)}
+.fc-ss-btn:focus-visible{outline:none;border-color:var(--fc-blue);box-shadow:0 0 0 4px rgba(41,112,255,.16)}
+.fc-ss-v{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fc-ss-pop{min-width:100%;width:max-content;max-width:min(400px,calc(100vw - 32px));gap:2px}
+.fc-ss-o{width:100%;margin:0;border:0;background:none;text-align:left;font-family:var(--f);justify-content:space-between}
+.fc-ss-o:focus-visible{outline:none;background:#F9FAFB;box-shadow:inset 0 0 0 2px rgba(41,112,255,.4)}
+.fc-ss-o>span{min-width:0}
+/* the chosen option keeps a #F2F4F7 fill (also on hover and keyboard focus) */
+.fc-ss-o.on,.fc-ss-o.on:hover,.fc-ss-o.on:focus-visible{background:#F2F4F7}
+.fc-ss-ck{display:block;flex:none;margin-left:12px}
+/* visually hidden, still read by screen readers (e.g. the peer-count dropdown's question, which has no visible label) */
+.fc-sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;border:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+/* in the reviewer table: the due-date "counted from" dropdown takes the old select's compact size (36px, 14px, 16px chevron) */
+.rx-dref-dd{flex:1;min-width:0}
+.rx-dref-dd .fc-ss-btn{height:36px;font-size:14px;padding:0 28px 0 10px;background-position:right 10px center;background-size:16px 16px}
+.rx-duec.bad .rx-dref-dd .fc-ss-btn{border-color:var(--red)}
+.rx-dref-dd .fc-ss-pop{min-width:180px}
+/* "Who is going to be reviewed?" before a role is picked: it is the last field on the page, so there is no room below; the list opens above the field, 4px gap */
+.fc-ss-up>.rx-pop{top:auto;bottom:calc(100% + 4px)}
+/* an option that can't be picked (e.g. a category already used in another auto-assign group): grayed, no hover */
+.fc-ss-o:disabled,.fc-ss-o:disabled:hover{color:#98A2B3;background:none;cursor:not-allowed}
+/* New Review Cycle fields on hover: border darkens to the tertiary text color (#667085).
+   Not while the field is focused, open, in error or disabled; those keep their own border. */
+.fc :is(.fc-inp,.rx-pct):hover:not(:focus,:focus-within,.open,.bad,:disabled,.is-dis):not(.rx-duec.bad *){border-color:var(--text-tertiary)}

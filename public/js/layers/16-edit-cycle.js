@@ -12,6 +12,7 @@ function cycEdit(cid,sec){const c=C(cid);if(!c)return;
   w.rx=JSON.parse(JSON.stringify(csRx(c)));w.desc=cdDesc(c);
   FC_TYPE_KEYS.forEach(k=>{if(c[k]!=null)w[k]=fcCopy(c[k])});
   S.wz=w;nav("wizard");w._live=liveSnap(w)}
+ /* Overview cards (Cycle Details, Reviewee, Reviewers, Overall Rating, Auto-assign) → the same editor section */
  if(sec!==undefined)setTimeout(()=>fcFocusSec(sec),150)}
 /* Overview › section Edit: scroll the editor to that section, then flash a blue border on it
    (fades in, holds 500ms, fades out). The flash waits for the scroll to finish so it's seen where the eye lands. */
@@ -27,7 +28,7 @@ const liveSnap=w=>{const{_live,...r}=w;return fcSnap(r)};
 /* header: Exit + Cancel / Save instead of Save as Draft / Create */
 const _vwzLive=V.wizard;V.wizard=()=>{const h=_vwzLive(),w=W();if(!w||!w.live)return h;
  return h.replace('onclick="fcExit()"','onclick="fcLiveCancel()"')
-  .replace(/<div class="fc-acts">[\s\S]*?<\/div><\/div>/,`<div class="fc-acts"><button type="button" class="fc-btn" onclick="fcLiveCancel()">Cancel</button><button type="button" class="fc-btn p" onclick="fcCreate()">Save</button></div></div>`)};
+  .replace(/<div class="rc-hdr-acts">[\s\S]*?<\/div>/,`<div class="rc-hdr-acts"><button type="button" class="rc-hdr-btn" onclick="fcLiveCancel()">Cancel</button><button type="button" class="rc-hdr-btn is-primary" onclick="fcCreate()">Save</button></div>`)};
 function fcLiveBack(){const id=W().id;S.wz=null;nav("cycle",{cid:id,tab:"overview"})}
 function fcLiveCancel(){wzCollect();const w=W();if(w._live===liveSnap(w))return fcLiveBack();
  openModal(`<h3>Discard changes?</h3><p class="dim" style="margin:0 0 12px">Your edits to this review cycle haven't been saved.</p>

@@ -1,7 +1,6 @@
 /* Participants · Rating Scale · Additional Settings (focused cycle editor) */
 .fc-hd{display:flex;flex-direction:column;gap:6px}
 .fc-hd p{margin:0;font-size:14px;line-height:1.45;color:#667085}
-.fc-help{margin:0;font-size:13px;line-height:1.45;color:#667085;padding:0}
 
 /* checkbox (Lumber style: rounded square, blue when on) */
 .rx-cb{appearance:none;-webkit-appearance:none;width:20px;height:20px;margin:0;flex-shrink:0;border:1.5px solid #D0D5DD;border-radius:6px;background:#fff;cursor:pointer;display:inline-grid;place-content:center;transition:background .12s,border-color .12s}
@@ -41,13 +40,11 @@
 .rx-oi:hover{background:#F9FAFB}
 .rx-oi[hidden]{display:none}
 .rx-o{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;text-align:left;border:0;background:none;padding:8px 10px;border-radius:8px;cursor:pointer;font-family:var(--f)}
-.rx-o:focus-visible,.rx-prev:focus-visible{outline:2px solid var(--fc-blue);outline-offset:-2px}
+.rx-o:focus-visible{outline:2px solid var(--fc-blue);outline-offset:-2px}
 .rx-o.on{background:#EFF4FF}
 .rx-o-n{font-size:14px;font-weight:600;color:#101828;overflow-wrap:anywhere}
 .rx-o.on .rx-o-n{color:#1849A9}
 .rx-o-m{font-size:12px;color:#667085}
-.rx-prev{flex-shrink:0;width:32px;height:32px;margin-right:4px;border:0;border-radius:6px;background:none;color:#667085;cursor:pointer;display:grid;place-content:center}
-.rx-prev:hover{background:#EAECF0;color:#101828}
 .rx-none{padding:16px 10px;text-align:center;font-size:14px;color:#667085}
 .rx-none[hidden]{display:none}
 .rx-addtpl{display:flex;align-items:center;gap:8px;width:100%;border:0;border-top:1px solid var(--fc-card-line);background:#fff;border-radius:0 0 12px 12px;padding:12px 16px;font-family:var(--f);font-size:14px;font-weight:600;color:var(--fc-blue);cursor:pointer;text-align:left}
@@ -67,7 +64,7 @@
 /* Reviewer column stays pinned on the left while the table scrolls; it covers the row's 16px left padding */
 .rx-g>:first-child{position:sticky;left:0;z-index:2;align-self:stretch;margin-left:-16px;padding-left:16px;line-height:43px;background:#fff;transition:box-shadow .15s}
 .rx-head>:first-child{background:#F9FAFB}
-.rx-scroll.is-scrolled .rx-g>:first-child{box-shadow:6px 0 6px -4px rgba(16,24,40,.12)}
+.rx-scroll.is-scrolled .rx-g>:first-child{box-shadow:inset -1px 0 0 #EAECF0}   /* scrolled: 1px right stroke, no shadow */
 .rx-g .c{text-align:center;justify-self:center}
 .rx-head{height:44px;background:#F9FAFB;border-radius:12px 12px 0 0;font-size:14px;font-weight:600;color:#344054;line-height:1.2;white-space:nowrap}
 .rx-head>div{overflow:hidden;text-overflow:ellipsis}
@@ -107,9 +104,7 @@
 .rx-step-b img.up{transform:rotate(180deg)}
 .rx-step-n{display:inline-block;width:88px;flex:0 0 88px}
 .rx-step-n .rx-numin{width:100%;box-sizing:border-box}
-.rx-dref{flex:1;min-width:0;height:36px;font-size:14px;padding:0 28px 0 10px;background-position:right 10px center;background-size:16px 16px;text-overflow:ellipsis}
-.rx-duec.bad .rx-dn,.rx-duec.bad .rx-dref{border-color:var(--red)}
-.rx-opt-tag{font-weight:400;color:#667085}
+.rx-duec.bad .rx-dn{border-color:var(--red)}
 .rx-ck{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;color:#101828}
 .rx-cl{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .rx-na{color:#98A2B3}
@@ -123,17 +118,9 @@
 .rx-link{margin-left:auto;border:0;background:none;padding:0;color:var(--fc-blue);font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap}
 .rx-link:hover{text-decoration:underline}
 /* self-evaluation / peers / additional settings: checkbox + label + description */
-.rx-opts{display:flex;flex-direction:column;gap:22px}
-.rx-opt{display:grid;grid-template-columns:20px minmax(0,1fr);column-gap:8px;row-gap:4px}
-.rx-opt-l{display:contents;cursor:pointer}
-.rx-opt-l .rx-cb{margin-top:1px}
-.rx-opt-t{font-size:16px;font-weight:500;color:#101828;line-height:22px;cursor:pointer}
-.rx-opt-b{grid-column:2;min-width:0}
-.rx-opt-b p{margin:0;font-size:14px;line-height:1.45;color:#475467}
 .rx-nest{display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;margin-top:12px;font-size:14px;color:var(--fc-ink)}
 .rx-numin{width:80px;height:40px;font-size:15px}
 .rx-numin:disabled{background:#F9FAFB;color:#98A2B3;cursor:not-allowed}
-.rx-nest-h{color:#667085}
 .rx-nest .fc-err{flex-basis:100%;padding:0}
 
 /* rating scale */
@@ -151,9 +138,6 @@
 .rx-num.n4{background:#D1FADF;color:#067647}
 .rx-num.n5{background:#039855;color:#fff}
 
-@media (max-width:700px){
-  .rx-opt-t{font-size:15px}
-}
 /* reviewer checkboxes row under "Who should review them?" (Figma LMS 1032:14652) */
 .rx-checks{display:flex;flex-direction:column;align-items:flex-start;gap:12px;margin-top:4px}
 .rx-check{display:inline-flex;align-items:center;gap:8px;font-size:16px;font-weight:500;line-height:1.4;color:#000;cursor:pointer}
@@ -161,26 +145,17 @@
 .rx-cb.sm:checked{background-size:12px}
 /* info tooltip: dark bubble above the icon, pointer at bottom centre; shows on hover and keyboard focus */
 .rx-tip{position:relative;display:inline-flex}
-.rx-tip-btn{display:flex;padding:0;border:0;background:none;cursor:help;border-radius:50%}
-.rx-tip-btn:focus-visible{outline:2px solid var(--fc-blue);outline-offset:2px}
-.rx-tip-btn img{display:block}
 .rx-tip-box{position:absolute;bottom:calc(100% + 10px);left:50%;transform:translate(-50%,4px);z-index:50;width:max-content;max-width:280px;
   padding:8px 12px;border-radius:8px;background:#101828;color:#fff;font-size:12px;font-weight:500;line-height:18px;text-align:center;
   box-shadow:0 12px 16px -4px rgba(16,24,40,.08),0 4px 6px -2px rgba(16,24,40,.03);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .12s,transform .12s,visibility .12s}
 .rx-tip-box:after{content:"";position:absolute;top:100%;left:50%;margin-left:-6px;border:6px solid transparent;border-top-color:#101828}
-.rx-tip:hover .rx-tip-box,.rx-tip-btn:focus-visible+.rx-tip-box{opacity:1;visibility:visible;transform:translate(-50%,0)}
-/* peer limit nests under "Allow reviewee to nominate peers": indent = 16px checkbox + 8px gap, so its checkbox lines up with that label's text */
+.rx-tip:hover .rx-tip-box{opacity:1;visibility:visible;transform:translate(-50%,0)}
 /* checkbox group under "Who is this review for?": 24px below the select (8px field gap + 16px) */
 .rx-chkbox{display:flex;flex-direction:column;gap:12px;margin-top:16px}
 .rx-chkbox .rx-checks{margin-top:0}
 /* nested option: vertical guide line under the parent checkbox's centre (16px box → 7px + 2px line + 15px = content at 24px) */
 .rx-chkbox>.rx-nest{margin:0 0 0 7px;padding:4px 0 4px 15px;border-left:2px solid #EAECF0}
-/* "(optional)" next to a card title */
-.fc-opt{font-size:16px;font-weight:400;color:#667085}
-/* subsection inside a card (Employees → Add employees automatically) */
-.fc-subsec{display:flex;flex-direction:column;gap:24px;padding-top:24px;border-top:1px solid var(--fc-card-line)}
-.fc-subsec h3{margin:0;font-size:16px;line-height:1.3;font-weight:600;color:#000}
-.fc-subsec h3 .fc-opt{font-size:14px}
+
 /* Save as Draft → Saved */
 .fc-btn.fc-save.is-saved,.fc-btn.fc-save:disabled{opacity:1;cursor:default;color:#667085;background:#fff}
 /* exit confirmation (Figma LMS 1:20632) */
@@ -226,15 +201,11 @@
 .rx-nest-col{flex-direction:column;align-items:flex-start;gap:12px}
 .rx-nest-col>.rx-nest{margin-top:0}
 .rx-check-t{font-size:16px;font-weight:500;line-height:1.4;color:#000}
-.rx-check-h{margin:-8px 0 0 24px;font-size:14px;line-height:1.45;color:#475467}
-.rx-opt-b>.rx-nest-col{gap:16px;margin-top:16px}
-.rx-opt-b>.rx-nest-col>.rx-nest{margin-top:0}
-.rx-opt-sm{font-size:14px}
-.rx-reopen-l{font-size:16px;font-weight:500;line-height:1.4;color:#000}
+.rx-reopen-l{font-size:14px;font-weight:600;line-height:1.4;letter-spacing:-.28px;color:#101828}   /* same as a field label (.v5lbl) */
 /* Additional Settings → reopen window + who can reopen */
 .rx-reopen{width:100%}
-.rx-reopen-f{display:flex;flex-direction:column;gap:8px;width:100%;max-width:480px}
-.rx-reopen-row{display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px}
+.rx-reopen-f{display:flex;flex-direction:column;gap:8px;width:100%;max-width:480px}   /* 8px between the label and its fields */
+.rx-reopen-row{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px}   /* 12px between the fields and the text beside them */
 .rx-reopen-sel{width:200px;flex:0 0 200px}
 /* New Hire Review › At regular intervals: "till [End of probation | Specific period]" select */
 .rx-till-sel{width:300px;flex:0 0 300px;max-width:100%}
@@ -243,8 +214,7 @@
 /* …and the words between the fields use the same type as the text inside them */
 .fc-prob .rx-nest,.fc-prob .rx-nest .rx-numin{font-size:16px;font-weight:500;color:#101828}
 .fc-prob .rx-nest .fc-err{font-weight:400}
-/* Project Completion Review › Specific projects: the multi-select fills the nested row */
-.rx-proj .rx-dd{flex:1 1 100%}
+
 /* Projects sits on its own row, under "Who is going to be reviewed?" (same column and width) */
 .fc-field.rx-proj-f{grid-column:1}
 .rx-reopen-f .fc-err{padding:0}
@@ -252,3 +222,12 @@
 .rx-inlink{border:0;background:none;padding:0;margin-left:4px;color:var(--fc-blue,#155EEF);font:inherit;font-weight:600;cursor:pointer;white-space:nowrap}
 .rx-inlink:hover{text-decoration:underline}
 .rx-inlink:focus-visible{outline:2px solid currentColor;outline-offset:2px;border-radius:2px}
+/* reviewer table: a horizontal scrollbar that's always shown (not the auto-hiding overlay one on macOS) when the columns don't fit.
+   It sits under the last row, above Total Weightage. 8px bar on a #F9FAFB track, #D0D5DD thumb (#98A2B3 on hover). */
+@supports (-moz-appearance:none){.rx-scroll{scrollbar-width:thin;scrollbar-color:#D0D5DD #F9FAFB}}   /* Firefox only: in Chrome these would switch off the styling below */
+.rx-scroll::-webkit-scrollbar{height:8px;-webkit-appearance:none}
+.rx-scroll::-webkit-scrollbar-track{background:#F9FAFB;border-top:1px solid #EAECF0}
+.rx-scroll::-webkit-scrollbar-thumb{background:#D0D5DD;border-radius:8px;border:2px solid #F9FAFB}
+.rx-scroll::-webkit-scrollbar-thumb:hover{background:#98A2B3}
+/* not enough room below the field on screen: the list / calendar opens above it, 4px away (fcFlipPops, 14-reviewee-reviewers.js) */
+.rx-pop.is-up,.fc-pop.is-up{top:auto;bottom:calc(100% + 4px)}

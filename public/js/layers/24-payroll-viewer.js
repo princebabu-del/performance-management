@@ -27,13 +27,15 @@ const _vCyclesPR=V.cycles;
 V.cycles=()=>{if(!PR())return _vCyclesPR();
  const tabs=[["Active",c=>["Active","Paused"].includes(c.status)],["Scheduled",c=>c.status==="Scheduled"],["Closed",c=>c.status==="Closed"]];
  if(!tabs.some(t=>t[0]===S.cycTab))S.cycTab="Active";
- const list=D.cycles.filter(tabs.find(t=>t[0]===S.cycTab)[1]).filter(c=>!S.q||c.name.toLowerCase().includes(S.q.toLowerCase())),cols=clColsOn();
  D.cycles.forEach(clStamp);
+ let rows=D.cycles.filter(tabs.find(t=>t[0]===S.cycTab)[1]).filter(c=>!S.q||c.name.toLowerCase().includes(S.q.toLowerCase()));
+ if(typeof lsFilterRows==="function")rows=lsFilterRows("cycles",rows);
+ const list=lsSorted("cycles",rows,clSortVal),cols=clColsOn();
  const res=c=>{const ps=prLive(c),f=ps.filter(prFinal).length;return ps.length?`<span class="tab-num">${f} of ${ps.length}</span>${f===ps.length?' <span class="dim sm">final</span>':""}`:'<span class="dim">—</span>'};
  return `<div class="ph"><div><h1>Review Cycles</h1><div class="sub">View only · cycle status and results</div></div></div>
  ${tabBar(tabs.map(t=>({id:t[0],label:t[0],count:D.cycles.filter(t[1]).length})),{active:S.cycTab,label:"Review cycle status",onSelect:id=>`nav('cycles',{cycTab:'${id}'})`})}
- <div class="card">${toolbar(`<div class="cl-tools-l"><label class="srch">${ic("search")}<input id="cq" placeholder="Search review cycles" value="${esc(S.q)}" oninput="S.q=this.value;render();const i=$('#cq');i.focus();i.setSelectionRange(i.value.length,i.value.length)"></label></div>`)}
- ${list.length?`<div class="tw"><table class="tbl cyctbl pr-tbl"><thead><tr>${cols.map(x=>`<th${x.num?' class="num"':""}>${x.l}</th>`).join("")}<th>Results</th></tr></thead><tbody>${pgRows(list,"pr-cycles-"+S.cycTab).map(c=>{const n=prLive(c).length;
+ <div class="card">${list.length||S.q||fltOn("cycles")?toolbar(`<div class="cl-tools-l"><label class="srch">${ic("search")}<input id="cq" placeholder="Search review cycles" value="${esc(S.q)}" oninput="S.q=this.value;render();const i=$('#cq');i.focus();i.setSelectionRange(i.value.length,i.value.length)"></label></div>`):""}
+ ${list.length?`<div class="tw"><table class="tbl cyctbl pr-tbl"><thead><tr>${cols.map(x=>lsTh("cycles",x.k,x.l,x.num?"num":"")).join("")}<th>Results</th></tr></thead><tbody>${pgRows(list,"pr-cycles-"+S.cycTab).map(c=>{const n=prLive(c).length;
   return `<tr class="click" tabindex="0" onclick="nav('cycle',{cid:'${c.id}',tab:'overview'})" onkeydown="if(event.key==='Enter')this.click()">${cols.map(x=>x.td(c,n,false)).join("")}<td>${res(c)}</td></tr>`}).join("")}</tbody></table></div>${pgFoot(list.length,"pr-cycles-"+S.cycTab)}`:clEmpty()}</div>`};
 
 /* cycle detail: only the Overview and Employees tabs */

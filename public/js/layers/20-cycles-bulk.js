@@ -9,8 +9,8 @@ function clBulkActs(tab,sel){const ids=sel.map(id=>`'${id}'`).join(","),cs=sel.m
   if(cs.some(c=>c.status==="Paused"))A.push(["play","Resume",`clBulkResume([${ids}])`]);
   A.push(["copy","Duplicate",`clBulkDup([${ids}])`]);return A}
  if(tab==="Scheduled")return [["copy","Duplicate",`clBulkDup([${ids}])`],["x","Cancel launch",`clBulkCancel([${ids}])`,1]];
- if(tab==="Drafts")return [["copy","Duplicate",`clBulkDup([${ids}])`],["x","Delete",`clBulkDelete([${ids}])`,1]];
- return [["copy","Duplicate",`clBulkDup([${ids}])`],["down","Archive",`clBulkArchive([${ids}])`]]}
+ if(tab==="Drafts")return [["trash","Delete",`clBulkDelete([${ids}])`,1]];   // a draft can't be duplicated
+ return []}   // Closed: no bulk actions (no archive, no duplicate)
 const clN=n=>`${n} cycle${n===1?"":"s"}`;
 const clDone=()=>{S.sel=new Set();S.menu=null;closeModal();render()};
 function clBulkRemind(ids){const n=ids.filter(id=>C(id).status==="Active").length;S.sel=new Set();S.menu=null;render();toast(`Reminders sent for ${clN(n)}. Only people with an open review are reminded.`)}

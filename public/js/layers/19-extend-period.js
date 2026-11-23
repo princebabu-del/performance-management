@@ -30,7 +30,7 @@ function cxMonth(y,m){const first=new Date(y,m,1).getDay(),n=new Date(y,m+1,0).g
  for(let i=0;i<first;i++)cells+=`<span></span>`;
  for(let d=1;d<=n;d++){const iso=fcISO(y,m,d),off=iso<=CXP.cur,c=[iso===CXP.s?"s":"",iso===end?"e":"",iso>CXP.s&&iso<end?"in":"",iso===today?"t":""].join(" ").trim();
   cells+=`<button type="button" class="${c}" ${off?"disabled":""} onclick="cxDay('${iso}')" onmouseenter="cxHover('${iso}')" aria-label="${FC_MONTHS[m]} ${d}, ${y}${iso===CXP.s?", start date, locked":""}" aria-pressed="${iso===CXP.s||iso===CXP.e}">${d}</button>`}
- return `<div class="fc-mon"><div class="fc-mon-h">${FC_MONTHS[m]} ${y}</div><div class="fc-wk">${["Su","Mo","Tu","We","Th","Fr","Sa"].map(x=>`<span>${x}</span>`).join("")}</div><div class="fc-days">${cells}</div></div>`}
+ return `<div><div class="fc-mon-h">${FC_MONTHS[m]} ${y}</div><div class="fc-wk">${["Su","Mo","Tu","We","Th","Fr","Sa"].map(x=>`<span>${x}</span>`).join("")}</div><div class="fc-days">${cells}</div></div>`}
 function cxDraw(){const f=$("#cxPeriod");if(!f)return;let p=$("#cxPop");
  if(!p){p=document.createElement("div");p.id="cxPop";p.className="fc-pop cx-pop";p.setAttribute("role","dialog");p.setAttribute("aria-label","Choose new end date");document.body.appendChild(p)}
  f.setAttribute("aria-expanded","true");

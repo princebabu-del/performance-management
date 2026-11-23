@@ -1,5 +1,5 @@
 /* ===== Cycle detail › Settings tab, rebuilt around the focused cycle editor's sections
-   (Cycle Details · Reviewees · Reviewers · Overall Rating · Additional Settings).
+   (Cycle Details · Reviewee · Reviewers · Overall Rating · Auto-assign).
    Key/value rows: fixed 200px key, value 12px after it. Each section header has an Edit button that opens
    the editor (Edit Review Cycle) scrolled to that section — see 16-edit-cycle.js.
    Reads the saved editor state (c.rx, c.ctype, c.rating…); seeded cycles get an equivalent rx built from their older fields. ===== */
@@ -51,25 +51,33 @@ const csRatingNote=c=>csScale(csRatingKey(c.rating||(c.wz||{}).rating||""));
 /* editor › Overall Rating: same card, with the scale row in place of the blue "What employees see" banner */
 rxRating=function(w){if(!RX_FMTS.some(f=>f.k===w.rating))w.rating="Numeric 1–5 with definitions";
  return `<section class="fc-card">${rxHd("Overall Rating","One overall rating format for everyone in this cycle, or no overall rating. Questionnaires can still ask their own questions.")}
-  <div class="fc-form"><div class="fc-field"><div class="fc-lbl"><label for="rxFmt">Rating format</label></div>
-   <select class="fc-inp fc-sel" id="rxFmt" onchange="W().rating=this.value;render()">${RX_FMTS.map(o=>`<option value="${o.k}" ${o.k===w.rating?"selected":""}>${RX_FMT_LBL[o.k]||o.n}</option>`).join("")}</select>
-  </div></div>
+  <div class="fc-form"><div class="fc-field">${fcQ("Rating format",{id:"rxFmtQ",d:"One rating format or no rating for this cycle.",did:"rxFmtD"})}
+   ${fcSel({id:"rxFmt",value:w.rating,options:RX_FMTS.map(o=>({v:o.k,t:RX_FMT_LBL[o.k]||o.n})),ph:"Select an option",pick:"rxFmtPick"}).replace('aria-haspopup="listbox"','aria-haspopup="listbox" aria-describedby="rxFmtD"')}
+  </div></div><!--fc-rate-->
   ${w.rating==="No rating"?banner("info",`<b>No overall rating for this cycle.</b> Reviewers only answer the questionnaire, and employees see the written feedback without a score. Questionnaires can still ask their own rating questions.`):csScale(w.rating)}</section>`};
+/* Rating format pick (same single-select dropdown as Review type / Repeats, 30-single-select.js) */
+function rxFmtPick(v){if(v){W().rating=v;render()}}
 /* a row is {k, v} (plain text, escaped here) or {k, html}; note = HTML shown under the value */
 const csRow=(k,v,note)=>({k,v,note});
+/* Sections and their order follow the New / Edit Review Cycle editor (V.wizard in 14-reviewee-reviewers.js):
+   Cycle Details (name · type · period + repeats, or schedule · cycle reopening · notes)
+   · Reviewee (projects · role + self-evaluation · peer nomination · credentials)
+   · Reviewers (reviewer table · editing submission) · Overall Rating (rating format) · Auto-assign. */
 function csSections(c){const x=csRx(c),type=clType(c),rev=clReviewee(c),rep=clRepeats(c),per=clPeriod(c);
- const details=[csRow("Cycle Name",c.name),csRow("Cycle Type",type)];
- if(type==="General Review")details.push(csRow("Cycle Period",per==="—"?c.period:per),csRow("Repeats",rep==="—"?"":rep,csRepeatLink(c)));
- if(type!=="General Review")details.push(csRow("Review Schedule",clProbSched(c)));
- details.push({k:"Status",html:pill(c.status==="Paused"?"Paused":c.status)},{k:"Additional Notes",html:cdDescBlock(c)});
  const peerTxt=!x.peers?"Not allowed":`${x.peerMode==="any"?"Unlimited peers":`Up to ${x.peerMax||3} peers`}, approved by their manager`;
  const reopen=!x.reopen?"Not allowed":`${x.reopenWin==="any"?"Any time after the end date":`Up to ${x.reopenMonths} month${x.reopenMonths>1?"s":""} after the end date`} · ${(x.reopenBy||[]).join(", ")||"Admin"}`;
+ const details=[csRow("Cycle Name",c.name),csRow("Review Type",type)];
+ if(type==="General Review")details.push(csRow("Cycle Period",per==="—"?c.period:per),csRow("Repeats",rep==="—"?"":rep,csRepeatLink(c)));
+ else details.push(csRow("Review Schedule",clProbSched(c)));
+ details.push(csRow("Cycle reopening",reopen),{k:"Additional Notes",html:cdDescBlock(c)});
+ const revRows=csReviewerRows(c,x);
+ if(revRows.length)revRows.push(csRow("Editing submission",x.revEdit&&x.revEdit.on?"Allowed until the due date, or the cycle end date if there's no due date":"Not allowed"));
  return [
   ["Cycle Details",details],
-  ["Reviewees",[csRow("Who is reviewed",rev),...(type==="Project Completion Review"?[csRow("Projects",clProjects(c))]:[]),{k:"Self-evaluation",html:x.self?`Allowed<div class="cs-sub">Edits after submission: ${x.selfEdit&&x.selfEdit.on?"allowed until its due date, or the cycle end date if there's no due date":"not allowed"}</div>`:"Not allowed"},csRow("Peer nomination",peerTxt),{k:"Auto Assign",html:csAutoAssign(x,rev)}]],
-  ["Reviewers",csReviewerRows(c,x)],
-  ["Overall Rating",[{k:"Rating System",html:csRatingNote(c)}]],
-  ["Additional Settings",[csRow("Include credentials",x.creds?"Shown on the review":"Not included"),csRow("Reopen after end date",reopen)]]]}
+  ["Reviewee",[...(type==="Project Completion Review"?[csRow("Projects",clProjects(c))]:[]),csRow("Who is reviewed",rev),csRow("Self-evaluation",x.self?"Allowed":"Not allowed"),csRow("Peer nomination",peerTxt),csRow("Credentials",x.creds?"Shown on the review":"Not included")]],
+  ["Reviewers",revRows],
+  ["Overall Rating",[{k:"Rating Format",html:csRatingNote(c)}]],
+  ["Auto-assign",[{k:"Auto-assign",html:csAutoAssign(x,rev)||"Off"}]]]}
 /* Reviewers: everything set in the editor's reviewer table, per reviewer —
    Reviewers (role names) · Weightage (donut + legend on the right) · Questionnaire (each questionnaire with a View eye → side drawer, reviewers using it below) · View Reviewee's evaluation · Reviewee sees reviews from (Anonymous in brackets) · Edits after submission. */
 function csDueText(c,r){r={...r};rxDueMig(r);if(r.dueN===""||r.dueN==null)return"No due date";const n=+r.dueN,d=`${n} day${n===1?"":"s"}`;
@@ -86,12 +94,11 @@ function csReviewerRows(c,x){const K=rxKeys(x);if(!K.length)return[];
   <ul class="cs-wt-leg" style="--rows:${Math.min(W.length,5)}">${W.map(o=>`<li><span class="cs-wt-dot" style="background:${o.col}" aria-hidden="true"></span><span class="cs-wt-n">${esc(o.n)}</span><span class="cs-wt-v">${o.w}%</span></li>`).join("")}</ul></div>`;
  /* Questionnaire: each questionnaire once (eye opens it in the side drawer), the reviewers using it underneath */
  const tpls=[];R.forEach(({n,r})=>{const id=r.tpl||"";let g=tpls.find(g=>g.id===id);if(!g)tpls.push(g={id,t:T(id),who:[]});g.who.push(n)});
- const qs=`<div class="cs-qs">${tpls.map(g=>`<div class="cs-q"><div class="cs-q-n">${g.t?`${esc(g.t.name)}<span class="rx-tip cs-q-tip"><button type="button" class="cs-rv-eye" aria-label="View questionnaire ${esc(g.t.name)}" onclick="previewTpl('${g.t.id}')">${ic("eye")}</button><span class="rx-tip-box" role="tooltip">View Questionnaire</span></span>`:"No questionnaire"}</div><div class="cs-q-who">${esc(g.who.join(", "))}</div></div>`).join("")}</div>`;
+ const qs=`<div class="cs-qs">${tpls.map(g=>`<div><div class="cs-q-n">${g.t?`${esc(g.t.name)}<span class="rx-tip cs-q-tip"><button type="button" class="cs-rv-eye" aria-label="View questionnaire ${esc(g.t.name)}" onclick="previewTpl('${g.t.id}')">${ic("eye")}</button><span class="rx-tip-box" role="tooltip">View Questionnaire</span></span>`:"No questionnaire"}</div><div class="cs-q-who">${esc(g.who.join(", "))}</div></div>`).join("")}</div>`;
  const rows=[{k:"Reviewers",html:`<ul class="cs-chips">${R.map(o=>`<li class="cs-chip">${esc(o.n)}</li>`).join("")}</ul>`},{k:"Weightage (%)",html:weight},{k:"Questionnaire",html:qs}];
  if(others.length){
   if(x.self)rows.push({k:"View Reviewee's evaluation",html:list(others.filter(o=>o.r.seeSelf).map(o=>o.n))});
-  rows.push({k:"Reviewee sees reviews from",html:list(others.filter(o=>o.r.revSees).map(o=>o.n+(o.r.anon?" (Anonymous)":"")))});
-  rows.push(csRow("Edits after submission",x.revEdit&&x.revEdit.on?"Allowed until the due date, or the cycle end date if there's no due date":"Not allowed"))}
+  rows.push({k:"Reviewee sees reviews from",html:list(others.filter(o=>o.r.revSees).map(o=>o.n+(o.r.anon?" (Anonymous)":"")))});}
  return rows}
 /* anything not configured shows an em dash */
 const CS_EMPTY=`<span class="cs-empty" aria-label="Not set">—</span>`;
@@ -103,12 +110,14 @@ function csAutoAssign(x,rev){const a=x.auto;if(!a||!a.on)return"";const role=rev
  return `<div class="cs-aa-list">${a.mode==="groups"?(groups.length?groups.map(g=>line((AA_CAT[g.by]||{one:g.by}).one,g.vals.join(", "))).join(""):CS_EMPTY):`<div>All ${esc(role)}</div>`}
   ${ex.length?line("Excluded",ex.join(", ")):""}</div>`}
 /* Bento layout: two independent columns with a 16px gap both ways, so cards never leave holes whatever their height.
-   All five sections alternate left/right in editor order (Cycle Details | Reviewees, Reviewers | Overall Rating, Additional Settings).
+   The five sections alternate left/right in editor order (Cycle Details | Reviewee, Reviewers | Overall Rating, Auto-assign).
    Edit buttons open the editor at that section. */
+/* Edit icon: Untitled UI edit-02, 20px (Figma "Exploration – Lumber Web App" 797:34489); stroke follows the button's text color */
+const CS_EDIT_ICO='<svg class="cs-edit-i" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 10 14 6M2.5 21.5l3.384-.376c.414-.046.62-.069.814-.131.171-.056.334-.134.485-.233.17-.112.316-.259.61-.553L21 7a2.828 2.828 0 1 0-4-4L3.794 16.206c-.294.294-.442.442-.553.611a2 2 0 0 0-.233.485c-.063.193-.086.4-.132.814L2.5 21.5Z"/></svg>';
 cycSettings=function(c){
  const ro=["Closed","Archived"].includes(c.status),cols=[[],[]];
  csSections(c).forEach(([title,rows],i)=>{
-  cols[i%2].push(`<section class="card cs-card" style="--o:${i}"><div class="hd"><h3>${title}</h3>${ro?"":`<button type="button" class="btn ghost s cs-edit" aria-label="Edit ${title.toLowerCase()}" onclick="cycEdit('${c.id}',${i})">${ic("edit","s")} Edit</button>`}</div>
+  cols[i%2].push(`<section class="card cs-card" style="--o:${i}"><div class="hd"><h3>${title}</h3>${ro?"":`<button type="button" class="cs-edit" aria-label="Edit ${title.toLowerCase()}" onclick="cycEdit('${c.id}',${i})">${CS_EDIT_ICO}Edit</button>`}</div>
   <div class="cs-kv-list">${rows.length?rows.map(r=>`<div class="cs-kv"><div class="cs-kv-k">${esc(r.k)}</div><div class="cs-kv-v">${r.html!==undefined?(r.html||CS_EMPTY):(r.v==null||r.v===""||r.v==="—"?CS_EMPTY:esc(r.v))}${r.note?`<div class="cs-kv-note">${r.note}</div>`:""}</div></div>`).join("")
    :`<div class="cs-kv"><div class="cs-kv-k">${esc(title)}</div><div class="cs-kv-v">${CS_EMPTY}</div></div>`}</div></section>`)});
  return `<div class="cs-bento">${cols.map(x=>`<div class="cs-col">${x.join("")}</div>`).join("")}</div>`};

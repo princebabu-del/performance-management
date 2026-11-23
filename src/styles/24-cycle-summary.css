@@ -1,0 +1,27 @@
+/* New Review Cycle page grid + Cycle Summary card.
+   Grid (PTO prototype V5): section nav 240px | section cards up to 1200px | summary 320px, 16px apart, centred.
+   Summary (Figma "Exploration – Lumber Web App" 785:34406): #D1E0FF frame, 1px in, 8px corners; header 12×16 in,
+   12/600 lh 1.35 +0.48px uppercase #344054; white inner panel 8px corners, 16px in, rows 8px apart;
+   row = 16px #079455 check (2px from the top) · 8px · 14/400 lh 1.4 +0.14px #344054. Markup: 29-cycle-summary.js */
+.fc-body{display:grid;grid-template-columns:240px minmax(0,1200px) 320px;justify-content:center;align-items:start;column-gap:16px;row-gap:24px}
+.fc-main{min-width:0}
+
+.fc-sum{position:sticky;top:99px;box-sizing:border-box;display:flex;flex-direction:column;padding:1px;border-radius:8px;background:#D1E0FF;overflow:hidden}
+.fc-sum-h{padding:12px 16px}
+.fc-sum-h h2{margin:0;font-size:12px;font-weight:600;line-height:1.35;letter-spacing:.48px;text-transform:uppercase;color:#344054}
+.fc-sum-b{display:flex;flex-direction:column;gap:8px;margin:0;padding:16px;list-style:none;border-radius:8px;background:#fff}
+.fc-sum-b li{display:flex;align-items:flex-start;gap:8px;min-width:0}
+.fc-sum-b img{display:block;flex:none;margin-top:2px}
+.fc-sum-b span{flex:1;min-width:0;font-size:14px;font-weight:400;line-height:1.4;letter-spacing:.14px;color:#344054;overflow-wrap:anywhere}
+.fc-sum-b b{font-weight:600}
+
+/* not enough room for three columns: the summary moves under the cards */
+@media (max-width:1400px){
+  .fc-body{grid-template-columns:240px minmax(0,1200px)}
+  .fc-sum{grid-column:2;position:static}
+}
+/* the section nav is hidden at this width (15-focused-editor.css): one column */
+@media (max-width:1000px){
+  .fc-body{grid-template-columns:minmax(0,1fr)}
+  .fc-sum{grid-column:1}
+}
