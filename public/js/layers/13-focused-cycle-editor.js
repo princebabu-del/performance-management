@@ -5,10 +5,10 @@ const FC_REPEATS=["Every month","Every 3 months","Every 6 months","Every year"];
 /* older pattern/draft values map onto the new list; anything else (One time, Rolling) shows as not set */
 const fcRecur=w=>{const v={"Every quarter":"Every 3 months"}[w.recur]||w.recur;w.recur=FC_REPEATS.includes(v)?v:"";return w.recur};
 /* mandatory question: a "*" after the text (PTO prototype .req: same color as the question, 2px gap). Hidden from screen readers; the field carries aria-required */
-const FC_REQ=`<span class="fc-req" aria-hidden="true">*</span>`;
+const FC_REQ=`<span class="required-mark" aria-hidden="true">*</span>`;
 const fcErr=(w,k)=>(w.errs||{})[k];
-const fcMsg=(w,k)=>fcErr(w,k)?`<div class="fc-err">${esc(fcErr(w,k))}</div>`:"";
-function fcName(el){const w=W();w.name=el.value;if(w.errs&&w.errs.name&&el.value.trim()){delete w.errs.name;el.classList.remove("bad");const m=el.closest(".fc-field").querySelector(".fc-err");if(m)m.remove()}}
+const fcMsg=(w,k)=>fcErr(w,k)?`<div class="error-text">${esc(fcErr(w,k))}</div>`:"";
+function fcName(el){const w=W();w.name=el.value;if(w.errs&&w.errs.name&&el.value.trim()){delete w.errs.name;el.classList.remove("bad");const m=el.closest(".setting").querySelector(".error-text");if(m)m.remove()}}
 /* ---- Cycle Period: one field, two-month range calendar ---- */
 const fcMDY=iso=>{if(!iso)return"";const[y,m,d]=iso.split("-");return `${m}/${d}/${y}`};
 const fcISO=(y,m,d)=>`${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
@@ -27,14 +27,14 @@ function fcMonth(y,m){const first=new Date(y,m,1).getDay(),n=new Date(y,m+1,0).g
  for(let i=0;i<first;i++)cells+=`<span></span>`;
  for(let d=1;d<=n;d++){const iso=fcISO(y,m,d),c=[iso===FCP.s?"s":"",iso===end?"e":"",FCP.s&&end&&iso>FCP.s&&iso<end?"in":"",iso===today?"t":""].join(" ").trim();
   cells+=`<button type="button" class="${c}" onclick="fcDay('${iso}')" onmouseenter="fcHover('${iso}')" aria-label="${FC_MONTHS[m]} ${d}, ${y}" aria-pressed="${iso===FCP.s||iso===FCP.e}">${d}</button>`}
- return `<div><div class="fc-mon-h">${FC_MONTHS[m]} ${y}</div><div class="fc-wk">${["Su","Mo","Tu","We","Th","Fr","Sa"].map(x=>`<span>${x}</span>`).join("")}</div><div class="fc-days">${cells}</div></div>`}
-function fcPopDraw(){const host=$("#fcPeriodWrap");if(!host)return;let p=$("#fcPop");if(!p){p=document.createElement("div");p.id="fcPop";p.className="fc-pop";p.setAttribute("role","dialog");p.setAttribute("aria-label","Choose cycle period");host.appendChild(p)}
+ return `<div><div class="datepicker__month-title">${FC_MONTHS[m]} ${y}</div><div class="datepicker__weekdays">${["Su","Mo","Tu","We","Th","Fr","Sa"].map(x=>`<span>${x}</span>`).join("")}</div><div class="datepicker__days">${cells}</div></div>`}
+function fcPopDraw(){const host=$("#fcPeriodWrap");if(!host)return;let p=$("#fcPop");if(!p){p=document.createElement("div");p.id="fcPop";p.className="datepicker";p.setAttribute("role","dialog");p.setAttribute("aria-label","Choose cycle period");host.appendChild(p)}
  $("#fcPeriod").setAttribute("aria-expanded","true");
  const nx=new Date(FCP.y,FCP.m+1,1),days=FCP.s&&FCP.e?Math.round((new Date(FCP.e)-new Date(FCP.s))/864e5)+1:0;
- p.innerHTML=`<div class="fc-pop-nav"><button type="button" class="fc-nav" onclick="fcShift(-1)" aria-label="Previous month">‹</button><button type="button" class="fc-nav" onclick="fcShift(1)" aria-label="Next month">›</button></div>
-  <div class="fc-mons" onmouseleave="if(FCP.hover){FCP.hover='';fcPopDraw()}">${fcMonth(FCP.y,FCP.m)}${fcMonth(nx.getFullYear(),nx.getMonth())}</div>
-  <div class="fc-pop-f"><span class="fc-pop-sel">${FCP.s?`${fcMDY(FCP.s)} – ${FCP.e?fcMDY(FCP.e):"Pick an end date"}`:"Pick a start date"}${days?` <span class="dim">· ${days} days</span>`:""}</span>
-  <div class="fc-acts"><button type="button" class="fc-btn sm" onclick="fcPeriodClose()">Cancel</button><button type="button" class="fc-btn p sm" ${FCP.s&&FCP.e?"":"disabled"} onclick="fcApply()">Apply</button></div></div>`}
+ p.innerHTML=`<div class="datepicker__nav"><button type="button" class="datepicker__nav-button" onclick="fcShift(-1)" aria-label="Previous month">‹</button><button type="button" class="datepicker__nav-button" onclick="fcShift(1)" aria-label="Next month">›</button></div>
+  <div class="datepicker__months" onmouseleave="if(FCP.hover){FCP.hover='';fcPopDraw()}">${fcMonth(FCP.y,FCP.m)}${fcMonth(nx.getFullYear(),nx.getMonth())}</div>
+  <div class="datepicker__footer"><span class="datepicker__selection">${FCP.s?`${fcMDY(FCP.s)} – ${FCP.e?fcMDY(FCP.e):"Pick an end date"}`:"Pick a start date"}${days?` <span class="dim">· ${days} days</span>`:""}</span>
+  <div class="datepicker__actions"><button type="button" class="button button--small" onclick="fcPeriodClose()">Cancel</button><button type="button" class="button p sm" ${FCP.s&&FCP.e?"":"disabled"} onclick="fcApply()">Apply</button></div></div>`}
 document.addEventListener("mousedown",e=>{if(FCP.open&&!e.target.closest("#fcPeriodWrap"))fcPeriodClose()});
 /* × before the calendar icon: removes the chosen period (same hover/focus × as Repeats) */
 function fcPeriodClear(){const w=W();fcPeriodClose();Object.assign(w,{start:"",end:"",opens:"",datesSet:false});FCP.s=FCP.e=FCP.hover="";render();
@@ -55,41 +55,41 @@ function fcType(v){const w=W();w.ctype=v;if(v!=="General Review")w.recur="";if(w
 function fcProbSched(v){const w=W();w.probSched=v;if(w.errs){delete w.errs.probEvery;delete w.errs.probTillN;delete w.errs.projTillN}render();const el=document.querySelector(`input[name="fcProb"][value="${v}"]`);if(el)el.focus()}
 function fcTill(v){const w=W();w.probTill=v;if(w.errs)delete w.errs.probTillN;render();const el=$("#fcTill");if(el)el.focus()}
 /* number fields in the nested row: clear only their own error, without a re-render (keeps focus) */
-function fcNestNum(el,k,ok){const w=W();w[k]=parseInt(el.value,10)||0;if(w.errs&&w.errs[k]&&ok(w)){delete w.errs[k];el.classList.remove("bad");const m=el.closest(".rx-nest").querySelector(`.fc-err[data-k="${k}"]`);if(m)m.remove()}}
+function fcNestNum(el,k,ok){const w=W();w[k]=parseInt(el.value,10)||0;if(w.errs&&w.errs[k]&&ok(w)){delete w.errs[k];el.classList.remove("bad");const m=el.closest(".sub-settings").querySelector(`.error-text[data-k="${k}"]`);if(m)m.remove()}}
 const fcEvery=el=>fcNestNum(el,"probEvery",w=>w.probEvery>=1);
 const fcTillN=el=>fcNestNum(el,"probTillN",w=>w.probTillN>=1);
 const fcProjTillN=el=>fcNestNum(el,"projTillN",w=>w.projTillN>=1);
-const fcNestMsg=(w,k)=>fcErr(w,k)?`<div class="fc-err" data-k="${k}">${esc(fcErr(w,k))}</div>`:"";
-const fcNumIn=(id,v,bad,aria,oninput,max)=>`<span class="rx-step rx-step-n"><input class="fc-inp rx-numin ${bad?"bad":""}" id="${id}" type="number" inputmode="numeric" min="1" max="${max}" value="${v||""}" aria-label="${aria}" oninput="${oninput}">${typeof rxStepB==="string"?rxStepB:""}</span>`;
+const fcNestMsg=(w,k)=>fcErr(w,k)?`<div class="error-text" data-k="${k}">${esc(fcErr(w,k))}</div>`:"";
+const fcNumIn=(id,v,bad,aria,oninput,max)=>`<span class="number-stepper number-stepper--fluid"><input class="input input--number ${bad?"bad":""}" id="${id}" type="number" inputmode="numeric" min="1" max="${max}" value="${v||""}" aria-label="${aria}" oninput="${oninput}">${typeof rxStepB==="string"?rxStepB:""}</span>`;
 function fcProbation(w){const nh=w.ctype==="New Hire Review";
- const rad=(v,t)=>`<label class="rx-check"><input class="rx-rad" type="radio" name="fcProb" value="${v}" ${w.probSched===v?"checked":""} onchange="fcProbSched('${v}')"><span>${t}</span></label>`;
- const till=nh?`<select class="fc-inp fc-sel rx-till-sel" id="fcTill" aria-label="Keep reviewing till" onchange="fcTill(this.value)">${Object.entries(FC_TILL).map(([k,t])=>`<option value="${k}" ${w.probTill===k?"selected":""}>${t}</option>`).join("")}</select>
+ const rad=(v,t)=>`<label class="choice-item"><input class="radio" type="radio" name="fcProb" value="${v}" ${w.probSched===v?"checked":""} onchange="fcProbSched('${v}')"><span>${t}</span></label>`;
+ const till=nh?`<select class="input input--select till-select" id="fcTill" aria-label="Keep reviewing till" onchange="fcTill(this.value)">${Object.entries(FC_TILL).map(([k,t])=>`<option value="${k}" ${w.probTill===k?"selected":""}>${t}</option>`).join("")}</select>
   ${w.probTill==="period"?`${fcNumIn("fcTillIn",w.probTillN,fcErr(w,"probTillN"),"Months after the start date","fcTillN(this)",36)}<span>months after the start date</span>`:""}`
   /* Project Completion: "till [N] months after the completion date" */
   :`${fcNumIn("fcProjTillIn",w.projTillN,fcErr(w,"projTillN"),"Months after the completion date","fcProjTillN(this)",36)}<span>months after the completion date</span>`;
- return `<div class="fc-field full">${fcQ("Review schedule",{id:"fcProbL"})}
-  <div class="rx-chkbox fc-prob"><div class="rx-checks" role="radiogroup" aria-labelledby="fcProbL">${rad("end",FC_SCHED_END[w.ctype])}${rad("interval","At regular intervals")}</div>
-  ${w.probSched==="interval"?`<div class="rx-nest"><span>Every</span>${fcNumIn("fcEveryIn",w.probEvery,fcErr(w,"probEvery"),"Review every how many months","fcEvery(this)",12)}<span>months till</span>${till}${fcNestMsg(w,"probEvery")}${fcNestMsg(w,"probTillN")}${fcNestMsg(w,"projTillN")}</div>`:""}</div></div>`}
-/* question column (PTO prototype V5 .v5lblwrap): the question, and an optional description under it.
+ return `<div class="setting">${fcQ("Review schedule",{id:"fcProbL"})}
+  <div class="choice-group review-schedule"><div class="choice-list" role="radiogroup" aria-labelledby="fcProbL">${rad("end",FC_SCHED_END[w.ctype])}${rad("interval","At regular intervals")}</div>
+  ${w.probSched==="interval"?`<div class="sub-settings"><span>Every</span>${fcNumIn("fcEveryIn",w.probEvery,fcErr(w,"probEvery"),"Review every how many months","fcEvery(this)",12)}<span>months till</span>${till}${fcNestMsg(w,"probEvery")}${fcNestMsg(w,"probTillN")}${fcNestMsg(w,"projTillN")}</div>`:""}</div></div>`}
+/* question column (PTO prototype V5 .setting__label): the question, and an optional description under it.
    o.for → a <label> for that control; o.id → the question's id (for aria-labelledby); o.d / o.did → description text / its id */
 function fcQ(t,o={}){const id=o.id?` id="${o.id}"`:"";
- return `<div class="v5lblwrap">${o.for?`<label class="v5lbl" for="${o.for}"${id}>${t}</label>`:`<span class="v5lbl"${id}>${t}</span>`}${o.d?`<span class="v5desc"${o.did?` id="${o.did}"`:""}>${o.d}</span>`:""}</div>`}
+ return `<div class="setting__label">${o.for?`<label class="setting__title" for="${o.for}"${id}>${t}</label>`:`<span class="setting__title"${id}>${t}</span>`}${o.d?`<span class="setting__description"${o.did?` id="${o.did}"`:""}>${o.d}</span>`:""}</div>`}
 function fcDetails(w){
  fcRecur(w);fcTypeInit(w);
  const s=toISO(w.start),e=toISO(w.end);
- return `<section class="fc-card"><h2>Cycle Details</h2><div class="fc-form">
-  <div class="fc-field">${fcQ("Cycle name"+FC_REQ,{for:"wName"})}
-   <input class="fc-inp ${fcErr(w,"name")?"bad":""}" id="wName" aria-required="true" maxlength="100" placeholder="Enter cycle name" value="${esc(w.name)}" oninput="fcName(this)" autocomplete="off">${fcMsg(w,"name")}</div>
-  <div class="fc-field">${fcQ("Review type",{id:"fcTypeSelQ"})}
+ return `<section class="form-section"><h2>Cycle Details</h2><div class="setting-list">
+  <div class="setting">${fcQ("Cycle name"+FC_REQ,{for:"wName"})}
+   <input class="input ${fcErr(w,"name")?"bad":""}" id="wName" aria-required="true" maxlength="100" placeholder="Enter cycle name" value="${esc(w.name)}" oninput="fcName(this)" autocomplete="off">${fcMsg(w,"name")}</div>
+  <div class="setting">${fcQ("Review type",{id:"fcTypeSelQ"})}
    ${fcSel({id:"fcTypeSel",value:w.ctype,options:FC_TYPES.map(o=>({v:o,t:o})),ph:"Select an option",pick:"fcTypePick"})}</div>
   ${w.ctype!=="General Review"?fcProbation(w):""}
-  ${w.ctype==="General Review"?`<div class="fc-field">${fcQ("Cycle period"+FC_REQ,{for:"fcPeriod"})}
-   <div class="fc-dwrap fc-clr ${s&&e?"has":""}" id="fcPeriodWrap"><button type="button" class="fc-inp fc-period ${s&&e?"":"empty"} ${fcErr(w,"period")?"bad":""}" id="fcPeriod" aria-haspopup="dialog" aria-expanded="false" aria-required="true" onclick="fcPeriodOpen()"><span>${s&&e?`${fcMDY(s)} – ${fcMDY(e)}`:"MM/DD/YYYY – MM/DD/YYYY"}</span><img src="/assets/calendar.svg" width="20" height="20" alt=""></button>${s&&e?`<button type="button" class="fc-clr-x" aria-label="Clear cycle period" data-tip="Remove" data-tip-delay="300" onclick="fcPeriodClear()"><span class="fc-clr-i" aria-hidden="true"></span></button>`:""}</div>${fcMsg(w,"period")}</div>
-  <div class="fc-field">${fcQ("Repeats",{id:"fcRepeatsQ"})}
-   <div class="fc-rep-row">${fcSel({id:"fcRepeats",value:w.recur||"",options:FC_REPEATS.map(o=>({v:o,t:o})),ph:"Select an option",pick:"fcRepeatPick",clear:"Clear repeats"})}
-    ${w.recur?`${fcNumIn("fcRecurN",w.recurN,fcErr(w,"recurN"),"Number of occurrences, including this cycle","fcRecurNIn(this)",FC_RECUR_MAX).replace('<input ','<input onkeydown="if([\'-\',\'+\',\'e\',\'E\',\'.\',\',\'].includes(event.key))event.preventDefault()" ')}<span class="fc-rep-u">occurrences</span>`:""}</div>
+  ${w.ctype==="General Review"?`<div class="setting">${fcQ("Cycle period"+FC_REQ,{for:"fcPeriod"})}
+   <div class="date-range clearable ${s&&e?"has":""}" id="fcPeriodWrap"><button type="button" class="input input--date-range ${s&&e?"":"empty"} ${fcErr(w,"period")?"bad":""}" id="fcPeriod" aria-haspopup="dialog" aria-expanded="false" aria-required="true" onclick="fcPeriodOpen()"><span>${s&&e?`${fcMDY(s)} – ${fcMDY(e)}`:"MM/DD/YYYY – MM/DD/YYYY"}</span><img src="/assets/calendar.svg" width="20" height="20" alt=""></button>${s&&e?`<button type="button" class="clearable__button" aria-label="Clear cycle period" data-tip="Remove" data-tip-delay="300" onclick="fcPeriodClear()"><span class="clearable__icon" aria-hidden="true"></span></button>`:""}</div>${fcMsg(w,"period")}</div>
+  <div class="setting">${fcQ("Repeats",{id:"fcRepeatsQ"})}
+   <div class="inline-fields">${fcSel({id:"fcRepeats",value:w.recur||"",options:FC_REPEATS.map(o=>({v:o,t:o})),ph:"Select an option",pick:"fcRepeatPick",clear:"Clear repeats"})}
+    ${w.recur?`${fcNumIn("fcRecurN",w.recurN,fcErr(w,"recurN"),"Number of occurrences, including this cycle","fcRecurNIn(this)",FC_RECUR_MAX).replace('<input ','<input onkeydown="if([\'-\',\'+\',\'e\',\'E\',\'.\',\',\'].includes(event.key))event.preventDefault()" ')}<span class="inline-fields__text">occurrences</span>`:""}</div>
    ${fcMsg(w,"recurN")}
-   <div class="fc-rep-note" id="fcRepeatInfo" ${w.recur&&fcRecurOk(w.recurN)?"":"hidden"}>${fcRepeatInfo(w)}</div></div>`:""}
+   <div class="repeat-note" id="fcRepeatInfo" ${w.recur&&fcRecurOk(w.recurN)?"":"hidden"}>${fcRepeatInfo(w)}</div></div>`:""}
   ${typeof rxReopenOpt==="function"?rxReopenOpt(w,rxInit(w)):""}
  </div></section>`}   // Cycle reopening sits under Repeats (defined in 14-reviewee-reviewers.js)
 /* ---- Repeats: explain what happens after this cycle, using the chosen period ---- */
@@ -107,7 +107,7 @@ function fcRange(s,e){const a=fcD(s),b=fcD(e),o={month:"short",day:"numeric"};
 const FC_RECUR_MAX=24;
 const fcRecurOk=v=>v>=1&&v<=FC_RECUR_MAX;
 function fcRecurNIn(el){const w=W();let v=parseInt(el.value,10);if(!isNaN(v)&&v<1){v=1;el.value="1"}w.recurN=isNaN(v)?"":v;
- if(w.errs&&w.errs.recurN&&fcRecurOk(w.recurN)){delete w.errs.recurN;el.classList.remove("bad");const m=el.closest(".fc-field").querySelector(".fc-err");if(m)m.remove()}
+ if(w.errs&&w.errs.recurN&&fcRecurOk(w.recurN)){delete w.errs.recurN;el.classList.remove("bad");const m=el.closest(".setting").querySelector(".error-text");if(m)m.remove()}
  fcRepeatDraw()}
 function fcRepeatInfo(w){
  const n=FC_STEP[w.recur];if(!n)return"";
@@ -132,10 +132,10 @@ function fcCreate(){wzCollect();const w=W(),s=toISO(w.start),e=toISO(w.end),errs
  if(!w.name.trim())errs.name="Enter a cycle name";
  if(!s||!e)errs.period="Select a cycle period";
  w.errs=errs;const n=Object.keys(errs).length+wzIssuesCreate().filter(x=>x.b&&!/cycle name/i.test(x.t)).length;
- if(n){render();const f=document.querySelector(".fc .bad");if(f){f.scrollIntoView({block:"center",behavior:"smooth"});if(f.focus)f.focus({preventScroll:true})}toast(`Fix ${n} item${n>1?"s":""} first.`);return}
+ if(n){render();const f=document.querySelector(".editor .bad");if(f){f.scrollIntoView({block:"center",behavior:"smooth"});if(f.focus)f.focus({preventScroll:true})}toast(`Fix ${n} item${n>1?"s":""} first.`);return}
  createCycle()}
 /* steps are gone: any old "go to step" link just scrolls to the reviewers card */
-wzGo=function(){wzCollect();render();const c=document.querySelectorAll(".fc-card")[1];if(c)c.scrollIntoView({block:"start",behavior:"smooth"})};
+wzGo=function(){wzCollect();render();const c=document.querySelectorAll(".form-section")[1];if(c)c.scrollIntoView({block:"start",behavior:"smooth"})};
 /* a brand-new cycle starts empty, like the design; drafts keep their values */
 startCycle=function(pattern){S.wz=newWz(pattern||"Quarterly crew check-in");Object.assign(S.wz,{name:"",start:"",end:"",recur:"",datesSet:false,ctype:"General Review",probSched:"end",probEvery:1,probTill:"probation",probTillN:12,projMode:"all",projs:[]});nav("wizard")};
 const _editDraftFc=editDraft;editDraft=function(cid){_editDraftFc(cid);S.wz.editing=true;render()};

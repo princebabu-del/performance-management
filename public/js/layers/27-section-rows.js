@@ -8,12 +8,12 @@
    menu also ends in "</div></div>", which used to put the scale inside the dropdown wrapper and push the menu below it */
 const _rxRatingRows=rxRating;rxRating=function(w){const h=_rxRatingRows(w),M="</div></div><!--fc-rate-->",i=h.lastIndexOf(M);if(i<0)return h;
  const rest=h.slice(i+M.length).replace(/\s*<\/section>\s*$/,"").trim();
- return rest?`${h.slice(0,i)}<div class="fc-rate-x">${rest}</div></div></div></section>`:h};
-/* every field row: the question on the left, ONE answer column on the right (.fc-ans). The answer's parts (field, errors,
+ return rest?`${h.slice(0,i)}<div class="rating-preview">${rest}</div></div></div></section>`:h};
+/* every field row: the question on the left, ONE answer column on the right (.setting__control). The answer's parts (field, errors,
    rating scale, nested options…) stack under each other inside it instead of sharing grid rows with the question,
    so a long question or description never pushes them apart. Runs after each render (moving nodes keeps their handlers). */
-function fcWrapAnswers(){document.querySelectorAll(".fc-main .fc-form>.fc-field").forEach(f=>{if(f.querySelector(":scope>.fc-ans"))return;
- const kids=[...f.children].filter(c=>!c.classList.contains("v5lblwrap"));if(!kids.length)return;
- const a=document.createElement("div");a.className="fc-ans";kids.forEach(c=>a.appendChild(c));f.appendChild(a)})}
+function fcWrapAnswers(){document.querySelectorAll(".editor__main .setting-list>.setting").forEach(f=>{if(f.querySelector(":scope>.setting__control"))return;
+ const kids=[...f.children].filter(c=>!c.classList.contains("setting__label"));if(!kids.length)return;
+ const a=document.createElement("div");a.className="setting__control";kids.forEach(c=>a.appendChild(c));f.appendChild(a)})}
 const _renderAns=render;render=function(...a){const r=_renderAns(...a);fcWrapAnswers();return r};
 render();

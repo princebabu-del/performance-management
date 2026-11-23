@@ -20,8 +20,8 @@ if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(S.view
 /* editor field (Additional Notes + helper text): after Cycle Period / Repeats, at the end of the Cycle Details card */
 function fcDescIn(el){W().desc=el.value;const n=$("#fcDescCount");if(n)n.textContent=`${el.value.length}/${CD_DESC_MAX}`}
 const _fcDetailsDesc=fcDetails;fcDetails=function(w){const h=_fcDetailsDesc(w),d=w.desc||"",i=h.lastIndexOf("</div></section>");
- const f=`<div class="fc-field full">${fcQ("Additional notes",{for:"wDesc",d:"Shown to reviewers while they complete the review.",did:"wDescHelp"})}
-  <textarea class="fc-inp fc-ta" id="wDesc" maxlength="${CD_DESC_MAX}" rows="4" placeholder="Enter focus areas, rating guidance or anything that affected this period." aria-describedby="wDescHelp" oninput="fcDescIn(this)">${esc(d)}</textarea></div>`;
+ const f=`<div class="setting">${fcQ("Additional notes",{for:"wDesc",d:"Shown to reviewers while they complete the review.",did:"wDescHelp"})}
+  <textarea class="input input--textarea" id="wDesc" maxlength="${CD_DESC_MAX}" rows="4" placeholder="Enter focus areas, rating guidance or anything that affected this period." aria-describedby="wDescHelp" oninput="fcDescIn(this)">${esc(d)}</textarea></div>`;
  return i<0?h:h.slice(0,i)+f+h.slice(i)};
 /* save: drafts and new cycles (createCycle saves through wzSave), and live edits */
 const _wzSaveDesc=wzSave;wzSave=function(...a){_wzSaveDesc(...a);const w=W(),c=w&&w.id&&C(w.id);if(c)c.desc=(w.desc||"").trim()};

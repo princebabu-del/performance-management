@@ -43,15 +43,15 @@ function csCyclesDlg(cid){const c=C(cid),runs=csRuns(c,5);if(!runs.length)return
 const CS_NO_RATING="No overall rating for this cycle. Reviewers only answer the questionnaire, and employees see the written feedback without a score.";
 function csScale(key){
  if(key==="No rating")return `<div class="cs-scale"><span class="cs-scale-none">${CS_NO_RATING}</span></div>`;
- const star=key==="Stars",badge=i=>star?`<span class="cs-stars" aria-label="${i+1} of 5 stars">${[0,1,2,3,4].map(j=>`<span class="${j<=i?"on":""}" aria-hidden="true">${j<=i?"★":"☆"}</span>`).join("")}</span>`:`<span class="rx-num n${i+1}">${i+1}</span>`;
+ const star=key==="Stars",badge=i=>star?`<span class="cs-stars" aria-label="${i+1} of 5 stars">${[0,1,2,3,4].map(j=>`<span class="${j<=i?"on":""}" aria-hidden="true">${j<=i?"★":"☆"}</span>`).join("")}</span>`:`<span class="rating-badge n${i+1}">${i+1}</span>`;
  const lv=((star&&D.settings.starLevels)||D.settings.levels).map((l,i)=>[l,i]).reverse();
  return `<ul class="cs-scale">${lv.map(([l,i])=>`<li class="cs-lvl">${badge(i)}<span>${esc(l)}</span></li>`).join("")}</ul>`}
 const csRatingKey=r=>r==="Stars"?"Stars":/^(No rating|Written answers only)$/.test(r||"")?"No rating":"Numeric 1–5 with definitions";
 const csRatingNote=c=>csScale(csRatingKey(c.rating||(c.wz||{}).rating||""));
 /* editor › Overall Rating: same card, with the scale row in place of the blue "What employees see" banner */
 rxRating=function(w){if(!RX_FMTS.some(f=>f.k===w.rating))w.rating="Numeric 1–5 with definitions";
- return `<section class="fc-card">${rxHd("Overall Rating","One overall rating format for everyone in this cycle, or no overall rating. Questionnaires can still ask their own questions.")}
-  <div class="fc-form"><div class="fc-field">${fcQ("Rating format",{id:"rxFmtQ",d:"One rating format or no rating for this cycle.",did:"rxFmtD"})}
+ return `<section class="form-section">${rxHd("Overall Rating","One overall rating format for everyone in this cycle, or no overall rating. Questionnaires can still ask their own questions.")}
+  <div class="setting-list"><div class="setting">${fcQ("Rating format",{id:"rxFmtQ",d:"One rating format or no rating for this cycle.",did:"rxFmtD"})}
    ${fcSel({id:"rxFmt",value:w.rating,options:RX_FMTS.map(o=>({v:o.k,t:RX_FMT_LBL[o.k]||o.n})),ph:"Select an option",pick:"rxFmtPick"}).replace('aria-haspopup="listbox"','aria-haspopup="listbox" aria-describedby="rxFmtD"')}
   </div></div><!--fc-rate-->
   ${w.rating==="No rating"?banner("info",`<b>No overall rating for this cycle.</b> Reviewers only answer the questionnaire, and employees see the written feedback without a score. Questionnaires can still ask their own rating questions.`):csScale(w.rating)}</section>`};
@@ -94,7 +94,7 @@ function csReviewerRows(c,x){const K=rxKeys(x);if(!K.length)return[];
   <ul class="cs-wt-leg" style="--rows:${Math.min(W.length,5)}">${W.map(o=>`<li><span class="cs-wt-dot" style="background:${o.col}" aria-hidden="true"></span><span class="cs-wt-n">${esc(o.n)}</span><span class="cs-wt-v">${o.w}%</span></li>`).join("")}</ul></div>`;
  /* Questionnaire: each questionnaire once (eye opens it in the side drawer), the reviewers using it underneath */
  const tpls=[];R.forEach(({n,r})=>{const id=r.tpl||"";let g=tpls.find(g=>g.id===id);if(!g)tpls.push(g={id,t:T(id),who:[]});g.who.push(n)});
- const qs=`<div class="cs-qs">${tpls.map(g=>`<div><div class="cs-q-n">${g.t?`${esc(g.t.name)}<span class="rx-tip cs-q-tip"><button type="button" class="cs-rv-eye" aria-label="View questionnaire ${esc(g.t.name)}" onclick="previewTpl('${g.t.id}')">${ic("eye")}</button><span class="rx-tip-box" role="tooltip">View Questionnaire</span></span>`:"No questionnaire"}</div><div class="cs-q-who">${esc(g.who.join(", "))}</div></div>`).join("")}</div>`;
+ const qs=`<div class="cs-qs">${tpls.map(g=>`<div><div class="cs-q-n">${g.t?`${esc(g.t.name)}<span class="hint cs-q-tip"><button type="button" class="cs-rv-eye" aria-label="View questionnaire ${esc(g.t.name)}" onclick="previewTpl('${g.t.id}')">${ic("eye")}</button><span class="hint__box" role="tooltip">View Questionnaire</span></span>`:"No questionnaire"}</div><div class="cs-q-who">${esc(g.who.join(", "))}</div></div>`).join("")}</div>`;
  const rows=[{k:"Reviewers",html:`<ul class="cs-chips">${R.map(o=>`<li class="cs-chip">${esc(o.n)}</li>`).join("")}</ul>`},{k:"Weightage (%)",html:weight},{k:"Questionnaire",html:qs}];
  if(others.length){
   if(x.self)rows.push({k:"View Reviewee's evaluation",html:list(others.filter(o=>o.r.seeSelf).map(o=>o.n))});

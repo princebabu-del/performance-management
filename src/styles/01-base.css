@@ -370,7 +370,7 @@ textarea.inp{height:76px;padding:10px 12px;resize:vertical}
 .set-scales{display:flex;flex-direction:column;gap:16px}
 .set-scales>.lb-bgrp{align-self:flex-start}
 .pol.set-lvl{grid-template-columns:104px minmax(0,1fr)}
-.pol.set-lvl .rx-num{justify-self:start}
+.pol.set-lvl .rating-badge{justify-self:start}
 .pol.set-lvl .cs-stars{font-size:18px;gap:2px}
 /* Settings › Review defaults: field fills the row, 24px after the longest label (rows share columns) */
 .card.set-pols{display:grid;grid-template-columns:max-content minmax(0,1fr)}

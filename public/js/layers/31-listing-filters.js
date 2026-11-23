@@ -112,20 +112,20 @@ function lfCalMode(m){const c=S.fCal;c.mode=c.mode===m?"days":m;openFilters(S.fC
 function lfCalSet(part,n){const c=S.fCal;if(part==="m")c.m=n;else c.y=n;c.mode="days";openFilters(S.fCat)}
 
 /* ===== Delete confirmation (Figma Confirmation Dialog 1342:27783), used by Review Cycles and Questionnaires.
-   Same dialog shell as the editor's exit dialog (.fc-dlg: pattern, close X, full-width actions) with the red trash icon
+   Same dialog shell as the editor's exit dialog (.dialog: pattern, close X, full-width actions) with the red trash icon
    and a red Delete button. desc (the question) and note (what happens, its own paragraph) are HTML, names already escaped; onOk runs on Delete. Cancel / X / Escape / backdrop close it. */
 /* confirmDialog: the shared shell. icon = Figma icon file in /assets/icons, tone "danger" (red icon + red button, Delete)
    or "primary" (gray icon + blue button, Archive — Figma 2641:33910). deleteDialog = the delete preset. */
 function deleteDialog(o){confirmDialog({icon:"trash-01",tone:"danger",confirm:"Delete",...o})}
 function confirmDialog({title,desc,note="",confirm="Confirm",icon="",tone="primary",onOk}){
  window._delOk=onOk;
- $("#layer").insertAdjacentHTML("beforeend",`<div class="mbg" onclick="if(event.target===this)closeModal()"><div class="fc-dlg" role="alertdialog" aria-modal="true" aria-labelledby="delDlgT" aria-describedby="delDlgD">
-  <div class="fc-dlg-bg" aria-hidden="true"><img src="/assets/dlg-pattern.svg" width="336" height="336" alt=""></div>
-  <button type="button" class="fc-dlg-x" aria-label="Close" onclick="closeModal()"><img src="/assets/x-close-24-gray.svg" width="24" height="24" alt=""></button>
-  <div class="fc-dlg-h"><span class="fc-dlg-ic${tone==="danger"?" del":""}" aria-hidden="true"><img src="/assets/icons/${icon}.svg" width="24" height="24" alt=""></span>
-   <div class="fc-dlg-t"><h2 id="delDlgT">${title}</h2><div class="del-dlg-d" id="delDlgD"><p>${desc}</p>${note?`<p>${note}</p>`:""}</div></div></div>
-  <div class="fc-dlg-a"><button type="button" class="fc-btn" onclick="closeModal()">Cancel</button><button type="button" class="fc-btn ${tone==="danger"?"danger":"p"}" onclick="window._delOk&&window._delOk()">${confirm}</button></div></div></div>`);
- const c=$("#layer .fc-dlg .fc-btn");if(c)c.focus()}
+ $("#layer").insertAdjacentHTML("beforeend",`<div class="mbg" onclick="if(event.target===this)closeModal()"><div class="dialog" role="alertdialog" aria-modal="true" aria-labelledby="delDlgT" aria-describedby="delDlgD">
+  <div class="dialog__backdrop" aria-hidden="true"><img src="/assets/dlg-pattern.svg" width="336" height="336" alt=""></div>
+  <button type="button" class="dialog__close" aria-label="Close" onclick="closeModal()"><img src="/assets/x-close-24-gray.svg" width="24" height="24" alt=""></button>
+  <div class="dialog__header"><span class="dialog__icon${tone==="danger"?" del":""}" aria-hidden="true"><img src="/assets/icons/${icon}.svg" width="24" height="24" alt=""></span>
+   <div class="dialog__title"><h2 id="delDlgT">${title}</h2><div class="del-dlg-d" id="delDlgD"><p>${desc}</p>${note?`<p>${note}</p>`:""}</div></div></div>
+  <div class="dialog__actions"><button type="button" class="button" onclick="closeModal()">Cancel</button><button type="button" class="button ${tone==="danger"?"button--danger":"button--primary"}" onclick="window._delOk&&window._delOk()">${confirm}</button></div></div></div>`);
+ const c=$("#layer .dialog .button");if(c)c.focus()}
 
 /* Review Cycles: delete a draft (row menu). There's no archive for review cycles — a deleted draft is gone for good
    (the toast's Undo puts it back while it's showing). */

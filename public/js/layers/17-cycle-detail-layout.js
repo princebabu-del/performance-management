@@ -89,7 +89,7 @@ function cdRevRemove(id,role,name){const p=PK(id),self=role==="Reviewee";
    toast(`${name} removed from ${E(p.eid).name}'s review.`,()=>{Object.assign(p,JSON.parse(snap));log(p,"Reviewer removal undone","g");render(true)})}})}
 /* questionnaire cell: questionnaire name + eye (opens it in the side drawer, "View Questionnaire" tooltip) */
 function cdTplCell(id){const t=id&&T(id);if(!t)return '<span class="dim">—</span>';
- return `<div class="cd-tpl"><span class="cd-n cd-tpl-n">${esc(t.name)}</span><span class="rx-tip cs-q-tip" onclick="event.stopPropagation()"><button type="button" class="cs-rv-eye" aria-label="View questionnaire ${esc(t.name)}" onclick="previewTpl('${t.id}')">${ic("eye")}</button><span class="rx-tip-box" role="tooltip">View Questionnaire</span></span></div>`}
+ return `<div class="cd-tpl"><span class="cd-n cd-tpl-n">${esc(t.name)}</span><span class="hint cs-q-tip" onclick="event.stopPropagation()"><button type="button" class="cs-rv-eye" aria-label="View questionnaire ${esc(t.name)}" onclick="previewTpl('${t.id}')">${ic("eye")}</button><span class="hint__box" role="tooltip">View Questionnaire</span></span></div>`}
 /* a role nobody fills: Remove drops it from this reviewee's review (undo from the toast) */
 function cdRoleSkip(id,role){const p=PK(id);p.skip=[...(p.skip||[]),role];if(/Manager/.test(role))p.noReviewer=false;log(p,`${role} not required for this review`,"a");render(true);
  toast(`${role} removed from ${E(p.eid).name}'s review.`,()=>{p.skip=p.skip.filter(r=>r!==role);if(/Manager/.test(role)&&!(p.mgr&&p.mgr.by))p.noReviewer=true;log(p,"Role removal undone","g");render(true)})}

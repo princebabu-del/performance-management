@@ -1,51 +1,51 @@
-/* ===== Dropdown menu: the list popup shared by every single-select (.fc-ss-pop) and multi-select (.rx-pop) =====
+/* ===== Dropdown menu: the list popup shared by every single-select (.select__menu) and multi-select (.dropdown__menu) =====
    Spec: the MENU block in public/components/single-select/SingleSelect.tsx and multi-select/MultiSelect.tsx (keep the values in sync).
 
-   Container .rx-pop          1px #EAECF0 · 12px radius · 4px padding (options sit directly inside: reviewer roles, Who can reopen)
-   With a list .rx-pop-list   container padding 0; the list carries the 4px padding and scrolls
-   Search .rx-srch            its own block above the list: 8px 8px 4px padding, 36px input
-   Option .rx-mo / .fc-ss-o   min 40px · 8px 12px padding · 8px radius · 2px apart
-     primary   .dd-t1         14/20 medium #101828
-     secondary .dd-t2         12/18 medium #667085 (tertiary), 2px under the primary line; links in it (Preview) semibold #2970FF
+   Container .dropdown__menu          1px #EAECF0 · 12px radius · 4px padding (options sit directly inside: reviewer roles, Who can reopen)
+   With a list .dropdown__list   container padding 0; the list carries the 4px padding and scrolls
+   Search .dropdown__search            its own block above the list: 8px 8px 4px padding, 36px input
+   Option .dropdown__option / .select__option   min 40px · 8px 12px padding · 8px radius · 2px apart
+     primary   .dropdown__primary         14/20 medium #101828
+     secondary .dropdown__secondary         12/18 medium #667085 (tertiary), 2px under the primary line; links in it (Preview) semibold #2970FF
    Height                     7 options, then the list scrolls (--dd-row = one option's height; two-line lists use 56px)
-   Scrollbar                  native bar hidden; .dd-thumb (32-dropdown-scroll.js) is drawn over the options' right edge,
+   Scrollbar                  native bar hidden; .dropdown__scrollbar (32-dropdown-scroll.js) is drawn over the options' right edge,
                               6px wide, 2px from the border, and only shows while the pointer is over the menu */
 
-.rx-pop{padding:4px;--dd-rows:7;--dd-row:40px}
-.rx-pop:has(>.rx-pop-list){padding:0}
+.dropdown__menu{padding:4px;--dd-rows:7;--dd-row:40px}
+.dropdown__menu:has(>.dropdown__list){padding:0}
 
 /* search: a container of its own above the list */
-.rx-srch{padding:8px 8px 4px;flex:none}
+.dropdown__search{padding:8px 8px 4px;flex:none}
 
 /* the list: 4px padding, 2px between options, 7 options tall, then scrolls under an overlay thumb */
-.rx-pop-list{position:relative;padding:4px;gap:2px;display:flex;flex-direction:column;overflow-y:auto;overscroll-behavior:contain;
+.dropdown__list{position:relative;padding:4px;gap:2px;display:flex;flex-direction:column;overflow-y:auto;overscroll-behavior:contain;
  max-height:calc(var(--dd-rows) * var(--dd-row) + (var(--dd-rows) - 1) * 2px + 8px);scrollbar-width:none}
-.rx-pop-list::-webkit-scrollbar{display:none}
-.rx-pop-list>*{flex-shrink:0}   /* fixed-height scroller: rows keep their full height */
-.rx-pop-list .rx-none{padding:16px 12px}
+.dropdown__list::-webkit-scrollbar{display:none}
+.dropdown__list>*{flex-shrink:0}   /* fixed-height scroller: rows keep their full height */
+.dropdown__list .dropdown__empty{padding:16px 12px}
 
 /* options: 12px left / right padding, one 20px text line */
-.rx-mo,.fc-ss-o,.rx-tplpop .rx-oi{padding:8px 12px;line-height:20px}
+.dropdown__option,.select__option,.questionnaire-picker__menu .questionnaire-picker__option{padding:8px 12px;line-height:20px}
 
 /* two-line options: primary + secondary, 2px apart */
-.dd-txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;text-align:left}
-.dd-t1{font-size:14px;font-weight:500;line-height:20px;color:var(--text-primary,#101828);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.dd-t2{font-size:12px;font-weight:500;line-height:18px;color:var(--text-tertiary,#667085);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.dd-t2:empty{display:none}
-.fc-ss-o:disabled .dd-t1,.fc-ss-o:disabled .dd-t2{color:#98A2B3}
-.rx-pop.dd-2l,.rx-tplpop{--dd-row:56px}
-.rx-tplpop .rx-o-m{color:var(--text-tertiary,#667085);font-weight:500}
-.rx-view{font-weight:600}   /* links in the secondary line stay semibold */
+.dropdown__text{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;text-align:left}
+.dropdown__primary{font-size:14px;font-weight:500;line-height:20px;color:var(--text-primary,#101828);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dropdown__secondary{font-size:12px;font-weight:500;line-height:18px;color:var(--text-tertiary,#667085);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dropdown__secondary:empty{display:none}
+.select__option:disabled .dropdown__primary,.select__option:disabled .dropdown__secondary{color:#98A2B3}
+.dropdown__menu.dropdown__menu--two-line,.questionnaire-picker__menu{--dd-row:56px}
+.questionnaire-picker__menu .questionnaire-picker__meta{color:var(--text-tertiary,#667085);font-weight:500}
+.questionnaire-picker__preview{font-weight:600}   /* links in the secondary line stay semibold */
 
-/* single-select: options now live in .rx-pop-list (gap moves there) */
-.fc-ss-pop{gap:0}
+/* single-select: options now live in .dropdown__list (gap moves there) */
+.select__menu{gap:0}
 
 /* overlay scrollbar thumb — above the options (z-index), visible on hover / while dragging */
-.dd-thumb{position:absolute;right:2px;z-index:3;width:6px;border-radius:3px;background:#D0D5DD;opacity:0;pointer-events:none;transition:opacity .15s,background-color .15s;touch-action:none}
-.rx-pop:hover>.dd-thumb.is-on,.dd-thumb.is-drag{opacity:1;pointer-events:auto;cursor:default}
-.dd-thumb:hover,.dd-thumb.is-drag{background:#98A2B3}
+.dropdown__scrollbar{position:absolute;right:2px;z-index:3;width:6px;border-radius:3px;background:#D0D5DD;opacity:0;pointer-events:none;transition:opacity .15s,background-color .15s;touch-action:none}
+.dropdown__menu:hover>.dropdown__scrollbar.is-on,.dropdown__scrollbar.is-drag{opacity:1;pointer-events:auto;cursor:default}
+.dropdown__scrollbar:hover,.dropdown__scrollbar.is-drag{background:#98A2B3}
 
 /* search clear (×): the browser's blue cancel button replaced by the 16px x-close icon in the tertiary text color (#667085).
    Shown once there is text; clicking it empties the search and fires `input`, so the list re-filters. */
-.rx-search::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none;width:16px;height:16px;margin:0 0 0 8px;
+.dropdown__search-input::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none;width:16px;height:16px;margin:0 0 0 8px;
  background:url(/assets/x-close-20-tertiary.svg) center/16px 16px no-repeat;cursor:pointer}

@@ -3,7 +3,7 @@
      opts.value     ISO date "YYYY-MM-DD" or ""
      opts.min/max   ISO bounds (optional) — days outside are disabled
      opts.name      adds a hidden <input name> carrying the ISO value, for forms
-     opts.cls       extra classes on the field button (e.g. "fc-inp rx-date")
+     opts.cls       extra classes on the field button (e.g. "input rx-date")
      opts.aria      accessible label
      opts.disabled  true = read-only
      opts.onchange  JS run after a pick, with `this` = the field button; `this.value` is the ISO date ("" when cleared)

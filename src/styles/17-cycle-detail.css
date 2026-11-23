@@ -42,7 +42,7 @@
 .cs-scale{display:flex;flex-direction:column;gap:8px;margin:0;padding:0;list-style:none}
 .cs-scale-none{font-size:14px;font-weight:400;color:#475467;line-height:1.5}
 .cs-lvl{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500;line-height:20px;color:#101828}
-.cs-lvl .rx-num{flex-shrink:0;width:20px;height:20px;border-radius:4px;font-size:12px}
+.cs-lvl .rating-badge{flex-shrink:0;width:20px;height:20px;border-radius:4px;font-size:12px}
 .cs-stars{display:inline-flex;gap:1px;font-size:14px;line-height:1}
 .cs-stars span{color:#D0D5DD}
 .cs-stars span.on{color:#FDB022}
@@ -80,7 +80,7 @@
 .cs-rv-eye .i{width:20px;height:20px}
 .cs-rv-eye:hover{color:#101828}
 .cs-rv-eye:focus-visible{outline:2px solid var(--link);outline-offset:1px}
-.cs-q-tip .cs-rv-eye:focus-visible+.rx-tip-box{opacity:1;visibility:visible;transform:translate(-50%,0)}
+.cs-q-tip .cs-rv-eye:focus-visible+.hint__box{opacity:1;visibility:visible;transform:translate(-50%,0)}
 /* em dash for anything not configured */
 .cs-empty{color:#98A2B3;font-weight:400}
 /* secondary line under a value (e.g. self-evaluation edit rule) */

@@ -14,7 +14,7 @@ function colRows(){const V_=colV(),on=V_.on().map(x=>x.k);
  return V_.order().map(k=>{const x=V_.cols().find(c=>c.k===k),lk=!!x.lock,ck=lk||on.includes(k);
   return `<div class="col-row${lk?" lk":""}" data-k="${k}" ${lk?"":'draggable="true"'}>
    <button type="button" class="col-h" ${lk?'disabled aria-hidden="true" tabindex="-1"':`aria-label="Reorder ${esc(x.l)}. Use up and down arrow keys" onkeydown="colKey(event,'${k}')"`}>${ic("drag")}</button>
-   <label class="col-l"><input type="checkbox" class="rx-cb col-cb" ${ck?"checked":""} ${lk?"disabled":""} onchange="colToggle('${k}',this.checked)"><span>${esc(x.l)}</span></label></div>`}).join("")}
+   <label class="col-l"><input type="checkbox" class="checkbox col-cb" ${ck?"checked":""} ${lk?"disabled":""} onchange="colToggle('${k}',this.checked)"><span>${esc(x.l)}</span></label></div>`}).join("")}
 /* draw = rebuild the list (open / reorder); otherwise only keep the open state and position in sync after a page render */
 function colSync(draw){const b=colBtn();let p=document.getElementById("colPop");
  if(!S.colOpen||!colV()||!b){if(p)p.remove();S.colOpen=false;if(b){b.classList.remove("col-open");b.setAttribute("aria-expanded","false")}return}

@@ -35,14 +35,14 @@ function fcSumLines(w){const x=rxInit(w),L=[],t=w.ctype||"General Review",s=toIS
  /* Auto-assign */
  const a=x.auto;L.push(a&&a.on?`${b("Auto-assigns")} ${a.mode==="groups"?`${esc(role||"employees")} from selected groups`:`all ${esc(role||"employees")}`}.`:`People are ${b("added manually")}.`);
  return L}
-function fcSumDraw(){if(S.view!=="wizard")return;const body=document.querySelector(".fc-body"),w=W();if(!body||!w)return;
+function fcSumDraw(){if(S.view!=="wizard")return;const body=document.querySelector(".editor__body"),w=W();if(!body||!w)return;
  let el=document.getElementById("fcSum");
- if(!el){el=document.createElement("aside");el.id="fcSum";el.className="fc-sum";el.setAttribute("aria-labelledby","fcSumT");body.appendChild(el)}
- el.innerHTML=`<div class="fc-sum-h"><h2 id="fcSumT">Cycle Summary</h2></div>
-  <ul class="fc-sum-b">${fcSumLines(w).map(l=>`<li><img src="/assets/check-green-16.svg" width="16" height="16" alt="">${`<span>${l}</span>`}</li>`).join("")}</ul>`}
+ if(!el){el=document.createElement("aside");el.id="fcSum";el.className="summary";el.setAttribute("aria-labelledby","fcSumT");body.appendChild(el)}
+ el.innerHTML=`<div class="summary__header"><h2 id="fcSumT">Cycle Summary</h2></div>
+  <ul class="summary__body">${fcSumLines(w).map(l=>`<li><img src="/assets/check-green-16.svg" width="16" height="16" alt="">${`<span>${l}</span>`}</li>`).join("")}</ul>`}
 const _renderSum=render;render=function(...a){const r=_renderSum(...a);fcSumDraw();return r};
 /* typing and picks that don't re-render (name, notes, repeats, weightage, nested numbers) */
 let fcSumRaf=0;
-["input","change"].forEach(ev=>document.addEventListener(ev,e=>{if(!e.target.closest||!e.target.closest(".fc"))return;
+["input","change"].forEach(ev=>document.addEventListener(ev,e=>{if(!e.target.closest||!e.target.closest(".editor"))return;
  cancelAnimationFrame(fcSumRaf);fcSumRaf=requestAnimationFrame(fcSumDraw)}));
 render();

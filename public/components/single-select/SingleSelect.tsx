@@ -21,7 +21,7 @@
  *
  * This file is the spec and a typed React reference. The prototype itself is plain JS:
  * `fcSel()` in public/js/layers/30-single-select.js renders the same markup and class names,
- * styled by src/styles/25-single-select.css + 28-dropdown-menu.css (overlay scrollbar: public/js/layers/32-dropdown-scroll.js) (plus .fc-inp / .fc-sel / .rx-pop / .rx-mo).
+ * styled by src/styles/25-single-select.css + 28-dropdown-menu.css (overlay scrollbar: public/js/layers/32-dropdown-scroll.js) (plus .input / .input--select / .dropdown__menu / .dropdown__option).
  * If you change a value here, change it in the CSS too.
  *
  * ─────────────────────────────────────────────────────────────────────────────
@@ -67,16 +67,16 @@
  * ─────────────────────────────────────────────────────────────────────────────
  * ANATOMY
  * ─────────────────────────────────────────────────────────────────────────────
- *   .rx-dd                       wrapper, position: relative
- *   ├ button.fc-ss-btn           the field (aria-haspopup="listbox")
- *   │ └ span.fc-ss-v             value or placeholder, one line, ellipsed
- *   ├ button.fc-clr-x            optional clear (×), only when a value is chosen
- *   └ div.rx-pop.fc-ss-pop       the menu, only while open
- *     ├ div.rx-srch              optional search block
- *     └ div.rx-pop-list          role="listbox"
- *       └ button.fc-ss-o         role="option", one per option
- *         ├ span / span.dd-txt   label, or label + secondary line
- *         └ img.fc-ss-ck         check on the chosen option
+ *   .dropdown                            wrapper, position: relative
+ *   ├ button.select__trigger             the field (aria-haspopup="listbox")
+ *   │ └ span.select__value               value or placeholder, one line, ellipsed
+ *   ├ button.clearable__button           optional clear (×), only when a value is chosen
+ *   └ div.dropdown__menu.select__menu    the menu, only while open
+ *     ├ div.dropdown__search             optional search block
+ *     └ div.dropdown__list               role="listbox"
+ *       └ button.select__option          role="option", one per option
+ *         ├ span / span.dropdown__text   label, or label + secondary line
+ *         └ img.select__check            check on the chosen option
  *
  * ─────────────────────────────────────────────────────────────────────────────
  * FIELD STATES
@@ -129,7 +129,7 @@
  * ─────────────────────────────────────────────────────────────────────────────
  *   fcSel({ id: "rxWho", value: x.reviewee || "", ph: "Select a role", pick: "fcWhoPick",
  *           options: [{ v: "Worker", t: "Worker" }, { v: "Foreman", t: "Foreman" }],
- *           cls: x.reviewee ? "" : "fc-ss-up" });   // fc-ss-up = placement "top"
+ *           cls: x.reviewee ? "" : "select--up" });   // select--up = placement "top"
  *   fcSel({ ..., search: "Search questionnaires",            // adds the search block
  *           options: [{ v: "t1", t: "Detailed Review", s: "Office · 12 questions" }] });  // s = secondary line
  */

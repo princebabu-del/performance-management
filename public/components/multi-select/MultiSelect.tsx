@@ -72,18 +72,18 @@
  * ─────────────────────────────────────────────────────────────────────────────
  * ANATOMY
  * ─────────────────────────────────────────────────────────────────────────────
- *   .rx-dd                         wrapper, position: relative
- *   ├ div.fc-inp.rx-ms             the field: chips + placeholder, click opens
- *   │ ├ span.rx-tag                chip per selected option
- *   │ │ └ button.rx-tagx           × removes it (doesn't open the menu)
- *   │ ├ span.rx-more               "+N" for chips that don't fit on the line
- *   │ ├ span.rx-ph                 placeholder when nothing is selected
- *   │ └ button.rx-chev             full-size transparent button: focus target, aria-expanded, chevron
- *   └ div.rx-pop                   the menu (role="group"), only while open
- *     ├ div.rx-srch                optional search block
- *     └ div.rx-pop-list
- *       ├ label.rx-mo.rx-mo-all    optional "Select all"
- *       └ label.rx-mo              checkbox + text (+ span.rx-same meta)
+ *   .dropdown                                            wrapper, position: relative
+ *   ├ div.input.multiselect                              the field: chips + placeholder, click opens
+ *   │ ├ span.chip                                        chip per selected option
+ *   │ │ └ button.chip__remove                            × removes it (doesn't open the menu)
+ *   │ ├ span.chip--more                                  "+N" for chips that don't fit on the line
+ *   │ ├ span.multiselect__placeholder                    placeholder when nothing is selected
+ *   │ └ button.multiselect__toggle                       full-size transparent button: focus target, aria-expanded, chevron
+ *   └ div.dropdown__menu                                 the menu (role="group"), only while open
+ *     ├ div.dropdown__search                             optional search block
+ *     └ div.dropdown__list
+ *       ├ label.dropdown__option.dropdown__option--all   optional "Select all"
+ *       └ label.dropdown__option                         checkbox + text (+ span.dropdown__meta meta)
  *
  * ─────────────────────────────────────────────────────────────────────────────
  * FIELD STATES

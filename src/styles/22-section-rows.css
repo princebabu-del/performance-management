@@ -6,192 +6,191 @@
    question, 32px between rows, inputs 44px. No required marks or character counts. Option rows: 27-section-rows.js */
 /* text renders as in Figma and the PTO prototype: grayscale smoothing (macOS otherwise draws Inter noticeably heavier).
    Set on body while this screen is open (body.focusmode, 13-focused-cycle-editor.js), so it reaches everything the screen shows:
-   top bar, section nav, cards, and what renders outside .fc — dialogs and drawers in #layer, toasts in #toastHost, fixed popovers. */
+   top bar, section nav, cards, and what renders outside .editor — dialogs and drawers in #layer, toasts in #toastHost, fixed popovers. */
 body.focusmode{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
 
 /* section nav: 240px wide. The page grid (nav | 900px cards | summary) is in 24-cycle-summary.css */
-.fc-steps{flex:0 0 240px;gap:4px}
+.editor__nav{flex:0 0 240px;gap:4px}
 /* section nav (Figma Exploration – Lumber Web App 785:34389): text only, 14/500 #344054, 8×12 in, 8px corners, current on white */
-.fc-step{gap:8px;padding:8px 12px;border-radius:8px}
-.fc-step-t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;font-weight:500;line-height:1.4;letter-spacing:.07px;color:#344054}
+.editor__nav-item{gap:8px;padding:8px 12px;border-radius:8px}
+.editor__nav-label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;font-weight:500;line-height:1.4;letter-spacing:.07px;color:#344054}
 
-.fc-main .fc-card{border-radius:16px;gap:32px}
-.fc-main .fc-card h2{color:#101828}
+.editor__main .form-section{border-radius:16px;gap:32px}
+.editor__main .form-section__title{color:#101828}
 
 /* the question column (PTO prototype V5 markup, fcQ in 13-focused-cycle-editor.js): question, optional description 2px under it */
-.v5lblwrap{display:flex;flex-direction:column;gap:2px;min-width:0}
-.v5lbl{font-size:14px;font-weight:600;line-height:1.4;letter-spacing:-.28px;color:#101828}
-.v5desc{box-sizing:border-box;font-size:12px;font-weight:500;line-height:1.4;color:#667085;text-wrap:pretty}
+.setting__label{display:flex;flex-direction:column;gap:2px;min-width:0}
+.setting__title{font-size:14px;font-weight:600;line-height:1.4;letter-spacing:-.28px;color:#101828}
+.setting__description{box-sizing:border-box;font-size:12px;font-weight:500;line-height:1.4;color:#667085;text-wrap:pretty}
 
 /* fields: question left, everything else (input, errors, nested options) stacked in the answer column */
-.fc-main .fc-form{display:flex;flex-direction:column;gap:32px}
-.fc-main .fc-form>.fc-field{display:grid;grid-template-columns:240px minmax(0,1fr);column-gap:32px;row-gap:8px;align-items:start}
-.fc-main .fc-form>.fc-field>*{grid-column:2}
-.fc-main .fc-form>.fc-field>.v5lblwrap{grid-column:1;grid-row:1}
-/* the answer column (.fc-ans, 27-section-rows.js): its parts stack 8px apart, independent of the question's height */
-.fc-main .fc-form>.fc-field>.fc-ans{grid-column:2;grid-row:1;display:flex;flex-direction:column;align-items:stretch;gap:8px;min-width:0}
+.editor__main .setting-list{display:flex;flex-direction:column;gap:32px}
+.editor__main .setting-list>.setting{display:grid;grid-template-columns:240px minmax(0,1fr);column-gap:32px;row-gap:8px;align-items:start}
+.editor__main .setting-list>.setting>*{grid-column:2}
+.editor__main .setting-list>.setting>.setting__label{grid-column:1;grid-row:1}
+/* the answer column (.setting__control, 27-section-rows.js): its parts stack 8px apart, independent of the question's height */
+.editor__main .setting-list>.setting>.setting__control{grid-column:2;grid-row:1;display:flex;flex-direction:column;align-items:stretch;gap:8px;min-width:0}
 /* a question alone sits level with the middle of its 44px field; one with a description, or answered with radios, starts at the top */
-.fc-main .fc-form>.fc-field>.v5lblwrap:not(:has(.v5desc)){padding-top:12px}
-.fc-main .fc-form>.fc-field:has(>.fc-ans>.rx-chkbox:first-child)>.v5lblwrap{padding-top:0}
-.fc-main .fc-form>.fc-field>.fc-ans>.rx-chkbox:first-child{margin-top:0}
+.editor__main .setting-list>.setting>.setting__label:not(:has(.setting__description)){padding-top:12px}
+.editor__main .setting-list>.setting:has(>.setting__control>.choice-group:first-child)>.setting__label{padding-top:0}
+.editor__main .setting-list>.setting>.setting__control>.choice-group:first-child{margin-top:0}
 /* nested labels that keep the old style (Auto-assign › Exclude) */
-.fc-main .fc-lbl label{font-size:14px;font-weight:600;line-height:1.4;letter-spacing:-.28px;color:#101828}
-.fc-main .fc-form>.fc-field>.fc-ans:has(>.fc-rate-x){gap:12px}   /* Rating format → scale: one 12px gap (the column's own gap, no margin) */
+.editor__main .setting-list>.setting>.setting__control:has(>.rating-preview){gap:12px}   /* Rating format → scale: one 12px gap (the column's own gap, no margin) */
 /* half-width fields: (858 answer column − 24 gap) / 2 = 417px, shrinking on narrow screens */
-.fc-main #rxFmtWrap{width:min(100%,280px)}   /* same width as the Who is going to be reviewed? field */
+.editor__main #rxFmtWrap{width:min(100%,280px)}   /* same width as the Who is going to be reviewed? field */
 /* Review Type, Cycle Period and Reviewee: 280px wide (fits a full MM/DD/YYYY – MM/DD/YYYY range); "…" only as a fallback */
-.fc-main #fcTypeSelWrap,.fc-main #fcPeriodWrap,.fc-main #rxWhoWrap,.fc-main #fcRepeatsWrap{width:min(100%,280px)}   /* Repeats matches too */
-.fc-main #fcPeriod{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.editor__main #fcTypeSelWrap,.editor__main #fcPeriodWrap,.editor__main #rxWhoWrap,.editor__main #fcRepeatsWrap{width:min(100%,280px)}   /* Repeats matches too */
+.editor__main #fcPeriod{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* Additional Notes: 80px tall (still resizable) */
-.fc-main #wDesc{height:80px;min-height:80px}
+.editor__main #wDesc{height:80px;min-height:80px}
 
-/* checkbox settings (rxOpt): ordinary .fc-field rows — question + description left, a short checkbox right (.rx-row-c in the
+/* checkbox settings (rxOpt): ordinary .setting rows — question + description left, a short checkbox right (.setting__options in the
    answer column), its nested settings under it on a rule */
-.rx-row-c{display:flex;flex-direction:column;align-items:flex-start;gap:16px;min-width:0}
-.rx-row-c>.rx-nest-col,.rx-row-c>.rx-nest,.rx-row-c>.aa-body{align-self:stretch;margin:0 0 0 7px;padding:4px 0 4px 15px;border-left:2px solid #EAECF0}
-.rx-row-c>.rx-nest-col{gap:16px}
+.setting__options{display:flex;flex-direction:column;align-items:flex-start;gap:16px;min-width:0}
+.setting__options>.sub-settings--column,.setting__options>.sub-settings,.setting__options>.auto-assign{align-self:stretch;margin:0 0 0 7px;padding:4px 0 4px 15px;border-left:2px solid #EAECF0}
+.setting__options>.sub-settings--column{gap:16px}
 
 /* answers: 14px option labels, 44px inputs with regular-weight values (the reviewer table keeps its 36px inputs) */
-.fc-main .rx-check,.fc-main .rx-check-t{font-size:14px;color:#101828}
-.fc-main .fc-inp{height:44px;font-weight:400}
-.fc-main .fc-inp.fc-ta{height:auto}
-.fc-main .rx-g .fc-inp{height:36px}
-.fc-main .rx-ms{height:44px}
+.editor__main .choice-item,.editor__main .choice-item__text{font-size:14px;color:#101828}
+.editor__main .input{height:44px;font-weight:400}
+.editor__main .input.input--textarea{height:auto}
+.editor__main .reviewer-table__row .input{height:36px}
+.editor__main .multiselect{height:44px}
 
 /* too narrow for both columns (beside the section nav, or on small screens): the answer goes under its question */
 @media (min-width:1001px) and (max-width:1080px),(max-width:760px){
-  .fc-main .fc-form>.fc-field{grid-template-columns:minmax(0,1fr);row-gap:8px}
-  .fc-main .fc-form>.fc-field>*,.fc-main .fc-form>.fc-field>.v5lblwrap{grid-column:1;grid-row:auto}
-  .fc-main .fc-form>.fc-field>.v5lblwrap:not(:has(.v5desc)){padding-top:0}
+  .editor__main .setting-list>.setting{grid-template-columns:minmax(0,1fr);row-gap:8px}
+  .editor__main .setting-list>.setting>*,.editor__main .setting-list>.setting>.setting__label{grid-column:1;grid-row:auto}
+  .editor__main .setting-list>.setting>.setting__label:not(:has(.setting__description)){padding-top:0}
 }
 /* nested options sit 4px under the option they belong to (the column / group gap is 16px / 12px, so pull them up) */
-.rx-row-c>:is(.rx-nest-col,.rx-nest,.aa-body){margin-top:-12px}
-.rx-chkbox>.rx-nest{margin-top:-8px}
+.setting__options>:is(.sub-settings--column,.sub-settings,.auto-assign){margin-top:-12px}
+.choice-group>.sub-settings{margin-top:-8px}
 /* nested option blocks: 12px top padding, no bottom padding, inside the guide line */
-.rx-row-c>:is(.rx-nest-col,.rx-nest,.aa-body),.rx-chkbox>.rx-nest{padding-top:12px;padding-bottom:0}
+.setting__options>:is(.sub-settings--column,.sub-settings,.auto-assign),.choice-group>.sub-settings{padding-top:12px;padding-bottom:0}
 /* Auto-assign: the All / Only-from-groups radios start at the top of their nested block (no extra 4px) */
-.aa-body>.rx-checks{margin-top:0}
+.auto-assign>.choice-list{margin-top:0}
 
 /* reviewer table: text styles of the Review Cycles list table (.cyctbl) — header 14/500 lh 1.4 -0.28px #667085 on #F9FAFB,
    cells 14/500 lh 1.4 -0.28px #344054. Applies to headers, reviewer names, "days", the values in the row's fields and the total row.
    Row heights and layout are unchanged. */
-.fc-main .rx-grid{letter-spacing:-.28px}
-.fc-main .rx-head{font-weight:500;line-height:1.4;letter-spacing:-.28px;color:#667085}
-.fc-main .rx-name,.fc-main .rx-days{font-size:14px;font-weight:500;letter-spacing:-.28px;color:#344054}   /* line height left to the row, which centres the text */
-.fc-main .rx-g .fc-inp,.fc-main .rx-g .fc-inp .fc-ss-v,.fc-main .rx-pct input,.fc-main .rx-g .rx-dn{font-size:14px;font-weight:500;letter-spacing:-.28px;color:#344054}
-.fc-main .rx-g .rx-dn::placeholder{color:#98A2B3}
-.fc-main .rx-tot{line-height:1.4;letter-spacing:-.28px}
-.fc-main .rx-tot-l{font-weight:500;color:#344054}
-.fc-main .rx-total{font-weight:500}
+.editor__main .reviewer-table__frame{letter-spacing:-.28px}
+.editor__main .reviewer-table__row--head{font-weight:500;line-height:1.4;letter-spacing:-.28px;color:#667085}
+.editor__main .reviewer-table__name,.editor__main .due-date__unit{font-size:14px;font-weight:500;letter-spacing:-.28px;color:#344054}   /* line height left to the row, which centres the text */
+.editor__main .reviewer-table__row .input,.editor__main .reviewer-table__row .input .select__value,.editor__main .percent-input input,.editor__main .reviewer-table__row .due-date__days{font-size:14px;font-weight:500;letter-spacing:-.28px;color:#344054}
+.editor__main .reviewer-table__row .due-date__days::placeholder{color:#98A2B3}
+.editor__main .reviewer-table__total{line-height:1.4;letter-spacing:-.28px}
+.editor__main .reviewer-table__total-label{font-weight:500;color:#344054}
+.editor__main .reviewer-table__total-value{font-weight:500}
 
 /* reviewer table cells: 16px left/right padding in every cell (header and rows), no column gap and no row padding.
    Each column is its old content width + 32px, so the fields inside keep their size (14 → 0 gaps, 16 → per-cell padding). */
-.fc-main .rx-g{column-gap:0;padding:0;min-width:1344px;
+.editor__main .reviewer-table__row{column-gap:0;padding:0;min-width:1344px;
   grid-template-columns:200px 136px 248px 288px 132px 160px 120px 60px}
-.fc-main .rx-grid.noself .rx-g{min-width:1212px;grid-template-columns:200px 136px 248px 288px 160px 120px 60px}
-.fc-main .rx-g>*{box-sizing:border-box;padding-left:16px;padding-right:16px}
-.fc-main .rx-g>:first-child{margin-left:0}
+.editor__main .reviewer-table__frame.noself .reviewer-table__row{min-width:1212px;grid-template-columns:200px 136px 248px 288px 160px 120px 60px}
+.editor__main .reviewer-table__row>*{box-sizing:border-box;padding-left:16px;padding-right:16px}
+.editor__main .reviewer-table__row>:first-child{margin-left:0}
 /* centred columns (checkboxes, —): the cell spans its column so the 16px padding holds on both sides */
-.fc-main .rx-g>.c{justify-self:stretch;display:flex;justify-content:center;align-items:center}
+.editor__main .reviewer-table__row>.c{justify-self:stretch;display:flex;justify-content:center;align-items:center}
 /* every cell fills its row's full height (44px rows, 1px rule inside) with its content centred in it —
    header text by line-height (keeps the … truncation), field cells by flex */
-.fc-main .rx-head>*{align-self:stretch;line-height:43px}
-.fc-main .rx-r>*{align-self:stretch}
-.fc-main .rx-r>:not(:first-child):not(.c):not(.a-x){display:flex;align-items:center}
-.fc-main .rx-r>:not(:first-child):not(.c):not(.a-x)>:not(.rx-cl){flex:1 1 auto;min-width:0}
-.fc-main .rx-r>.a-x{display:flex;align-items:center;justify-content:center}
+.editor__main .reviewer-table__row--head>*{align-self:stretch;line-height:43px}
+.editor__main .reviewer-table__row--body>*{align-self:stretch}
+.editor__main .reviewer-table__row--body>:not(:first-child):not(.c):not(.reviewer-table__remove){display:flex;align-items:center}
+.editor__main .reviewer-table__row--body>:not(:first-child):not(.c):not(.reviewer-table__remove)>:not(.sr-only){flex:1 1 auto;min-width:0}
+.editor__main .reviewer-table__row--body>.reviewer-table__remove{display:flex;align-items:center;justify-content:center}
 
 /* reviewer table header: resize handle on each column's right edge (same stroke / hover as the Review Cycles table, .ls-rz).
    Header cells keep their … truncation via the inner text span. After a drag, --rx-cols / --rx-min (rxColApply) set the widths. */
-.fc-main .rx-head>.rx-hc:not(:first-child){position:relative}
-.fc-main .rx-hc .rx-ht{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.fc-main .rx-head>.rx-hc.c .rx-ht{text-align:center}
-.fc-main .rx-rz{right:0;z-index:3}
-.fc-main .rx-rz::after{left:auto;right:0}
-.fc-main .rx-rz:hover::after,.fc-main .rx-rz.is-drag::after{left:auto;right:0}
-.fc-main .rx-grid[style*="--rx-cols"] .rx-g{grid-template-columns:var(--rx-cols);min-width:var(--rx-min)}
+.editor__main .reviewer-table__row--head>.reviewer-table__heading:not(:first-child){position:relative}
+.editor__main .reviewer-table__heading .reviewer-table__heading-text{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.editor__main .reviewer-table__row--head>.reviewer-table__heading.c .reviewer-table__heading-text{text-align:center}
+.editor__main .reviewer-table__resizer{right:0;z-index:3}
+.editor__main .reviewer-table__resizer::after{left:auto;right:0}
+.editor__main .reviewer-table__resizer:hover::after,.editor__main .reviewer-table__resizer.is-drag::after{left:auto;right:0}
+.editor__main .reviewer-table__frame[style*="--rx-cols"] .reviewer-table__row{grid-template-columns:var(--rx-cols);min-width:var(--rx-min)}
 /* Total Weightage label: same text style as the header cells (14 / 500 / lh 1.4 / -0.28px / #667085) */
-.fc-main .rx-tot-l{font-size:14px;font-weight:500;line-height:1.4;letter-spacing:-.28px;color:#667085}
+.editor__main .reviewer-table__total-label{font-size:14px;font-weight:500;line-height:1.4;letter-spacing:-.28px;color:#667085}
 
 /* reviewer table cell padding: text cells 16px · field cells (Weightage, Questionnaire, Due date) 4px · action cell 12px.
    Inside the fields the text sits 12px from the left edge and dropdown chevrons 12px from the right. */
-.fc-main .rx-r>:is(.a-w,.a-tpl,.a-due){padding-left:4px;padding-right:4px}
-.fc-main .rx-g>.a-x{padding-left:12px;padding-right:12px}
-.fc-main .rx-pct input{padding:0 12px}
-.fc-main .rx-g .rx-dn{padding-left:12px}
-.fc-main .rx-tplbtn{padding-left:12px;padding-right:38px;background-position:right 12px center}
-.fc-main .rx-dref-dd .fc-ss-btn{padding-left:12px;padding-right:36px;background-position:right 12px center}
+.editor__main .reviewer-table__row--body>:is(.reviewer-table__weight,.reviewer-table__questionnaire,.reviewer-table__due){padding-left:4px;padding-right:4px}
+.editor__main .reviewer-table__row>.reviewer-table__remove{padding-left:12px;padding-right:12px}
+.editor__main .percent-input input{padding:0 12px}
+.editor__main .reviewer-table__row .due-date__days{padding-left:12px}
+.editor__main .questionnaire-picker__trigger{padding-left:12px;padding-right:38px;background-position:right 12px center}
+.editor__main .due-date__from .select__trigger{padding-left:12px;padding-right:36px;background-position:right 12px center}
 /* remove button: 36×36, 20px x-close icon in the tertiary text color */
-.fc-main .rx-x{width:36px;height:36px;display:flex;align-items:center;justify-content:center;padding:0;flex-shrink:0;color:var(--text-tertiary)}
-.fc-main .rx-x:hover{color:var(--text-tertiary)}
-.rx-x-i{display:block;width:20px;height:20px;background:currentColor;-webkit-mask:url(/assets/x-close-20.svg) center/20px 20px no-repeat;mask:url(/assets/x-close-20.svg) center/20px 20px no-repeat}
+.editor__main .remove-button{width:36px;height:36px;display:flex;align-items:center;justify-content:center;padding:0;flex-shrink:0;color:var(--text-tertiary)}
+.editor__main .remove-button:hover{color:var(--text-tertiary)}
+.remove-button__icon{display:block;width:20px;height:20px;background:currentColor;-webkit-mask:url(/assets/x-close-20.svg) center/20px 20px no-repeat;mask:url(/assets/x-close-20.svg) center/20px 20px no-repeat}
 
-/* Questionnaire dropdown in the reviewer table: rows follow the standard single-select (.fc-ss-o / .rx-mo) — 8px 12px padding (28-dropdown-menu.css),
+/* Questionnaire dropdown in the reviewer table: rows follow the standard single-select (.select__option / .dropdown__option) — 8px 12px padding (28-dropdown-menu.css),
    14/500 #101828 one-line name (… when long), #F9FAFB hover / keyboard focus, no blue fill on the chosen row, which ends in the
    standard 20px #2970FF check. Details line: 12px tertiary "Type · N questions · Preview" (medium), where Preview (blue semibold link) opens the
    questionnaire preview. Clicking anywhere else on the row picks it. */
-.rx-tplpop .rx-oi{flex-shrink:0;gap:0;min-height:40px;padding:8px 10px;cursor:pointer}   /* flex-shrink:0 — the list is a fixed-height scroller; without it rows get squashed below their padding */
-.rx-tplpop .rx-oi:hover,.rx-tplpop .rx-oi:has(.rx-o:focus-visible){background:#F9FAFB}
-.rx-tplpop .rx-oi:has(.rx-o:focus-visible){box-shadow:inset 0 0 0 2px rgba(41,112,255,.4)}
-.rx-tplpop .rx-o-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
-.rx-tplpop .rx-o,.rx-tplpop .rx-o.on{display:block;width:100%;min-width:0;padding:0;border-radius:0;background:none;text-align:left}
-.rx-tplpop .rx-o:focus-visible{outline:none}
-.rx-tplpop .rx-o-n,.rx-tplpop .rx-o.on .rx-o-n{display:block;font-size:14px;font-weight:500;line-height:20px;color:#101828;overflow-wrap:normal;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.rx-tplpop .rx-o-m{font-size:12px;font-weight:500;line-height:18px;color:var(--text-tertiary);white-space:nowrap}
-.rx-view{border:0;background:none;padding:0;margin:0;font-family:var(--f);font-size:12px;font-weight:600;line-height:18px;color:var(--fc-blue);cursor:pointer}
-.rx-view:hover{text-decoration:underline}
-.rx-view:focus-visible{outline:2px solid var(--fc-blue);outline-offset:1px;border-radius:2px}
-.rx-tplpop .rx-o-ck{margin-left:12px}
+.questionnaire-picker__menu .questionnaire-picker__option{flex-shrink:0;gap:0;min-height:40px;padding:8px 10px;cursor:pointer}   /* flex-shrink:0 — the list is a fixed-height scroller; without it rows get squashed below their padding */
+.questionnaire-picker__menu .questionnaire-picker__option:hover,.questionnaire-picker__menu .questionnaire-picker__option:has(.questionnaire-picker__name-button:focus-visible){background:#F9FAFB}
+.questionnaire-picker__menu .questionnaire-picker__option:has(.questionnaire-picker__name-button:focus-visible){box-shadow:inset 0 0 0 2px rgba(41,112,255,.4)}
+.questionnaire-picker__menu .questionnaire-picker__text{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.questionnaire-picker__menu .questionnaire-picker__name-button,.questionnaire-picker__menu .questionnaire-picker__name-button.on{display:block;width:100%;min-width:0;padding:0;border-radius:0;background:none;text-align:left}
+.questionnaire-picker__menu .questionnaire-picker__name-button:focus-visible{outline:none}
+.questionnaire-picker__menu .questionnaire-picker__name,.questionnaire-picker__menu .questionnaire-picker__name-button.on .questionnaire-picker__name{display:block;font-size:14px;font-weight:500;line-height:20px;color:#101828;overflow-wrap:normal;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.questionnaire-picker__menu .questionnaire-picker__meta{font-size:12px;font-weight:500;line-height:18px;color:var(--text-tertiary);white-space:nowrap}
+.questionnaire-picker__preview{border:0;background:none;padding:0;margin:0;font-family:var(--f);font-size:12px;font-weight:600;line-height:18px;color:var(--fc-blue);cursor:pointer}
+.questionnaire-picker__preview:hover{text-decoration:underline}
+.questionnaire-picker__preview:focus-visible{outline:2px solid var(--fc-blue);outline-offset:1px;border-radius:2px}
+.questionnaire-picker__menu .questionnaire-picker__check{margin-left:12px}
 
 /* "If someone doesn't have one of these reviewers…" note: regular-weight text, no emphasis */
-.rx-split-note .lb-banner__text{font-weight:400}
+.split-note .lb-banner__text{font-weight:400}
 
 /* checkbox cells (View self-eval, Reviewee can view, Anonymous): the checkbox sits at the exact vertical centre of the 44px row.
    Anonymous wraps its checkbox in a <span> (for the disabled hint), which otherwise put it on the text line, ~3px high. */
-.fc-main .rx-r>.c{line-height:0}
-.fc-main .rx-r>.c>span,.fc-main .rx-r>.c .rx-ck{display:flex;align-items:center;justify-content:center}
-.fc-main .rx-r>.c .rx-cb{display:block}
+.editor__main .reviewer-table__row--body>.c{line-height:0}
+.editor__main .reviewer-table__row--body>.c>span,.editor__main .reviewer-table__row--body>.c .reviewer-table__check{display:flex;align-items:center;justify-content:center}
+.editor__main .reviewer-table__row--body>.c .checkbox{display:block}
 
 /* Due date "counted from" dropdown: fixed 160px wide */
-.fc-main .rx-duec .rx-dref-dd{flex:0 0 160px;width:160px}
-.fc-main .rx-duec .rx-dref-dd .fc-ss-btn{width:100%}
+.editor__main .due-date .due-date__from{flex:0 0 160px;width:160px}
+.editor__main .due-date .due-date__from .select__trigger{width:100%}
 
 /* Anonymous column: no cell padding, 120px wide */
-.fc-main .rx-g>.a-anon{padding-left:0;padding-right:0}
+.editor__main .reviewer-table__row>.reviewer-table__anonymous{padding-left:0;padding-right:0}
 
 /* Split Evenly: disabled once the weightage is already split evenly */
-.rx-link:disabled{color:#98A2B3;cursor:not-allowed;text-decoration:none}
+.link-button:disabled{color:#98A2B3;cursor:not-allowed;text-decoration:none}
 
 /* "Allow self-evaluation" checkbox under the Who is going to be reviewed? field (12px below it) */
-.fc-main .rx-self-ck{align-self:flex-start;margin-top:4px}
+.editor__main .choice--self-eval{align-self:flex-start;margin-top:4px}
 
 /* Repeats note (warning / info): inside the Repeats answer column, under the fields. One 12px gap (the column's own gap, no margin) */
-.fc-main .fc-form>.fc-field>.fc-ans:has(>.fc-rep-note){gap:12px}
-.fc-main .fc-rep-note[hidden]{display:none}
+.editor__main .setting-list>.setting>.setting__control:has(>.repeat-note){gap:12px}
+.editor__main .repeat-note[hidden]{display:none}
 
 /* disabled checkbox: gray fill (#F2F4F7) with the normal #D0D5DD border, not faded */
-.rx-cb:disabled:not(:checked){opacity:1;background:#F2F4F7;border-color:#D0D5DD}
-.rx-cb:disabled:not(:checked):hover{border-color:#D0D5DD}
+.checkbox:disabled:not(:checked){opacity:1;background:#F2F4F7;border-color:#D0D5DD}
+.checkbox:disabled:not(:checked):hover{border-color:#D0D5DD}
 
 /* disabled + checked checkbox (e.g. Admin in Who can reopen it?): gray fill and border, gray check, not faded */
-.rx-cb:disabled:checked{opacity:1;border-color:#D0D5DD;background:#F2F4F7 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M11.7 3.5 5.5 9.8 2.3 6.6' fill='none' stroke='%23D0D5DD' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/14px no-repeat}
-.rx-mo:has(.rx-cb:disabled){cursor:default}
+.checkbox:disabled:checked{opacity:1;border-color:#D0D5DD;background:#F2F4F7 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M11.7 3.5 5.5 9.8 2.3 6.6' fill='none' stroke='%23D0D5DD' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/14px no-repeat}
+.dropdown__option:has(.checkbox:disabled){cursor:default}
 
 /* Review schedule › At regular intervals ("Every [1] months till [select] [12] months after the start date"):
    the words between the fields use the radio / checkbox label style (14px medium #101828, like "peers" and "months" elsewhere);
    the number boxes use the same value style as every other field on the page (16px regular #101828). */
-.fc-main .fc-prob .rx-nest{font-size:14px;font-weight:500;line-height:1.4;color:#101828}
-.fc-main .fc-prob .rx-nest .fc-inp,.fc-main .fc-prob .rx-nest .rx-numin{font-size:16px;font-weight:400;color:#101828}
+.editor__main .review-schedule .sub-settings{font-size:14px;font-weight:500;line-height:1.4;color:#101828}
+.editor__main .review-schedule .sub-settings .input,.editor__main .review-schedule .sub-settings .input--number{font-size:16px;font-weight:400;color:#101828}
 
 /* Projects multi-select: "Select all" first, with a divider under it */
-.rx-mo-all{border-bottom:1px solid var(--fc-card-line);border-radius:8px 8px 0 0;margin-bottom:2px}
-.fc-main .rx-proj-f .rx-dd{width:min(100%,560px)}
+.dropdown__option--all{border-bottom:1px solid var(--fc-card-line);border-radius:8px 8px 0 0;margin-bottom:2px}
+.editor__main .dropdown:has(#rxProjs){width:min(100%,560px)}
 /* Repeats: the select, then "[N] occurrences" beside it once an option is picked */
-.fc-rep-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.fc-rep-u{font-size:16px;font-weight:400;color:#101828}
-.fc-main .fc-rep-row .rx-numin{font-size:16px;font-weight:400;color:#101828}
+.inline-fields{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.inline-fields__text{font-size:16px;font-weight:400;color:#101828}
+.editor__main .inline-fields .input--number{font-size:16px;font-weight:400;color:#101828}
 /* mandatory questions: "*" right after the text, same color as the question (PTO prototype .req) */
-.fc-req{color:inherit;margin-left:2px}
+.required-mark{color:inherit;margin-left:2px}
 
 /* Rating format: its menu opens 4px under the field */
-.fc-main #rxFmtWrap>.rx-pop{top:calc(100% + 4px)}
+.editor__main #rxFmtWrap>.dropdown__menu{top:calc(100% + 4px)}
