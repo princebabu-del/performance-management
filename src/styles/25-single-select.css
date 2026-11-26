@@ -1,9 +1,9 @@
 /* New Review Cycle single-select dropdown (Review Type, Repeats, Who is going to be reviewed?) — markup: 30-single-select.js.
    Field: the 44px .input/.input--select look (chevron right), value ellipsed. Popup: the reviewer multi-select's .dropdown__menu with
-   .dropdown__option rows, no checkboxes; the chosen row ends in a 20px #2970FF check. */
+   .dropdown__option rows, no checkboxes; the chosen row ends in a 16px #2970FF check. */
 .select__trigger{display:flex;align-items:center;min-width:0;margin:0;font-family:var(--f);cursor:pointer}
 .select__trigger.open{border-color:var(--fc-blue)}
-.select__trigger:focus-visible{outline:none;border-color:var(--fc-blue);box-shadow:0 0 0 4px rgba(41,112,255,.16)}
+.select__trigger:focus-visible{outline:none;border-color:var(--fc-blue)} /* ring only from the keyboard: see html.is-keyboard in 22-section-rows.css */
 .select__value{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .select__menu{min-width:100%;width:max-content;max-width:min(400px,calc(100vw - 32px));gap:0}
 .select__option{width:100%;margin:0;border:0;background:none;text-align:left;font-family:var(--f);justify-content:space-between}
@@ -11,7 +11,7 @@
 .select__option>span{min-width:0}
 /* the chosen option keeps a #F2F4F7 fill (also on hover and keyboard focus) */
 .select__option.on,.select__option.on:hover,.select__option.on:focus-visible{background:#F2F4F7}
-.select__check{display:block;flex:none;margin-left:12px}
+.select__check{display:block;flex:none;width:16px;height:16px;margin-left:12px}
 /* visually hidden, still read by screen readers (e.g. the peer-count dropdown's question, which has no visible label) */
 .sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;border:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 /* in the reviewer table: the due-date "counted from" dropdown takes the old select's compact size (36px, 14px, 16px chevron) */

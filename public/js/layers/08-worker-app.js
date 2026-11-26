@@ -13,10 +13,10 @@ const wPeer=()=>({sections:[{n:"Working with Jose",nes:"Trabajando con Jose",qs:
 function wItems(){const m=EN("Miguel Torres"),pk=c=>D.packets.find(p=>p.cid===c&&p.eid===m.id);const p1=pk("c1"),q3=pk("c2"),q2=pk("c6");
  const done=id=>D.wdone[id];
  return [
-  {id:"q4",t:"Q4 2026 Check-in",tes:"Registro Q4 2026",sub:"Self review · about 2 minutes",ses:"Autoevaluación · unos 2 minutos",due:(((C("c1").phases||[]).find(ph=>/self/i.test(ph.n))||{}).e||"Oct 12")+", 2026",over:true,tpl:wT1(),done:done("q4")||(p1&&p1.self.st==="Submitted"?{on:"Nov 3, 2026",ans:{}}:null)},
+  {id:"q4",t:"Q4 2026 Check-in",tes:"Registro Q4 2026",sub:"Self-evaluation · about 2 minutes",ses:"Autoevaluación · unos 2 minutos",due:(((C("c1").phases||[]).find(ph=>/self/i.test(ph.n))||{}).e||"Oct 12")+", 2026",over:true,tpl:wT1(),done:done("q4")||(p1&&p1.self.st==="Submitted"?{on:"Nov 3, 2026",ans:{}}:null)},
   {id:"peer",t:"Peer review: Jose Ramirez",tes:"Evaluación de compañero: Jose Ramirez",sub:"Anonymous · 3 questions",ses:"Anónima · 3 preguntas",due:"Nov 10, 2026",tpl:wPeer(),done:done("peer")},
-  {id:"q3",t:"Q3 2026 Check-in",tes:"Registro Q3 2026",sub:"Self review",ses:"Autoevaluación",tpl:wT1(),done:{on:"Oct 2, 2026",ans:{"0_0":"0","0_1":"1","0_2":["1"],"0_3":"Need more harnesses on Riverside."}},res:q3&&q3.st==="Shared"?{r:q3.rating,by:q3.mgr.by,c:"Steady quarter. Good tie-off habits. Ready to start boom lift training.",ack:D.wack}:null},
-  {id:"q2",t:"Q2 2026 Check-in",tes:"Registro Q2 2026",sub:"Self review",ses:"Autoevaluación",tpl:wT1(),done:{on:"Jul 3, 2026",ans:{"0_0":"1","0_1":"0","0_2":["0"]}},res:q2?{r:q2.rating,by:q2.mgr.by,c:"Reliable and on time. Keep coaching the new apprentices.",ack:true}:null}]}
+  {id:"q3",t:"Q3 2026 Check-in",tes:"Registro Q3 2026",sub:"Self-evaluation",ses:"Autoevaluación",tpl:wT1(),done:{on:"Oct 2, 2026",ans:{"0_0":"0","0_1":"1","0_2":["1"],"0_3":"Need more harnesses on Riverside."}},res:q3&&q3.st==="Shared"?{r:q3.rating,by:q3.mgr.by,c:"Steady quarter. Good tie-off habits. Ready to start boom lift training.",ack:D.wack}:null},
+  {id:"q2",t:"Q2 2026 Check-in",tes:"Registro Q2 2026",sub:"Self-evaluation",ses:"Autoevaluación",tpl:wT1(),done:{on:"Jul 3, 2026",ans:{"0_0":"1","0_1":"0","0_2":["0"]}},res:q2?{r:q2.rating,by:q2.mgr.by,c:"Reliable and on time. Keep coaching the new apprentices.",ack:true}:null}]}
 const wTodo=()=>wItems().filter(i=>!i.done);
 function wGo(scr,item){const a=WA();if(scr==="form"){a.item=item;a.ans={};a.err=new Set();a.scr="loading";render();setTimeout(()=>{if(WA().scr==="loading"){WA().scr="form";render()}},700);return}a.scr=scr;render()}
 /* Answers use the admin form keys ("section_question"), read straight from the rendered form */

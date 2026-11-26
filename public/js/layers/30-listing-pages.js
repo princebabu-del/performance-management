@@ -46,7 +46,7 @@ function lsRzStart(e,view,k){e.preventDefault();e.stopPropagation();
    leftmost to the rightmost button) and set the action <col> to that plus the cell's padding. */
 function actColFit(){document.querySelectorAll("table.cd-tbl-fixed").forEach(t=>{const col=t.querySelector("col.c-act");if(!col)return;
  col.style.width="";   // measure at the CSS width (150px) so a previously shrunk column can't wrap wider cells
- let w=0,pad=0;t.querySelectorAll("td.cd-act").forEach(td=>{const bs=[...td.querySelectorAll("button")].filter(b=>!b.closest(".menu"));if(!bs.length)return;
+ let w=0,pad=0;t.querySelectorAll("td.cd-act").forEach(td=>{const bs=[...td.querySelectorAll("button")].filter(b=>!b.closest(".action-menu"));if(!bs.length)return;
   const rs=bs.map(b=>b.getBoundingClientRect());w=Math.max(w,Math.max(...rs.map(r=>r.right))-Math.min(...rs.map(r=>r.left)));
   const c=getComputedStyle(td);pad=parseFloat(c.paddingLeft)+parseFloat(c.paddingRight)});
  if(w)col.style.width=Math.ceil(w+pad)+"px"})}

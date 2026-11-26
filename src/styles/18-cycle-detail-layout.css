@@ -60,7 +60,7 @@
 .cd-srch .i{width:20px;height:20px;flex-shrink:0}
 .cd-srch input{flex:1;min-width:0;border:0;outline:0;background:transparent;font:inherit;font-size:16px;font-weight:500;color:#000}
 .cd-srch input::placeholder{color:#7D89B0}
-.cd-srch:focus-within{border-color:var(--cd-blue);box-shadow:0 0 0 3px rgba(41,112,255,.15)}
+.cd-srch:focus-within{border-color:var(--cd-blue)} /* search bars never get a ring (public/components/search-bar) */
 .cd-tbl th{background:#F9FAFB;border-right:0;border-bottom:1px solid var(--cd-g200);height:44px;padding:0 24px;font-size:14px;font-weight:500;line-height:1.4;letter-spacing:-.28px;color:var(--cd-g600)}
 .cd-tbl td{height:56px;padding:8px 24px;border-top:0;border-bottom:1px solid var(--cd-g200);font-size:14px;font-weight:500;letter-spacing:-.28px;color:#000}
 .cd-tbl td.tab-num{color:#1D2939}
@@ -94,7 +94,7 @@
 /* header title block: name + status badge (12px), secondary line, description */
 .cd-title{display:flex;flex-direction:column;gap:8px;min-width:0}
 .cd-name{display:flex;align-items:center;gap:12px;flex-wrap:wrap;min-width:0}
-.cd-name .pill{padding:2px 12px;font-size:14px}
+.cd-name .pill{gap:8px;box-sizing:border-box;padding:2px 12px;border-width:1px;border-style:solid;border-radius:16px;font-size:14px;font-weight:500;line-height:20px;letter-spacing:-0.28px}   /* same box as the multi-select .chip (16-reviewers-setup.css); status colors stay */
 .cd-desc{margin:0;font-size:14px;font-weight:400;line-height:1.4;letter-spacing:-.28px;color:var(--cd-g500)}
 .cd-more:focus-visible{outline:2px solid var(--cd-blue);outline-offset:2px;border-radius:2px}
 /* Employees toolbar: segmented control left, search + Filters right — all 44px tall */
@@ -133,7 +133,6 @@
 .cd-kb .i{width:20px;height:20px}
 .cd-kb:hover,.cd-kb[aria-expanded="true"]{background:#F2F4F7;color:#101828}
 .cd-kb:focus-visible{outline:2px solid var(--cd-blue);outline-offset:0}
-.cd-act .menu{text-align:left;min-width:220px}
 .cd-vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 /* questionnaire column */
 .cd-tpl{display:flex;align-items:center;gap:6px;min-width:0}
@@ -204,9 +203,8 @@ td:hover>.cd-tpl .cs-q-tip,.cd-tpl .cs-q-tip:focus-within{opacity:1}
 .cd-bulk-x:hover{background:#F9FAFB}
 .cd-bulk-a:focus-visible,.cd-bulk-x:focus-visible{outline:2px solid var(--cd-blue);outline-offset:-2px}
 .cd-bulk-menu{top:52px;right:auto;min-width:240px}
-.cd-bulk-menu button[hidden]{display:none}
 /* row kebab menu: fixed so it isn't clipped by the card or the table scroller (placed by cdKbPlace) */
-.cd-act .menu.cd-kb-menu{position:fixed;top:0;left:0;right:auto;z-index:44}
+.cd-act .action-menu.cd-kb-menu{position:fixed;top:0;left:0;right:auto;z-index:44}
 
 /* employee name in a group row: opens the Resources profile; the rest of the row expands the group */
 .cd-n-link{display:block;max-width:100%;padding:0;border:0;background:none;font:inherit;font-size:14px;font-weight:500;color:#000;text-align:left;cursor:pointer;overflow:hidden;text-overflow:ellipsis}

@@ -2,6 +2,8 @@
 
 Underline tabs with count badges, shown under a page header (Review Cycles, Review Templates, My Reviews, Users). The selected tab has a 3px blue (`#2F6FDE`) underline.
 
+Text: selected (and hover) = primary text `#101828` (`--text-primary`), unselected = secondary text `#344054` (`--text-secondary`). Each tab is 44px tall including its bottom border: 12px top padding, 20px line height, and bottom padding + border = 12px. The V1 and V2 listing pages use the same values.
+
 ## Files
 
 | File | What it is |

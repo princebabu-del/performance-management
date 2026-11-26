@@ -1,0 +1,44 @@
+/* ===== Action menu: the popup behind a kebab / "More" / split button (Move Down, Duplicate, Delete …) =====
+   Spec: public/components/action-menu/ActionMenu.tsx (keep the values in sync).
+   Same container and option metrics as the select dropdown (src/styles/28-dropdown-menu.css):
+
+   Container .action-menu            #FFF · 1px #EAECF0 · 8px radius · 4px padding · lg shadow · min 200px, hugs the longest label
+   Item .action-menu__item           36px (hugs content) · 8px 12px padding · 8px radius · 8px icon gap · no gap between items
+     label                           Inter 14/20 medium #101828 (text-primary), one line
+     icon .action-menu__icon         20px · #344054 · 1.5 stroke (inline svg, or a span masking an /assets/icons file)
+   Variations                        icon + label, or label only
+   States                            hover / keyboard focus #F9FAFB (focus adds a 2px inset blue ring)
+   Danger .action-menu__item--danger text + icon #D92D20, hover #FEF3F2
+
+   Placement is left to the context (kebab, table row, bulk bar). The default below has zero specificity (:where),
+   so any context rule wins without !important. */
+
+:where(.action-menu){position:absolute;top:34px;right:0;z-index:25}
+
+.action-menu{display:flex;flex-direction:column;gap:0;min-width:200px;width:max-content;max-width:calc(100vw - 32px);padding:4px;
+ background:#fff;border:1px solid #EAECF0;border-radius:8px;text-align:left;cursor:default;
+ box-shadow:0 12px 16px -4px rgba(16,24,40,.08),0 4px 6px -2px rgba(16,24,40,.03)}
+
+.action-menu__item{display:flex;align-items:center;gap:8px;width:100%;margin:0;padding:8px 12px;border:0;border-radius:8px;background:none;
+ font-family:var(--f,Inter,sans-serif);font-size:14px;font-weight:500;line-height:20px;letter-spacing:0;color:#101828;
+ text-align:left;white-space:nowrap;cursor:pointer}
+.action-menu__item:hover{background:#F9FAFB}
+.action-menu__item:focus-visible{outline:none;background:#F9FAFB;box-shadow:inset 0 0 0 2px rgba(41,112,255,.4)}
+.action-menu__item[hidden]{display:none}
+
+/* scoped (0,2,0) so it beats the app-wide svg.i 18px / 2px-stroke default */
+.action-menu .action-menu__icon{flex:none;display:block;width:20px;height:20px;color:#344054;stroke-width:1.5}
+/* file icons: a span (or an ic() svg swapped below) painted in currentColor through a mask */
+.action-menu__icon--mask{background:currentColor;-webkit-mask:var(--icon) center/20px 20px no-repeat;mask:var(--icon) center/20px 20px no-repeat}
+
+/* ic() icons that have an Untitled UI file: drawn from the file so every menu shows the same glyph */
+.action-menu__icon:is([data-i=edit],[data-i=copy],[data-i=archive],[data-i=trash]){background:currentColor;
+ -webkit-mask:var(--icon) center/20px 20px no-repeat;mask:var(--icon) center/20px 20px no-repeat}
+.action-menu__icon:is([data-i=edit],[data-i=copy],[data-i=archive],[data-i=trash])>*{display:none}
+.action-menu__icon[data-i=edit]{--icon:url(/assets/icons/edit-05.svg)}
+.action-menu__icon[data-i=copy]{--icon:url(/assets/icons/copy-03.svg)}
+.action-menu__icon[data-i=archive]{--icon:url(/assets/icons/box.svg)}
+.action-menu__icon[data-i=trash]{--icon:url(/assets/icons/trash-01.svg)}
+
+.action-menu__item--danger,.action-menu__item--danger .action-menu__icon{color:#D92D20}
+.action-menu__item--danger:hover,.action-menu__item--danger:focus-visible{background:#FEF3F2}

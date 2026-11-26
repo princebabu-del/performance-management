@@ -98,8 +98,6 @@
 .col-pop .col-cb:disabled{opacity:1;cursor:default}
 .col-pop .col-cb:disabled:checked{background-color:#D0D5DD;border-color:#D0D5DD}
 /* header split-button menu: items match the button text (16px / 600) with 20px icons */
-.split-menu button{font-size:16px;font-weight:600}
-.split-menu svg.i{width:20px;height:20px}
 /* card empty state (HR Admin overview) */
 .es{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;padding:80px 20px}
 .es-h{font-size:16px;font-weight:500;color:var(--ink)}
@@ -114,13 +112,10 @@
 .tpltbl .tpl-act .btn.fav svg{fill:#F59E0B}
 /* row kebab menus inside a table scroller float so the scroller can't clip them (placed by layer 22) */
 /* z-index 44: above page content, below the top bar (45), drawers (50), modals (60) and toasts (70) */
-.tw .kebab>.menu:not(.cd-kb-menu){position:fixed;top:0;left:0;right:auto;z-index:44}
+.tw .kebab>.action-menu:not(.cd-kb-menu){position:fixed;top:0;left:0;right:auto;z-index:44}
 /* sticky cells (e.g. .cyctbl td.act, z-index 2) each form a stacking context, so the next row's sticky cell painted over
    the open menu. Lift the cell that holds the open menu just above its neighbours (3 > 2), never above overlays. */
-.tw td:has(.kebab>.menu),.tw th:has(.kebab>.menu){z-index:3}
-/* table row kebab menus: 20px icons, 16px medium labels */
-.tw .kebab>.menu button{font-size:16px;font-weight:500}
-.tw .kebab>.menu button svg.i{width:20px;height:20px;flex:none}
+.tw td:has(.kebab>.action-menu),.tw th:has(.kebab>.action-menu){z-index:3}
 /* HR Admin overview type scale: section heading 20/600, list heading 14/600, subtext 14/400 gray */
 .ov .card .hd h3{font-size:20px;font-weight:600}
 .ov .att .t,.ov .hrow-t{font-size:14px;font-weight:600}

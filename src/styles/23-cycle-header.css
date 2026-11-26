@@ -1,20 +1,17 @@
 /* New / Edit Review Cycle top bar — Figma "Exploration – Lumber Web App" 785:34380 (markup: fcHeader in 14-reviewee-reviewers.js).
    75px bar: 16px × 32px in, white, #EAECF0 rule along the bottom (drawn inside, as in Figma).
    Left: Exit (20px X, 8px gap, 16/600 #344054) · 16px · 1×28 #EAECF0 rule · 16px · title 20/600 lh 1.2 #101828.
-   Right: 12px apart, 43px buttons, 20px in, 8px corners, 16/600, xs shadow; secondary white / #D0D5DD / #344054, primary #2970FF. */
+   Right: 12px apart, 44px buttons (borders included), 20px in, 8px corners, 16/600, xs shadow; secondary white / #D0D5DD / #344054, primary #2970FF. */
 .editor__header{position:sticky;top:0;z-index:20;box-sizing:border-box;min-height:75px;display:flex;align-items:center;justify-content:space-between;gap:16px;
   padding:16px 32px;background:#fff;box-shadow:inset 0 -1px 0 #EAECF0}
 .editor__heading{display:flex;align-items:center;gap:16px;min-width:0}
-.editor__exit{flex:none;display:inline-flex;align-items:center;gap:8px;margin:0;padding:0;border:0;border-radius:4px;background:none;cursor:pointer;
-  font-family:var(--f);font-size:16px;font-weight:600;line-height:normal;color:#344054}
-.editor__exit img{display:block;flex:none}
-.editor__exit:hover{color:#101828}
-.editor__exit:focus-visible{outline:2px solid #2970FF;outline-offset:4px}
+/* Exit: shared link-gray button with a 20px x (.lb-btn--link-gray, public/components/button) */
+.editor__exit{flex:none}
 .editor__divider{flex:none;width:1px;height:28px;background:#EAECF0}
 .editor__title{min-width:0;margin:0;font-family:var(--f);font-size:20px;font-weight:600;line-height:1.2;color:#101828;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .editor__actions{flex:none;display:flex;align-items:flex-start;gap:12px}
-.editor__action{box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:43px;margin:0;padding:0 20px;
+.editor__action{box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;margin:0;padding:0 20px;
   border:1px solid #D0D5DD;border-radius:8px;background:#fff;box-shadow:0 1px 2px rgba(16,24,40,.05);cursor:pointer;white-space:nowrap;
   font-family:var(--f);font-size:16px;font-weight:600;line-height:normal;color:#344054}
 .editor__action:hover{background:#F9FAFB}
@@ -28,5 +25,5 @@
   .editor__header{flex-wrap:wrap;gap:12px;padding:12px 16px}
   .editor__title{font-size:18px}
   .editor__actions{width:100%}
-  .editor__action{flex:1}
+  .editor__action,.editor__actions .lb-btn{flex:1}
 }

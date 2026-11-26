@@ -1,7 +1,7 @@
 /* ===== Dropdown menu: the list popup shared by every single-select (.select__menu) and multi-select (.dropdown__menu) =====
    Spec: the MENU block in public/components/single-select/SingleSelect.tsx and multi-select/MultiSelect.tsx (keep the values in sync).
 
-   Container .dropdown__menu          1px #EAECF0 · 12px radius · 4px padding (options sit directly inside: reviewer roles, Who can reopen)
+   Container .dropdown__menu          1px #EAECF0 · 8px radius · 4px padding (options sit directly inside: reviewer roles, Who can reopen)
    With a list .dropdown__list   container padding 0; the list carries the 4px padding and scrolls
    Search .dropdown__search            its own block above the list: 8px 8px 4px padding, 36px input
    Option .dropdown__option / .select__option   hugs its content (36px one-line) · 8px 12px padding · 8px radius · no gap between options

@@ -24,8 +24,8 @@ function epInfo(e){const [first,...rest]=e.name.split(" "),role=e.isMgr?"Foreman
   +epRow("Date of Birth*",epDate("","Date of Birth"))
   +epRow("Birth Place",epInp("","Enter Birth Place","Birth Place"))
   +epRow("Ethnicity",`<label class="ep-check"><input type="checkbox"> Hispanic or Latino</label>`)
-  +epRow("Minority (Race)",epSel("","Select Minority (Race)",["American Indian or Alaska Native","Asian","Black or African American","Native Hawaiian or Other Pacific Islander","White","Two or More Races"],"Minority (Race)"))
-  +epRow("Marital Status",epSel("","Select Marital Status",["Single","Married","Divorced","Widowed"],"Marital Status"))
+  +epRow("Minority (Race)",epSel("","Select",["American Indian or Alaska Native","Asian","Black or African American","Native Hawaiian or Other Pacific Islander","White","Two or More Races"],"Minority (Race)"))
+  +epRow("Marital Status",epSel("","Select",["Single","Married","Divorced","Widowed"],"Marital Status"))
   +`<hr class="ep-hr">`
   +epRow("Job Title*",epInp(e.title,"Enter Job Title","Job Title"))
   +epRow("Hire Date*",epDate(epISO(e.hire),"Hire Date"))
@@ -33,8 +33,8 @@ function epInfo(e){const [first,...rest]=e.name.split(" "),role=e.isMgr?"Foreman
   +epRow("Effective Tenure Date",epDate("","Effective Tenure Date"))
   +epRow("Termination Date",epDate("","Termination Date"))
   +epRow("Termination Reason",epInp("","Reason for Termination","Termination Reason"))
-  +epRow("Role*",epSel(role,"Select Role",["Worker","Foreman","Office","Admin"],"Role"))
-  +epRow("Employment Type",epSel(e.type==="Office"?"Salaried":"Hourly","Select Employment Type",["Hourly","Salaried","Contractor"],"Employment Type"),"ep-gap-b")
+  +epRow("Role*",epSel(role,"Select",["Worker","Foreman","Office","Admin"],"Role"))
+  +epRow("Employment Type",epSel(e.type==="Office"?"Salaried":"Hourly","Select",["Hourly","Salaried","Contractor"],"Employment Type"),"ep-gap-b")
   +epRow("Employee Code",epInp(e.code,"Enter Employee Code","Employee Code"))
   +epRow("Secondary Employee ID",epInp("","Enter Secondary Employee ID","Secondary Employee ID")))}
 

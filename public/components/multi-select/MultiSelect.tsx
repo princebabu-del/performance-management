@@ -74,11 +74,15 @@
  * ─────────────────────────────────────────────────────────────────────────────
  *   .dropdown                                            wrapper, position: relative
  *   ├ div.input.multiselect                              the field: chips + placeholder, click opens
- *   │ ├ span.chip                                        chip per selected option
+ *   │ ├ span.chip                                        chip per selected option, in the order they were picked
+ *   │ │                                                  (first picked = first chip; not the menu order)
  *   │ │ └ button.chip__remove                            × removes it (doesn't open the menu)
  *   │ ├ span.chip--more                                  "+N" for chips that don't fit on the line
  *   │ ├ span.multiselect__placeholder                    placeholder when nothing is selected
- *   │ └ button.multiselect__toggle                       full-size transparent button: focus target, aria-expanded, chevron
+ *   │ └ button.multiselect__toggle                       full-size transparent button: focus target, aria-expanded
+ *   └ (chevron)                                          20px chevron-down.svg (chevron-up.svg while open), 12px from the right, #667085. ALWAYS visible:
+ *                                                        empty, filled, overflowing (+N), open and disabled. The field has
+ *                                                        8px left / 40px right padding, so chips and "+N" never reach it
  *   └ div.dropdown__menu                                 the menu (role="group"), only while open
  *     ├ div.dropdown__search                             optional search block
  *     └ div.dropdown__list
@@ -93,9 +97,11 @@
  *   Empty        #D0D5DD    #FFF        Placeholder #98A2B3, Inter 16
  *   Filled       #D0D5DD    #FFF        Chips: 30px, 0 4px 0 10px padding, 1px #EAECF0, 6px radius, #F9FAFB,
  *                                       Inter 14/500 #344054; × 22px, #98A2B3, hover #EAECF0 / #344054
- *   Overflow     —          —           Chips stay on one line; the ones that don't fit hide behind "+N"
+ *   Overflow     —          —           Chips stay on one line; the ones that don't fit hide behind "+N".
+ *                                       "+N" sits before the 40px right padding: the chevron stays visible
  *                                       (30px, 0 8px padding, 6px radius, #F2F4F7, 14/500 #344054)
- *   Open         #2970FF    —
+ *   Open         #2970FF    —           Chevron flips up. No ring by click; + 4px ring rgba(41,112,255,.16) when opened
+ *                                       from the keyboard (see FOCUS in ../input-field/InputField.tsx)
  *   Focus (kbd)  —          —           2px #2970FF outline, 2px offset (on the chevron button)
  *   Error        #DC2626    —
  *   Disabled     #D0D5DD    #F9FAFB     not-allowed cursor, placeholder #98A2B3
@@ -120,6 +126,8 @@
  *   - Tab / Shift+Tab move between checkboxes; ↓ in the search moves to the first one.
  *   - Escape closes and returns focus to the field; an outside click closes.
  *   - A chip's × removes that option without opening the menu.
+ *   - Chips follow pick order: a new pick goes to the end; removing one and picking it again moves it
+ *     to the end. With overflow, the latest picks are the ones folded into "+N".
  *   - Select all / clear applies to the options currently visible in the search.
  *   - The chevron button reads "<label>, N selected".
  */
@@ -134,7 +142,7 @@ import * as React from "react";
 const MENU_TOKENS = {
   font: "Inter, -apple-system, 'Segoe UI', Roboto, sans-serif",
   container: {
-    radius: 12, padding: 4, border: "#EAECF0", background: "#FFFFFF", zIndex: 45,
+    radius: 8, padding: 4, border: "#EAECF0", background: "#FFFFFF", zIndex: 45,
     shadow: "0 12px 16px -4px rgba(16,24,40,.08), 0 4px 6px -2px rgba(16,24,40,.03)",
   },
   search: {
@@ -406,7 +414,7 @@ const rowHeightFor = (opts: { description?: string }[]) =>
 
 export const MULTI_SELECT_TOKENS = {
   font: MENU_TOKENS.font,
-  field: { height: 46, radius: 8, padding: "6px 44px 6px 8px", gap: 6, fontSize: 16 },
+  field: { height: 46, radius: 8, padding: "6px 40px 6px 8px", gap: 6, fontSize: 16, chevronRight: 12 },   // chevron always visible; 40px right padding keeps chips / "+N" clear of it
   chip: { height: 30, padding: "0 4px 0 10px", radius: 6, border: "#EAECF0", background: "#F9FAFB", fontSize: 14, fontWeight: 500, color: "#344054", gap: 2 },
   chipX: { size: 22, radius: 4, color: "#98A2B3", hoverBg: "#EAECF0", hoverColor: "#344054" },
   more: { height: 30, padding: "0 8px", radius: 6, background: "#F2F4F7" },
@@ -453,9 +461,9 @@ export interface MultiSelectProps<V extends string = string> {
 
 /* ───────────── Icons ───────────── */
 
-const Chevron = () => (
+const Chevron = ({ up = false }: { up?: boolean }) => (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-    <path d="M5 7.5L10 12.5L15 7.5" stroke={T.color.icon} strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+    <path d={up ? "M15 12.5L10 7.5L5 12.5" : "M5 7.5L10 12.5L15 7.5"} stroke={T.color.icon} strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 const Tick = ({ color }: { color: string }) => (
@@ -537,7 +545,7 @@ function OptionRow({
 /* ───────────── Component ───────────── */
 
 export function MultiSelect<V extends string = string>({
-  options, value, onChange, label, placeholder = "Select one or more", searchPlaceholder, emptyText = "No matches",
+  options, value, onChange, label, placeholder = "Select", searchPlaceholder, emptyText = "No matches",
   selectAll, invalid, disabled, style,
 }: MultiSelectProps<V>) {
   const [open, setOpen] = React.useState(false);
@@ -551,7 +559,8 @@ export function MultiSelect<V extends string = string>({
   const boxRefs = React.useRef<(HTMLInputElement | null)[]>([]);
 
   const searchable = !!searchPlaceholder;
-  const selected = options.filter((o) => value.includes(o.value));
+  /* chips in pick order (value keeps it: toggle appends), not menu order: first picked = first chip */
+  const selected = value.map((v) => options.find((o) => o.value === v)).filter((o): o is NonNullable<typeof o> => !!o);
   const visible = options.filter((o) => matchesQuery(query, o.label, o.description));
   const togglable = visible.filter((o) => !o.disabled);
   const allOn = togglable.length > 0 && togglable.every((o) => value.includes(o.value));
@@ -672,10 +681,10 @@ export function MultiSelect<V extends string = string>({
           aria-label={`${label}${value.length ? `, ${value.length} selected` : ""}`}
           style={{
             position: "absolute", inset: 0, width: "100%", border: 0, borderRadius: T.field.radius, background: "none",
-            cursor: "inherit", display: "flex", alignItems: "center", justifyContent: "flex-end", paddingRight: 13,
+            cursor: "inherit", display: "flex", alignItems: "center", justifyContent: "flex-end", paddingRight: T.field.chevronRight,
           }}
         >
-          <Chevron />
+          <Chevron up={open} />
         </button>
       </div>
 
@@ -747,12 +756,12 @@ export function MultiSelectStates() {
     <div style={{ display: "grid", gap: 32, fontFamily: T.font, paddingBottom: 440 }}>
       <section style={row}>
         <span style={q}>1 · Filled, trailing meta (Reviewers)</span>
-        <MultiSelect label="Reviewer roles" value={revs} onChange={setRevs} options={REVIEWER_ROLES} placeholder="Select one or more reviewers" />
+        <MultiSelect label="Reviewer roles" value={revs} onChange={setRevs} options={REVIEWER_ROLES} placeholder="Select" />
       </section>
 
       <section style={row}>
         <span style={q}>2 · Overflow "+N", Select all (Projects)</span>
-        <MultiSelect label="Projects" value={many} onChange={setMany} options={PROJECTS} selectAll placeholder="Select projects" />
+        <MultiSelect label="Projects" value={many} onChange={setMany} options={PROJECTS} selectAll placeholder="Select" />
       </section>
 
       <section style={row}>
@@ -769,7 +778,7 @@ export function MultiSelectStates() {
           options={EMPLOYEES}
           searchPlaceholder="Search"
           emptyText="No employees match"
-          placeholder="Select employees to exclude"
+          placeholder="Select"
         />
       </section>
 
@@ -789,17 +798,17 @@ export function MultiSelectStates() {
 
       <section style={row}>
         <span style={q}>4c · With search, one-line options (Group values: Trade)</span>
-        <MultiSelect label="Trades" value={trades} onChange={setTrades} options={TRADES} searchPlaceholder="Search" placeholder="Select trades" />
+        <MultiSelect label="Trades" value={trades} onChange={setTrades} options={TRADES} searchPlaceholder="Search" placeholder="Select" />
       </section>
 
       <section style={row}>
         <span style={q}>5 · Error</span>
-        <MultiSelect label="Reviewer roles" value={bad} onChange={setBad} options={REVIEWER_ROLES} invalid={!bad.length} placeholder="Select one or more reviewers" />
+        <MultiSelect label="Reviewer roles" value={bad} onChange={setBad} options={REVIEWER_ROLES} invalid={!bad.length} placeholder="Select" />
       </section>
 
       <section style={row}>
-        <span style={q}>6 · Disabled field (Select a category first)</span>
-        <MultiSelect label="Group values" value={[]} onChange={() => {}} options={[]} disabled placeholder="Select a category first" />
+        <span style={q}>6 · Disabled field (label says what to pick first)</span>
+        <MultiSelect label="Group values" value={[]} onChange={() => {}} options={[]} disabled placeholder="Select" />
       </section>
     </div>
   );

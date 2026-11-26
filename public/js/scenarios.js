@@ -12,6 +12,9 @@ const STATES=[[true,"Empty","Brand-new company, no review cycles yet"],[false,"F
 /* feature switches for things that are built but hidden for now. Off by default; kept for the session (a reload resets them, like the rest of the demo) */
 window.FEATURES=window.FEATURES||{outlier:false,audit:false};
 const FLAGS=[["outlier","Outlier check","Review Details page › Outlier check tab (cycles with calibration)"],["audit","Audit Log","Review Details page › Audit Log tab"]];
+/* page versions (layers/34-listing-v2.js): V1 = current page, V2 = the redesign in progress. Kept across refreshes. */
+const VER_PAGES=[["cycles","Performance page"]];   // one switch: Overview, Review Cycles and Questionnaires together
+const VERS=[["v1","V1","Current page"],["v2","V2","Performance header tabs, status control + toolbar above the table"]];
 const isMac=/Mac|iPhone|iPad/.test(navigator.platform||navigator.userAgent);
 const KEY=(isMac?"⌘":"Ctrl")+" /";
 let open=false;
@@ -42,6 +45,7 @@ function draw(){
   <section><h3 id="scnU">User</h3><div role="radiogroup" aria-labelledby="scnU">${USERS.map(([r,l,s])=>opt(R===r,l,s,"role:"+r)).join("")}</div></section>
   <section><h3 id="scnS">State</h3><div role="radiogroup" aria-labelledby="scnS">${STATES.map(([n,l,s])=>opt(!!S.newCo===n,l,s,"state:"+n,n&&!adm)).join("")}</div>
    ${adm?"":`<p class="scn-note">The empty state is only available for Admin.</p>`}</section>
+  ${VER_PAGES.map(([p,l])=>`<section><h3 id="scnV-${p}">${l}</h3><div role="radiogroup" aria-labelledby="scnV-${p}">${VERS.map(([v,vl,s])=>opt(PAGE_VER[p]===v,vl,s,`ver:${p}:${v}`)).join("")}</div></section>`).join("")}
   <section><h3 id="scnF">Features</h3><div role="group" aria-labelledby="scnF">${FLAGS.map(([k,l,s])=>chk(!!FEATURES[k],l,s,"flag:"+k)).join("")}</div></section>
  </div>
  <div class="scn-ft"><button type="button" class="btn scn-reset" data-act="reset">Reset demo</button></div>`;
@@ -55,11 +59,12 @@ fab.addEventListener("click",e=>{e.stopPropagation();setOpen(!open)});
 panel.addEventListener("click",e=>{
  e.stopPropagation();
  const b=e.target.closest("[data-act]");if(!b||b.disabled)return;
- const [a,v]=b.dataset.act.split(":");
+ const [a,v,v2]=b.dataset.act.split(":");
  if(a==="close")return setOpen(false,true);
  if(a==="role"){if(v!==S.role)setRole(v)}
  else if(a==="state"){const n=v==="true";if(n!==!!S.newCo){setMode(n);toast(n?"Showing the empty state.":"Showing the filled state.")}}
  else if(a==="flag"){FEATURES[v]=!FEATURES[v];render();toast(`${(FLAGS.find(f=>f[0]===v)||[,v])[1]} ${FEATURES[v]?"shown":"hidden"}.`)}
+ else if(a==="ver"){if(v2!==PAGE_VER[v]){setPageVer(v2);toast(`${VER_PAGES.find(p=>p[0]===v)[1]}: ${v2.toUpperCase()}.`)}}
  else if(a==="reset")resetDemo();
  if(open)draw();
 });

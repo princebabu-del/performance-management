@@ -26,6 +26,7 @@
 /* notes under a value (Repeats schedule, rating scale) and the 3-line description */
 .cs-kv-note{margin-top:8px;font-weight:400}
 .cs-kv-note .lb-banner{margin:0}
+.cs-kv-note .cs-lvl{color:var(--text-tertiary)}   /* detail page: rating labels under the format name in tertiary text */
 .cs-desc-t{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;line-clamp:3;overflow:hidden;white-space:pre-line}
 .cs-desc.open .cs-desc-t{display:inline;-webkit-line-clamp:unset;line-clamp:none}
 .cs-desc .cd-more{margin-top:4px;border:0;background:none;padding:0;font:inherit;font-weight:600;color:#344054;cursor:pointer}
@@ -57,21 +58,17 @@
 .cs-chips{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
 .cs-chip{padding:2px 12px;border:1px solid #EAECF0;border-radius:999px;background:#F9FAFB;font-size:12px;font-weight:500;line-height:18px;color:var(--text-secondary)}
 .cs-kv:has(.cs-wt){align-items:start}
-.cs-wt{display:flex;flex-wrap:wrap;align-items:center;gap:16px 24px;min-width:0}
-.cs-wt-donut{position:relative;flex-shrink:0;width:160px;height:160px}
-.cs-wt-donut svg{display:block;width:100%;height:100%}
-.cs-wt-track,.cs-wt-seg{fill:none;stroke-width:16}
-.cs-wt-track{stroke:#F2F4F7}
-.cs-wt-seg{transition:opacity .12s}
-.cs-wt-donut svg:hover .cs-wt-seg{opacity:.55}
-.cs-wt-donut svg .cs-wt-seg:hover{opacity:1}
-.cs-wt-tot{position:absolute;inset:0;display:grid;place-content:center;font-size:20px;font-weight:600;color:#101828;font-variant-numeric:tabular-nums;pointer-events:none}
-/* legend on the right: up to 5 items per column (8px apart), then a new column */
-.cs-wt-leg{display:grid;grid-template-rows:repeat(var(--rows,5),auto);grid-auto-flow:column;grid-auto-columns:max-content;gap:8px 32px;min-width:0;margin:0;padding:0;list-style:none}
-.cs-wt-leg li{display:flex;align-items:center;gap:8px;min-width:0}
+.cs-wt{display:flex;flex-direction:column;gap:12px;min-width:0}
+.cs-wt-bar{display:flex;gap:2px;width:100%;height:12px}   /* one stacked bar; 2px surface gap between segments, rounded ends */
+.cs-wt-seg{min-width:4px;border-radius:2px;transition:opacity .12s}
+.cs-wt-seg:first-child{border-radius:4px 2px 2px 4px}.cs-wt-seg:last-child{border-radius:2px 4px 4px 2px}.cs-wt-seg:only-child{border-radius:4px}
+.cs-wt-bar:hover .cs-wt-seg{opacity:.55}.cs-wt-bar .cs-wt-seg:hover{opacity:1}
+.cs-wt-rest{border-radius:2px 4px 4px 2px;background:#F2F4F7}   /* unassigned share when weights total under 100% */
+.cs-wt-leg{display:grid;grid-template-columns:8px minmax(0,1fr) max-content;align-items:center;gap:8px;min-width:0;margin:0;padding:0;list-style:none}   /* one reviewer per line; names left, % at the right end (under the bar's end) */
+.cs-wt-leg li{display:contents}
 .cs-wt-dot{flex-shrink:0;width:8px;height:8px;border-radius:50%}
-.cs-wt-n{min-width:0;font-weight:400;color:#475467;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.cs-wt-v{margin-left:auto;padding-left:12px;font-weight:600;color:#101828;font-variant-numeric:tabular-nums}
+.cs-wt-n{min-width:0;font-weight:500;color:#475467;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cs-wt-v{padding-left:16px;text-align:right;font-weight:600;color:#101828;font-variant-numeric:tabular-nums}
 /* Questionnaire: template name + View eye, reviewers using it underneath */
 .cs-qs{display:flex;flex-direction:column;gap:10px}
 .cs-q-n{display:flex;align-items:center;gap:6px}
@@ -89,3 +86,22 @@
 .cs-aa-list{display:flex;flex-direction:column;gap:4px}
 .cs-aa{line-height:20px}
 .cs-aa-k{font-weight:400;color:#667085}
+
+/* V2 › Overview › Rating Format: rating distribution, vertical bars (csRatingDist in layers/15-cycle-settings-kv.js).
+   5 equal columns; 120px plot on a 1px #EAECF0 baseline; bars #2970FF, max 40px wide, 4px rounded tops, darker on hover/focus;
+   count above each bar (12/500 secondary); badge + level name under each column (12/400 tertiary). */
+.rating-dist{margin:4px 0 0;padding:0}
+.rating-dist__summary{margin:0 0 12px;font-size:14px;font-weight:400;line-height:1.4;color:var(--text-tertiary)}
+.rating-dist__plot,.rating-dist__axis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2px}
+.rating-dist__plot{grid-template-rows:140px;align-items:end;border-bottom:1px solid #EAECF0}   /* tallest bar 100px + count above */
+.rating-dist__col{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;height:100%;min-width:0;border-radius:4px 4px 0 0;cursor:default;outline:none}
+.rating-dist__col:focus-visible{box-shadow:0 0 0 2px #2970FF}
+.rating-dist__count{font-size:12px;font-weight:500;line-height:16px;color:var(--text-secondary);font-variant-numeric:tabular-nums}
+.rating-dist__bar{display:block;width:100%;max-width:40px;border-radius:4px 4px 0 0;background:#2970FF;transition:background .12s}
+.rating-dist__bar.is-empty{display:none}
+.rating-dist__col:hover .rating-dist__bar,.rating-dist__col:focus-visible .rating-dist__bar{background:#155EEF}
+.rating-dist__axis{margin:8px 0 0;padding:0;list-style:none}
+.rating-dist__lvl{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0;text-align:center}
+.rating-dist__lvl .rating-badge{width:24px;height:24px;border-radius:6px;font-size:12px}
+.rating-dist__lvl .cs-stars{font-size:11px}
+.rating-dist__name{font-size:12px;font-weight:400;line-height:1.3;color:var(--text-tertiary);overflow-wrap:break-word}

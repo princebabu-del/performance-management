@@ -28,7 +28,7 @@ const liveSnap=w=>{const{_live,...r}=w;return fcSnap(r)};
 /* header: Exit + Cancel / Save instead of Save as Draft / Create */
 const _vwzLive=V.wizard;V.wizard=()=>{const h=_vwzLive(),w=W();if(!w||!w.live)return h;
  return h.replace('onclick="fcExit()"','onclick="fcLiveCancel()"')
-  .replace(/<div class="editor__actions">[\s\S]*?<\/div>/,`<div class="editor__actions"><button type="button" class="editor__action" onclick="fcLiveCancel()">Cancel</button><button type="button" class="editor__action is-primary" onclick="fcCreate()">Save</button></div>`)};
+  .replace(/<div class="editor__actions">[\s\S]*?<\/div>/,`<div class="editor__actions"><button type="button" class="lb-btn lb-btn--secondary" onclick="fcLiveCancel()">Cancel</button><button type="button" class="lb-btn lb-btn--primary" onclick="fcCreate()">Save</button></div>`)};
 function fcLiveBack(){const id=W().id;S.wz=null;nav("cycle",{cid:id,tab:"overview"})}
 function fcLiveCancel(){wzCollect();const w=W();if(w._live===liveSnap(w))return fcLiveBack();
  openModal(`<h3>Discard changes?</h3><p class="dim" style="margin:0 0 12px">Your edits to this review cycle haven't been saved.</p>

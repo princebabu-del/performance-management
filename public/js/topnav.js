@@ -26,7 +26,10 @@ const ALL=[
  {link:"forms",title:"Forms"}
 ];
 const NOTIF=15;
-const BAR=ALL.filter(x=>!x.inMore),MORE_ONLY=ALL.filter(x=>x.inMore);
+const ALL_BAR=ALL.filter(x=>!x.inMore),MORE_ONLY=ALL.filter(x=>x.inMore);
+/* V2 (layers/34-listing-v2.js): Performance leaves the top bar and lives in the HR menu as a plain link */
+const v2Nav=()=>typeof perfV2==="function"&&perfV2();
+const bar=()=>v2Nav()?ALL_BAR.filter(x=>!x.perf):ALL_BAR;
 
 /* ---- Performance tab versions (one per role; items come from the prototype's live ROLE_NAV) ---- */
 const ROLES=[
@@ -62,12 +65,17 @@ function perfMenu(){
 const soon=t=>()=>{closeAll();toast(`${t} isn't part of this Performance prototype.`)};
 function subMenu(item){
  if(item.perf)return perfMenu();
- return (item.subs||[]).map(([l,t,kids])=>{
+ /* V2: HR lists Hiring · Templates · HR Dashboard above the benefits items (no Onboarding / HR onboarding) */
+ const subs=item.link==="hr"&&v2Nav()?[["hiring","Hiring"],["lumber_onboarding","Templates"],["hr_dashboard","HR Dashboard"],...item.subs.filter(([l])=>l.startsWith("benefit")||l==="credentials")]:item.subs||[];
+ return subs.flatMap(([l,t,kids])=>{
   if(item.link==="resources"&&l==="users")return {label:t,sel:S.view==="users",children:kids.map(([kl,kt])=>({label:kt,sel:S.view==="users"&&kl==="active",go:()=>{closeAll();nav("users")}}))};
+  /* V2: Performance sits in HR right above Credential management — a plain link, no submenu (the page has its own tabs) */
+  if(item.link==="hr"&&l==="credentials"&&v2Nav())
+   return [{label:"Performance",sel:PERF_TABS.some(([v])=>navOn(v)),go:()=>perfGo(role(),ROLE_HOME[role()]),testid:"nav-hr-performance"},{label:t,go:soon(t)}];
   return {label:t,go:soon(t)};
  });
 }
-const selectedApp=()=>S&&S.view==="users"?"resources":"performance";
+const selectedApp=()=>S&&S.view==="users"?"resources":v2Nav()?"hr":"performance";
 
 /* ---- generic MUI-like menu engine (stack of open menus) ---- */
 let stack=[];        // [{el, anchor, kind}]
@@ -87,14 +95,20 @@ function place(el,anchor,pos){
 function openMenu(level,anchor,items,opt={}){
  closeFrom(level);
  const el=document.createElement("div");
- el.className="lt-menu "+(opt.cls||"");el.setAttribute("role","menu");
- const list=document.createElement("div");list.className="lt-list";el.appendChild(list);
+ /* opt.dd: the shared dropdown component (.dropdown__menu › .dropdown__list › .dropdown__option, 28-dropdown-menu.css) —
+    used for the HR menu on V2. Plain links only (no children / badges); the current page gets the gray selected row (no check). */
+ el.className=opt.dd?"dropdown__menu nav-dropdown":"lt-menu "+(opt.cls||"");el.setAttribute("role","menu");
+ const list=document.createElement("div");list.className=opt.dd?"dropdown__list":"lt-list";el.appendChild(list);
  if(opt.cap){const c=document.createElement("div");c.className="lt-cap";c.textContent=opt.cap;list.appendChild(c)}
  items.forEach(it=>{
   if(it.hr){const h=document.createElement("hr");h.className="lt-hr";list.appendChild(h);return}
   const b=document.createElement("button");
-  b.type="button";b.className="lt-mi"+(it.sel?" sel":"");b.setAttribute("role","menuitem");
+  b.type="button";b.setAttribute("role","menuitem");
   if(it.testid)b.dataset.testid=it.testid;
+  if(opt.dd){b.className="dropdown__option select__option"+(it.sel?" on":"");if(it.sel)b.setAttribute("aria-current","page");
+   b.innerHTML=`<span>${esc(it.label)}</span>`;
+   b.addEventListener("click",e=>{e.stopPropagation();if(it.go)it.go()});list.appendChild(b);return}
+  b.className="lt-mi"+(it.sel?" sel":"");
   b.innerHTML=`<span class="lt-l">${esc(it.label)}${it.sub?`<span class="lt-sub">${esc(it.sub)}</span>`:""}</span>${it.badge?`<span class="lt-badge">${it.badge}</span>`:""}${it.children?svg("right"):""}`;
   const openKids=()=>{if(stack[level+1]&&stack[level+1].anchor===b)return;list.querySelectorAll(".lt-mi.hot").forEach(x=>x.classList.remove("hot"));b.classList.add("hot");openMenu(level+1,b,it.children,{pos:"right",cls:opt.childCls||"nested"})};
   b.addEventListener("mouseenter",()=>{if(it.children)openKids();else{closeFrom(level+1);list.querySelectorAll(".lt-mi.hot").forEach(x=>x.classList.remove("hot"))}});
@@ -112,7 +126,7 @@ function openMenu(level,anchor,items,opt={}){
 document.addEventListener("click",()=>{if(stack.length)closeAll()});
 document.addEventListener("keydown",e=>{
  if(e.key==="Escape"&&stack.length){const top=stack[stack.length-1];closeFrom(stack.length-1);top.anchor&&top.anchor.focus&&top.anchor.focus()}
- if((e.key==="ArrowDown"||e.key==="ArrowUp")&&stack.length){const m=stack[stack.length-1].el,bs=[...m.querySelectorAll(".lt-mi")],i=bs.indexOf(document.activeElement);if(bs.length){e.preventDefault();bs[(i+(e.key==="ArrowDown"?1:-1)+bs.length)%bs.length].focus()}}
+ if((e.key==="ArrowDown"||e.key==="ArrowUp")&&stack.length){const m=stack[stack.length-1].el,bs=[...m.querySelectorAll(".lt-mi,.dropdown__option")],i=bs.indexOf(document.activeElement);if(bs.length){e.preventDefault();bs[(i+(e.key==="ArrowDown"?1:-1)+bs.length)%bs.length].focus()}}
  if(e.key==="ArrowLeft"&&stack.length>1){const top=stack[stack.length-1];closeFrom(stack.length-1);top.anchor.focus()}
  if(e.key==="ArrowRight"&&stack.length&&document.activeElement&&document.activeElement.classList.contains("lt-mi"))document.activeElement.click();
 });
@@ -134,7 +148,7 @@ function appBtn(item,sel){
   e.stopPropagation();
   if(stack[0]&&stack[0].anchor===b){closeAll();return}
   if(!has){soon(item.title)();return}
-  openMenu(0,b,subMenu(item),{cls:"tab",childCls:"tab nested"});
+  openMenu(0,b,subMenu(item),item.link==="hr"&&v2Nav()?{dd:true}:{cls:"tab",childCls:"tab nested"});
  });
  return b;
 }
@@ -163,13 +177,13 @@ function settingsMenu(anchor){
   {label:"Admin",go:soon("Admin")}
  ],{cls:"tab",after:prof});
 }
-let shown=BAR.length;
-function primaryCount(){return BAR.length}   // start with every tab; fit() moves the overflow into "More"
+let shown=ALL_BAR.length;
+function primaryCount(){return bar().length}   // start with every tab; fit() moves the overflow into "More"
 function split(n){
- let vis=BAR.slice(0,n);
- const perf=BAR.find(x=>x.perf);
- if(!vis.includes(perf))vis=BAR.slice(0,Math.max(0,n-1)).concat(perf);   // Performance always stays in the bar
- return [vis,BAR.filter(x=>!vis.includes(x)).concat(MORE_ONLY)];
+ const B=bar();let vis=B.slice(0,n);
+ const keep=B.find(x=>x.link===selectedApp());   // the current app (Performance, or HR on V2) always stays in the bar
+ if(keep&&!vis.includes(keep))vis=B.slice(0,Math.max(0,n-1)).concat(keep);
+ return [vis,B.filter(x=>!vis.includes(x)).concat(MORE_ONLY)];
 }
 function draw(n){
  const bar=document.getElementById("ltBar");if(!bar||!S)return;

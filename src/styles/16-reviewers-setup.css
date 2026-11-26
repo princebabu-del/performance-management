@@ -9,9 +9,10 @@
 
 /* dropdowns */
 .dropdown{position:relative;min-width:0}
-.dropdown__menu{position:absolute;top:calc(100% + 6px);left:0;z-index:45;width:max(100%,280px);max-width:calc(100vw - 32px);background:#fff;border:1px solid var(--fc-card-line);border-radius:12px;box-shadow:0 12px 16px -4px rgba(16,24,40,.08),0 4px 6px -2px rgba(16,24,40,.03);padding:6px;display:flex;flex-direction:column}
+.dropdown__menu{position:absolute;top:calc(100% + 6px);left:0;z-index:45;width:max(100%,280px);max-width:calc(100vw - 32px);background:#fff;border:1px solid var(--fc-card-line);border-radius:8px;box-shadow:0 12px 16px -4px rgba(16,24,40,.08),0 4px 6px -2px rgba(16,24,40,.03);padding:6px;display:flex;flex-direction:column}
 /* reviewer multi-select */
-.multiselect{height:46px;min-height:0;box-sizing:border-box;overflow:hidden;display:flex;flex-wrap:nowrap;align-items:center;gap:6px;padding:6px 44px 6px 8px;cursor:pointer;position:relative;background:#fff url(/assets/chevron-down.svg) right 14px center/20px 20px no-repeat}
+.multiselect{height:46px;min-height:0;box-sizing:border-box;overflow:hidden;display:flex;flex-wrap:nowrap;align-items:center;gap:6px;padding:6px 40px 6px 8px;cursor:pointer;position:relative;background:#fff url(/assets/chevron-down.svg) right 12px center/20px 20px no-repeat}
+/* chevron always visible: the 40px right padding keeps chips and "+N" clear of it (rxFitChips measures up to that padding) */
 .multiselect.open{border-color:var(--fc-blue)}
 .multiselect__placeholder{padding:0 6px;color:var(--fc-ph)}
 /* selected chip = Badge (Figma Employee-Onboarding 9773:54889): Gray/50 fill, Gray/200 border, 16px radius, 2px 12px padding,
@@ -49,9 +50,8 @@
 .questionnaire-picker__meta{font-size:12px;color:#667085}
 .dropdown__empty{padding:16px 10px;text-align:center;font-size:14px;color:#667085}
 .dropdown__empty[hidden]{display:none}
-.questionnaire-picker__add{display:flex;align-items:center;gap:8px;width:100%;border:0;border-top:1px solid var(--fc-card-line);background:#fff;border-radius:0 0 12px 12px;padding:12px 16px;font-family:var(--f);font-size:14px;font-weight:600;color:var(--fc-blue);cursor:pointer;text-align:left}
-.questionnaire-picker__add:hover,.questionnaire-picker__add:focus-visible{background:#F5F8FF;outline:none}
-.questionnaire-picker__add span{font-size:18px;line-height:1}
+/* menu footer: 1px divider, then "+ Add Questionnaire" as the shared tertiary (gray) button (sm), 4px in from the edges */
+.questionnaire-picker__footer{display:flex;padding:4px;border-top:1px solid var(--fc-card-line)}
 
 /* reviewer grid: fixed-width table that scrolls horizontally inside the card; total row stays put */
 .reviewer-table{display:flex;flex-direction:column;gap:12px}
@@ -60,8 +60,8 @@
 .reviewer-table__scroll{overflow-x:auto;overflow-y:hidden;border-radius:12px 12px 0 0;overscroll-behavior-x:contain}
 /* the Questionnaire dropdown would be clipped by the scroller, so it's pinned to the viewport (rxPlacePops) */
 .reviewer-table__scroll .dropdown__menu{position:fixed;top:auto;left:auto}
-.reviewer-table__row{display:grid;min-width:1196px;grid-template-columns:minmax(140px,1fr) 104px minmax(200px,1.6fr) 292px 100px 120px 96px 28px;column-gap:12px;align-items:center;min-height:44px;padding:0 16px;border-bottom:1px solid var(--fc-card-line);box-sizing:border-box}
-.reviewer-table__frame.noself .reviewer-table__row{min-width:1084px;grid-template-columns:minmax(140px,1fr) 104px minmax(200px,1.6fr) 292px 120px 96px 28px}
+.reviewer-table__row{display:grid;min-width:1156px;grid-template-columns:minmax(140px,1fr) 104px minmax(200px,1.6fr) 292px 100px 120px 96px;column-gap:12px;align-items:center;min-height:44px;padding:0 16px;border-bottom:1px solid var(--fc-card-line);box-sizing:border-box}
+.reviewer-table__frame.noself .reviewer-table__row{min-width:1044px;grid-template-columns:minmax(140px,1fr) 104px minmax(200px,1.6fr) 292px 120px 96px}
 .reviewer-table__row>*{min-width:0}
 /* Reviewer column stays pinned on the left while the table scrolls; it covers the row's 16px left padding */
 .reviewer-table__row>:first-child{position:sticky;left:0;z-index:2;align-self:stretch;margin-left:-16px;padding-left:16px;line-height:43px;background:#fff;transition:box-shadow .15s}
@@ -110,17 +110,16 @@
 .reviewer-table__check{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;color:#101828}
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .reviewer-table__na{color:#98A2B3}
-.remove-button{width:32px;height:32px;border:0;border-radius:8px;background:none;color:#98A2B3;font-size:20px;line-height:1;cursor:pointer}
-.remove-button:hover{background:#F2F4F7;color:var(--fc-ink)}
-.reviewer-table__total{display:flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;background:#F9FAFB;border-radius:0 0 12px 12px;font-size:14px;box-sizing:border-box}
+.reviewer-table__total{display:flex;align-items:center;gap:4px;min-height:44px;padding:0 16px;background:#F9FAFB;border-radius:0 0 12px 12px;font-size:14px;box-sizing:border-box}
+.reviewer-table__total #rxSplitBtn{margin-left:auto}   /* label → value 4px; Split Evenly sits at the right end */
 .reviewer-table__total-label{font-weight:600;color:#101828}
 .reviewer-table__total-value{font-weight:600}
-.reviewer-table__total-value.is-ok{color:#667085}   /* 100%: same color as the "Total Weightage:" key */
+.reviewer-table__total-value.is-ok{color:var(--text-primary)}   /* 100%: primary text */
 .reviewer-table__total-value.is-bad{color:var(--red)}
 .link-button{margin-left:auto;border:0;background:none;padding:0;color:var(--fc-blue);font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap}
 .link-button:hover{text-decoration:underline}
 /* self-evaluation / peers / additional settings: checkbox + label + description */
-.sub-settings{display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;margin-top:12px;font-size:14px;color:var(--fc-ink)}
+.sub-settings{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin-top:12px;font-size:14px;color:var(--fc-ink)}
 .input--number{width:80px;height:40px;font-size:15px}
 .input--number:disabled{background:#F9FAFB;color:#98A2B3;cursor:not-allowed}
 .sub-settings .error-text{flex-basis:100%;padding:0}
@@ -158,13 +157,12 @@
 /* nested option: vertical guide line under the parent checkbox's centre (16px box → 7px + 2px line + 15px = content at 24px) */
 .choice-group>.sub-settings{margin:0 0 0 7px;padding:4px 0 4px 15px;border-left:2px solid #EAECF0}
 
-/* Save as Draft → Saved */
-.button.editor__save.is-saved,.button.editor__save:disabled{opacity:1;cursor:default;color:#667085;background:#fff}
 /* exit confirmation (Figma LMS 1:20632) */
 .dialog{--fc-line:#D0D5DD;--fc-ink:#344054;--fc-blue:#2970FF;--fc-shadow:0 1px 2px rgba(16,24,40,.05);position:relative;width:450px;max-width:100%;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 20px 24px -4px rgba(16,24,40,.08),0 8px 8px -4px rgba(16,24,40,.03);font-family:var(--f)}
 .dialog__backdrop{position:absolute;left:-120px;top:-120px;width:336px;height:336px;pointer-events:none;-webkit-mask:url(/assets/dlg-pattern-mask.svg) center/336px 336px no-repeat;mask:url(/assets/dlg-pattern-mask.svg) center/336px 336px no-repeat}
 .dialog__backdrop img{display:block}
 .dialog__close{position:absolute;top:16px;right:16px;z-index:1;display:flex;padding:10px;border:0;background:none;border-radius:8px;cursor:pointer}
+.dialog__close.lb-icon-btn{padding:0}   /* exit dialog: shared tertiary icon button (44px box, 20px x) */
 .dialog__close:hover{background:#F2F4F7}
 .dialog__close:focus-visible{outline:2px solid var(--fc-blue);outline-offset:0}
 .dialog__close img{display:block}
@@ -177,6 +175,7 @@
 .dialog__title b{font-weight:600}
 .dialog__actions{position:relative;display:flex;gap:12px;padding:16px 24px 24px}
 .dialog__actions .button{flex:1;padding:10px 18px;line-height:24px}
+.dialog__actions .lb-btn{flex:1}
 
 /* Which employees should be included? — radios + category/value group rows */
 input.radio{appearance:none;-webkit-appearance:none;width:16px;height:16px;margin:0;flex-shrink:0;border:1px solid #D0D5DD;border-radius:50%;background:#fff;cursor:pointer;transition:border-color .12s,box-shadow .12s}
@@ -188,17 +187,13 @@ input.radio:focus-visible{outline:2px solid var(--fc-blue);outline-offset:2px}
 /* category groups hang off the "Only … from selected groups" radio on a 2px #EAECF0 line, centred under the 16px radio
    (same nested-line style as the Review schedule interval row) */
 .auto-assign__groups{display:flex;flex-direction:column;gap:8px;margin:-8px 0 0 7px;padding:12px 0 0 15px;border-left:2px solid #EAECF0}
-.auto-assign__group{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr) 44px;gap:12px;align-items:start}
+.auto-assign__group{display:grid;grid-template-columns:200px minmax(0,1fr) 44px;gap:12px;align-items:center}   /* category 200px, values fill the rest, 44px remove; all share one centre line */
 .auto-assign__group .input--select{min-height:44px}
 .auto-assign__group .multiselect{height:44px}
-.editor__main .auto-assign__remove{width:44px;height:44px}   /* 44px icon button, 20px x icon (.remove-button__icon) */
-.auto-assign__remove:disabled{opacity:.35;cursor:not-allowed;background:none}
-.auto-assign__and{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#667085;padding-left:2px}
+.auto-assign__and{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#667085;padding-left:2px}   /* 8% tracking */
 /* Add category: no top margin · 20px plus icon · 14px semibold label; hover underlines the label only */
-.auto-assign__add{margin:0;align-self:flex-start;display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;line-height:20px}
-.auto-assign__add:hover{text-decoration:none}
-.auto-assign__add:hover .auto-assign__add-label{text-decoration:underline}
-.auto-assign__add-icon{display:block;flex:none;width:20px;height:20px;background:currentColor;-webkit-mask:url(/assets/icons/plus.svg) center/20px 20px no-repeat;mask:url(/assets/icons/plus.svg) center/20px 20px no-repeat}
+/* Add category: shared tertiary blue button, sm (.lb-btn--tertiary-blue, public/components/button); only its place in the column here */
+.auto-assign__add{align-self:flex-start}
 .multiselect.is-dis{background:#F9FAFB;cursor:not-allowed}
 .multiselect.is-dis .multiselect__placeholder{color:#98A2B3}
 @media (max-width:700px){.auto-assign__group{grid-template-columns:minmax(0,1fr) 44px}.auto-assign__group .dropdown{grid-column:1}}
@@ -214,7 +209,7 @@ input.radio:focus-visible{outline:2px solid var(--fc-blue);outline-offset:2px}
 /* field: a small label above its control, inside a setting's control column (Exclude, Who can reopen it?, peer limit) */
 .field{display:flex;flex-direction:column;gap:8px;width:100%;min-width:0}   /* 8px between the label and its control */
 .sub-settings>.field{max-width:480px}
-.inline-fields{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px}   /* 12px between the fields and the text beside them */
+.inline-fields{display:flex;align-items:center;flex-wrap:wrap;gap:12px}   /* rule-based settings: 12px between fields and the text beside them (the reviewer table's due date uses 8px) */
 .reopen-settings__select{width:200px;flex:0 0 200px}
 /* New Hire Review › At regular intervals: "till [End of probation | Specific period]" select */
 .till-select{width:300px;flex:0 0 300px;max-width:100%}
@@ -240,4 +235,4 @@ input.radio:focus-visible{outline:2px solid var(--fc-blue);outline-offset:2px}
 /* not enough room below the field on screen: the list / calendar opens above it, 4px away (fcFlipPops, 14-reviewee-reviewers.js) */
 .dropdown__menu.is-up,.datepicker.is-up{top:auto;bottom:calc(100% + 4px)}
 /* forces what follows onto a new line inside a .sub-settings row (e.g. "[N] months after the start date" under "Every N months till …") */
-.sub-settings__break{flex-basis:100%;height:0}
+.sub-settings__break{flex-basis:100%;height:0;margin-top:-12px}   /* forced line break: cancels one of its two 12px row gaps, so wrapped lines stay 12px apart */

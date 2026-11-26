@@ -6,7 +6,7 @@ function cycDue(c){const sc=stageCounts(c),cur=sc.find(s=>s.st==="cur")||sc[sc.l
 /* "Oct 9, 2026" → 10/09/2026 */
 function mdy(str){const t=Date.parse(str);if(isNaN(t))return str||"—";const d=new Date(t);return `${String(d.getMonth()+1).padStart(2,"0")}/${String(d.getDate()).padStart(2,"0")}/${d.getFullYear()}`}
 /* Header split button: New Review Cycle, with Add Questionnaire in the dropdown */
-function newCycleSplit(){return `<span class="kebab"><span class="splitbtn"><button class="btn p" onclick="startCycle()">${ic("plus")} New Review Cycle</button><button class="btn p" aria-label="More create options" aria-haspopup="menu" aria-expanded="${S.menu==="homeAdd"}" onclick="toggleMenu('homeAdd',event)">▾</button></span>${S.menu==="homeAdd"?`<div class="menu split-menu" role="menu" style="top:46px"><button role="menuitem" onclick="S.menu=null;newTemplate()">${ic("tpl")} Add Questionnaire</button></div>`:""}</span>`}
+function newCycleSplit(){return `<span class="kebab"><span class="splitbtn"><button class="btn p" onclick="startCycle()">${ic("plus")} New Review Cycle</button><button class="btn p" aria-label="More create options" aria-haspopup="menu" aria-expanded="${S.menu==="homeAdd"}" onclick="toggleMenu('homeAdd',event)">▾</button></span>${S.menu==="homeAdd"?`<div class="action-menu split-menu" role="menu" style="top:46px"><button type="button" role="menuitem" class="action-menu__item" onclick="S.menu=null;newTemplate()">${ic("tpl","action-menu__icon")}Add Questionnaire</button></div>`:""}</span>`}
 const CHEV=`<svg class="hrow-chev" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 /* Metadata separator: one small light-gray dot everywhere in subtext */
 const SEP=`<span class="sep" aria-hidden="true">·</span>`,sepd=t=>t.replace(/ [·•] /g,SEP);
@@ -51,7 +51,7 @@ attention=function(){
  const nr=P.filter(p=>p.noReviewer&&p.exc!=="Removed");
  if(nr.length)it.push(["r",`${nr.length} worker${nr.length>1?"s have":" has"} no manager reviewer`,"Q4 2026 Field Crew Check-in · Their manager left on 10/09/2026","Assign reviewer","nr_fix()"]);
  const od=P.filter(p=>p.exc==="Overdue");
- if(od.length)it.push(["a",`${od.length} self review${od.length>1?"s are":" is"} overdue`,`Q4 2026 Field Crew Check-in · Closed ${phaseEnd("c1",/self/i)}, late submissions still accepted`,"Remind all",`actRemind([${od.map(p=>p.id)}])`]);
+ if(od.length)it.push(["a",`${od.length} self-evaluation${od.length>1?"s are":" is"} overdue`,`Q4 2026 Field Crew Check-in · Closed ${phaseEnd("c1",/self/i)}, late submissions still accepted`,"Remind all",`actRemind([${od.map(p=>p.id)}])`]);
  const nc=P.filter(p=>p.cid==="c1"&&p.exc!=="Removed"&&!E(p.eid).phone&&!E(p.eid).email);
  if(nc.length)it.push(["a",`${nc.length} worker${nc.length>1?"s":""} can't be reached`,`Q4 2026 Field Crew Check-in · No phone or email on file`,"Update contact",`actContact(${nc[0].id})`]);
  if(D.reopenReqs.length){const r=D.reopenReqs[0],p=PK(r.pid);if(p)it.push(["a",`${r.by} asked to reopen a review`,`${E(p.eid).name} · Q2 2026 · “${r.reason}”`,"Review request","openReopenReq(0)"])}
@@ -60,7 +60,7 @@ attention=function(){
 /* Reviews the admin owes, as {p, kind:'peer'|'mgr', due ISO-ish sort key}: peer reviews first (earlier due) */
 function myAdminTasks(){
  const act=p=>p.exc!=="Removed"&&["Active","Paused"].includes((C(p.cid)||{}).status);
- const peer=D.packets.filter(p=>act(p)&&(p.peers||[]).some(x=>x.by===ADMIN_ME&&x.st!=="Submitted")).map(p=>({p,kind:"peer",st:p.peers.find(x=>x.by===ADMIN_ME).st,due:phaseEnd(p.cid,/peer|self/i)}));
+ const peer=D.packets.filter(p=>act(p)&&(p.peers||[]).some(x=>x.by===ADMIN_ME&&x.st!=="Submitted"&&!(typeof cdPeerPending==="function"&&cdPeerPending(csRx(C(p.cid)),x)))).map(p=>({p,kind:"peer",st:p.peers.find(x=>x.by===ADMIN_ME).st,due:phaseEnd(p.cid,/peer|self/i)}));
  const mgr=myAdminReviews().map(p=>({p,kind:"mgr",st:p.mgr.st,due:phaseEnd(p.cid,/manager/i)}));
  const key=d=>d?d.slice(6)+d.slice(0,2)+d.slice(3,5):"9";
  return [...peer,...mgr].sort((a,b)=>key(a.due).localeCompare(key(b.due)));
@@ -71,7 +71,7 @@ V.home=()=>{
  const live=D.cycles.filter(c=>["Active","Paused"].includes(c.status)),done=D.cycles.filter(c=>c.status==="Closed"),att=attention();
  /* My Tasks: things that need the admin (issues first) followed by reviews they owe, as one list */
  const revItems=myAdminTasks().map(({p,kind,st,due})=>{const e=E(p.eid),pid=typeof p.id==="number"?p.id:"'"+p.id+"'",ip=st==="In progress",selfWait=kind==="mgr"&&!ip&&p.self&&!["Submitted","Off"].includes(p.self.st);
-   const pill=ip?["b","In progress"]:selfWait?["n","Waiting on self review"]:["a","Not started"];
+   const pill=ip?["b","In progress"]:selfWait?["n","Waiting on self-evaluation"]:["a","Not started"];
    return `<div class="att task">${av(e.name,30)}<div class="grow"><div class="t">Review ${esc(e.name)}</div><div class="d">${esc(e.title)}${SEP}${kind==="peer"?"Peer review":"Manager review"}${due?`${SEP}Due ${due}`:""}</div></div><span class="pill ${pill[0]}">${pill[1]}</span><button class="btn s" onclick="openWrite(${pid},'${kind}')">${ip?"Continue":"Start review"}</button></div>`});
  const attItems=att.map(a=>`<div class="att task"><span class="sev ${a[0]}"></span><div class="grow"><div class="t">${a[1]}</div><div class="d">${sepd(esc(a[2]))}</div></div><button class="btn s" onclick="${a[4]}">${a[3]}</button></div>`);
  const grp=(l,items)=>items.length?`<div class="task-grp">${l}<span class="dim">${items.length}</span></div><div>${items.join("")}</div>`:"";

@@ -61,7 +61,7 @@ function cdSortTh(k,label){const s=S.empSort,on=s&&s.k===k,dir=on?(s.dir>0?"asce
 /* Employees table: one collapsible group per reviewee. The group row is the reviewee (chevron · attention dot · avatar · name)
    with the packet's overall due date, status and next step; expanding it shows one row per reviewer, in the cycle's reviewer order
    (Settings › Reviewers): role · reviewer · due · that reviewer's status · remind. Needs-attention states are yellow. */
-const CD_ATTN=new Set(["Overdue","No reviewer","Disputed","Recalled","Reopened","Abandoned"]);
+const CD_ATTN=new Set(["Pending approval","Overdue","No reviewer","Disputed","Recalled","Reopened","Abandoned"]);
 const CD_REV_DONE=new Set(["Submitted","Approved","Shared","Acknowledged","Closed","Manager submitted"]);
 const cdPill=s=>`<span class="pill ${CD_ATTN.has(s)?"a":s==="Completed"?"g":PILL[s]||"n"}"><i></i>${esc(s)}</span>`;
 S.empOpen=S.empOpen||new Set();
@@ -71,20 +71,27 @@ function cdRevs(c,p){const x=csRx(c),rev=x.revs||[],mgrRole=rev.find(r=>/Manager
  rxKeys(x).forEach(k=>{
   const tpl=(rxRow(x,k)||{}).tpl||"",n=out.length,miss=()=>{if(!skip.includes(k))out.push({role:k,by:"",st:"No reviewer",missing:true})};
   if(k==="Self"){if(p.self)out.push({role:"Reviewee",by:E(p.eid).name,st:p.self.st})}
-  else if(k==="Peers")(p.peers||[]).forEach(r=>out.push({role:"Peer",by:r.by||r.name,st:r.st||"Not started"}));
+  else if(k==="Peers")(p.peers||[]).forEach(r=>out.push(cdPeerPending(x,r)?{role:"Peer",by:r.by||r.name,st:"Pending approval",pending:true}:{role:"Peer",by:r.by||r.name,st:r.st||"Not started"}));
   else if(k===mgrRole){if(p.noReviewer||!(p.mgr&&p.mgr.by))miss();else out.push({role:k,by:p.mgr.by,st:p.mgr.st})}
   else{const L=k===conRole?(p.contrib||[]):((p.extra||{})[k]||[]);L.forEach(r=>out.push({role:k,by:r.by,st:r.st}));if(!L.length)miss()}
   out.slice(n).forEach(r=>{r.tpl=tpl;r.mgr=k===mgrRole;r.con=k===conRole})});
  /* the reviewee's own (self) review is always the first row */
  return [...out.filter(r=>r.role==="Reviewee"),...out.filter(r=>r.role!=="Reviewee")]}
-function cdKebab(id,label,items){return `<div class="kebab"><button type="button" class="cd-kb" aria-label="${esc(label)}" aria-haspopup="menu" aria-expanded="${S.menu===id}" onclick="toggleMenu('${id}',event)">${ic("kebab")}</button>${S.menu===id?`<div class="menu cd-kb-menu" role="menu">${items.map(i=>`<button type="button" role="menuitem" class="${i[3]?"d":""}" onclick="S.menu=null;${i[2].replace(/"/g,"&quot;")}">${ic(i[0],"s")} ${esc(i[1])}</button>`).join("")}</div>`:""}</div>`}
+/* V2 peer nominations: a nominated peer waits for approval (unless the cycle auto-approves nominations); only approved peers can review.
+   Approve → the peer gets the review (Not started). Reject → the nomination is dropped (undo from the toast). */
+const cdPeerPending=(x,r)=>typeof perfV2==="function"&&perfV2()&&!x.peerAuto&&r.ap==="pending";
+function cdPeerEntry(p,name){return (p.peers||[]).find(x=>(x.by||x.name)===name)}
+function cdPeerApprove(id,name){const p=PK(id),r=cdPeerEntry(p,name);if(!r)return;delete r.ap;r.st="Not started";log(p,`${name} approved as peer reviewer`,"g");render(true);toast(`${name} approved. They can now review ${E(p.eid).name}.`)}
+function cdPeerReject(id,name){const p=PK(id),i=(p.peers||[]).findIndex(x=>(x.by||x.name)===name);if(i<0)return;const r=p.peers[i];p.peers.splice(i,1);log(p,`${name}'s nomination rejected`,"r");render(true);
+ toast(`${name}'s nomination rejected.`,()=>{p.peers.splice(i,0,r);log(p,"Nomination rejection undone","g");render(true)})}
+function cdKebab(id,label,items){return `<div class="kebab"><button type="button" class="cd-kb" aria-label="${esc(label)}" aria-haspopup="menu" aria-expanded="${S.menu===id}" onclick="toggleMenu('${id}',event)">${ic("kebab")}</button>${S.menu===id?`<div class="action-menu cd-kb-menu" role="menu">${items.map(i=>`<button type="button" role="menuitem" class="action-menu__item${i[3]?" action-menu__item--danger":""}" onclick="S.menu=null;${i[2].replace(/"/g,"&quot;")}">${ic(i[0],"action-menu__icon")}${esc(i[1])}</button>`).join("")}</div>`:""}</div>`}
 /* reviewers still owing a review (have a person, not done) */
 const cdOpenRevs=(c,p)=>cdRevs(c,p).filter(r=>r.by&&!CD_REV_DONE.has(r.st));
 function cdRemindAll(cid,id){const p=PK(id),R=cdOpenRevs(C(cid),p);if(!R.length){toast("Everyone has already submitted.");return}
  log(p,"Reminder sent to "+R.map(r=>r.by).join(", "));toast(`Reminder sent to ${R.length} reviewer${R.length>1?"s":""}.`);render(true)}
 /* remove one reviewer from a reviewee's review: their weight is shared by the others; undo from the toast */
 function cdRevRemove(id,role,name){const p=PK(id),self=role==="Reviewee";
- reasonModal({title:`Remove ${name} as ${role==="Reviewee"?"self-reviewer":role}`,desc:`${E(p.eid).name}'s review continues without this reviewer. Feedback already submitted is kept.`,confirm:"Remove",danger:true,
+ reasonModal({title:`Remove ${name} as ${role==="Reviewee"?"self-evaluator":role}`,desc:`${E(p.eid).name}'s review continues without this reviewer. Feedback already submitted is kept.`,confirm:"Remove",danger:true,
   onOk:r=>{const snap=JSON.stringify({self:p.self,mgr:p.mgr,contrib:p.contrib,peers:p.peers,noReviewer:p.noReviewer,extra:p.extra||{}});
    if(self)p.self=null;
    else if(p.mgr&&p.mgr.by===name){p.mgr={...p.mgr,by:""};p.noReviewer=true}
@@ -128,14 +135,14 @@ function cdEmpGroup(c,p){const e=E(p.eid),at=needsAttn(p),open=S.empOpen.has(p.i
   <td class="cd-act" onclick="event.stopPropagation()">${cdKebab("eg-"+p.id,`Actions for ${e.name}`,[["user","View employee profile",`openProfile(${e.id},'Performance & Skills','${c.id}')`],["send","Send reminder for all",`cdRemindAll('${c.id}',${p.id})`],["down","Download PDF",`toast('PDF downloaded for ${q(e.name)}.')`],["x","Remove",`actRemove([${p.id}])`,1]])}</td></tr>`;
  if(!open)return head;
  return head+R.map((r,i)=>{const items=[];
-   if(r.by&&!CD_REV_DONE.has(r.st))items.push(["send","Send reminder",r.role==="Reviewee"?`actRemind([${p.id}])`:`cdRemind(${p.id},'${q(r.by)}')`]);
+   if(r.by&&!r.pending&&!CD_REV_DONE.has(r.st))items.push(["send","Send reminder",r.role==="Reviewee"?`actRemind([${p.id}])`:`cdRemind(${p.id},'${q(r.by)}')`]);
    items.push(["x","Remove",r.missing?`cdRoleSkip(${p.id},'${q(r.role)}')`:`cdRevRemove(${p.id},'${q(r.role)}','${q(r.by)}')`,1]);
   return `<tr class="cd-sub-row${r.missing?" is-missing":""}${i===R.length-1?" last":""}" ${i?"":`id="${gid}"`}><td class="cbx"></td><td class="cd-chev-c"></td><td></td>
   <td>${r.by?`<div class="cd-who">${cdAv(r.by)}<div style="min-width:0"><div class="cd-n">${esc(r.by)}</div><div class="cd-s">${esc(r.role)}</div></div></div>`:`<div class="cd-who"><span class="cd-av cd-av-empty" aria-hidden="true">${ic("user")}</span><div style="min-width:0"><div class="cd-miss">Not assigned</div><div class="cd-s">${esc(r.role)}</div></div></div>`}</td>
   <td>${cdTplCell(r.tpl)}</td>
-  <td class="tab-num">${CD_REV_DONE.has(r.st)?'<span class="dim">—</span>':(cdRevDue(c,p,r)||'<span class="dim">No due date</span>')}</td>
+  <td class="tab-num">${CD_REV_DONE.has(r.st)||r.pending?'<span class="dim">—</span>':(cdRevDue(c,p,r)||'<span class="dim">No due date</span>')}</td>
   <td>${cdPill(r.st)}</td>
-  <td class="cd-act" onclick="event.stopPropagation()"><div class="cd-acts-c">${r.missing?`<button type="button" class="cd-tert" onclick="cdAssignDlg('${c.id}',${p.id},'${q(r.role)}')">Assign</button>`:""}${cdKebab(`er-${p.id}-${i}`,`Actions for ${r.by||r.role}`,items)}</div></td></tr>`}).join("")}
+  <td class="cd-act" onclick="event.stopPropagation()"><div class="cd-acts-c">${r.pending?`<button type="button" class="cd-tert" onclick="cdPeerApprove(${p.id},'${q(r.by)}')">Approve</button><button type="button" class="cd-tert cd-tert--danger" onclick="cdPeerReject(${p.id},'${q(r.by)}')">Reject</button>`:r.missing?`<button type="button" class="cd-tert" onclick="cdAssignDlg('${c.id}',${p.id},'${q(r.role)}')">Assign</button>`:""}${r.pending?"":cdKebab(`er-${p.id}-${i}`,`Actions for ${r.by||r.role}`,items)}</div></td></tr>`}).join("")}
 /* Bulk action bar (Figma: Bulk Action Panel): "N selected" · actions · ✕, 12px after the segmented control.
    Actions that don't fit move, from the end, into a "More" dropdown — cdBulkFit() measures after every render and on resize. */
 function cdBulkBar(sel,selP){const ap=selP.filter(p=>p.st==="Approved").map(p=>p.id);
@@ -151,7 +158,7 @@ function bulkBar(n,A){
   <div class="cd-bulk-acts">${A.map((a,i)=>`<button type="button" class="cd-bulk-a${a[3]?" d":""}" data-i="${i}" onclick="${js(a)}">${ic(a[0])}<span>${a[1]}</span></button>`).join("")}
    <button type="button" class="cd-bulk-a cd-bulk-more" hidden aria-haspopup="menu" aria-expanded="${open}" onclick="toggleMenu('bulkMore',event)"><span>More</span><svg class="cd-bulk-car" viewBox="0 0 20 20" aria-hidden="true"><path d="${open?"M5 12.5l5-5 5 5":"M5 7.5l5 5 5-5"}"/></svg></button></div>
   <button type="button" class="cd-bulk-x" aria-label="Clear selection" onclick="S.sel=new Set();S.menu=null;render()">${ic("x")}</button></div>
-  ${open?`<div class="menu cd-bulk-menu" role="menu">${A.map((a,i)=>`<button type="button" role="menuitem" class="${a[3]?"d":""}" data-i="${i}" onclick="S.menu=null;${js(a)}">${ic(a[0],"s")} ${a[1]}</button>`).join("")}</div>`:""}</div>`}
+  ${open?`<div class="action-menu cd-bulk-menu" role="menu">${A.map((a,i)=>`<button type="button" role="menuitem" class="action-menu__item${a[3]?" action-menu__item--danger":""}" data-i="${i}" onclick="S.menu=null;${js(a)}">${ic(a[0],"action-menu__icon")}${a[1]}</button>`).join("")}</div>`:""}</div>`}
 function cdBulkFit(){const wrap=document.querySelector(".cd-bulk-wrap");if(!wrap)return;
  const bar=wrap.querySelector(".cd-bulk"),acts=[...bar.querySelectorAll(".cd-bulk-a:not(.cd-bulk-more)")],more=bar.querySelector(".cd-bulk-more");
  acts.forEach(a=>a.hidden=false);more.hidden=true;
@@ -207,7 +214,7 @@ function cdPkSection(x,cur,noNext){/* noNext: employee profile: hide the Next st
     const a=rv.missing?acts([["Assign",`cdAssignDlg('${c.id}',${x.id},'${q(rv.role)}')`]])
      :done?(self?[["View",`viewForm(${x.id},'self')`]]:rv.mgr?[["View",`viewForm(${x.id},'mgr')`]]:[])
      :acts([["Remind",self?`actRemind([${x.id}])`:`cdRemind(${x.id},'${q(rv.by)}')`]]);
-    return step(self?"Self review":`${esc(rv.role)} review`,who,rv.st,a,done)}).join("")}
+    return step(self?"Self-evaluation":`${esc(rv.role)} review`,who,rv.st,a,done)}).join("")}
    ${step("Results",r?`Rating ${r} · ${D.settings.levels[r-1]}${x.adj?` (calibrated from ${x.rating})`:""}`:"Shared after "+(c.calib?"calibration":"manager review"),res,[])}
   </div></section>`}
 openPacket=function(id){const p=PK(id),e=E(p.eid),start=x=>cycDates(cycOf(x))[0]||"";

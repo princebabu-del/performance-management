@@ -1,0 +1,172 @@
+/* Performance page, version 2: body.listpage-v2 (Review Cycles + Questionnaires) and body.perf-head (Overview),
+   set in public/js/layers/34-listing-v2.js. Only V2 changes go here; V1 keeps src/styles/25-listing-pages.css as is. */
+
+/* Page: white, no gray body */
+body.listpage.listpage-v2{background:#fff}
+
+/* Header: 16px from the title row to the tabs (V1 is 24px) */
+body.listpage-v2 .pagehead{gap:16px}
+
+/* Body: 24px top padding (V1 is 16px); toolbar above the table card, 16px apart */
+body.listpage-v2 .pagebody{display:flex;flex-direction:column;gap:16px;padding-top:24px}
+
+/* Card holds only the table: 12px radius (V1 is 20px). The card's border is the top edge, so the header row
+   drops its top stroke; header and last-row corners round to the card's inner radius (12px - 1px border) */
+body.listpage-v2 .pagebody>.card{border-radius:12px}
+body.listpage-v2 .card .tbl th{border-top:0}
+body.listpage-v2 .card>.tw:first-child thead tr:first-child th:first-child{border-top-left-radius:11px}
+body.listpage-v2 .card>.tw:first-child thead tr:first-child th:last-child{border-top-right-radius:11px}
+body.listpage-v2 .card>.tw:last-child tbody tr:last-child td:first-child{border-bottom-left-radius:11px}
+body.listpage-v2 .card>.tw:last-child tbody tr:last-child td:last-child{border-bottom-right-radius:11px}
+
+/* Table cells: 16px left/right padding (V1 is 24px); action column 8px (V1 is 12px) */
+body.listpage-v2 .card .tbl th,body.listpage-v2 .card .tbl td,
+body.listpage-v2 .card .tbl th.cbx,body.listpage-v2 .card .tbl td.cbx{padding-left:16px;padding-right:16px}
+body.listpage-v2 .card .tbl th.act,body.listpage-v2 .card .tbl td.act{padding-left:8px;padding-right:8px}
+body.listpage-v2 .card .tbl th.cbx,body.listpage-v2 .card .tbl td.cbx{width:52px}
+/* sortable headers: the cell has no padding, the button inside carries it */
+body.listpage-v2 .card .tbl th.ls-th{padding:0}
+body.listpage-v2 .card .tbl th .ls-sort{padding:0 16px}
+/* right-aligned (number) columns: the sort arrow sits to the left of the label */
+body.listpage-v2 .card .tbl th.num .ls-sort-i{order:-1}
+
+/* Header row 44px, body rows 56px (same as V1) */
+body.listpage-v2 .card .tbl th{height:44px}
+body.listpage-v2 .card .tbl td{height:56px}
+/* Action buttons: 36x36 with a 20px icon (V1 is 40x40); Continue setup / Reopen match the 36px height */
+body.listpage-v2 .card .tbl td.act .btn.ghost{width:36px;height:36px;padding:8px}
+body.listpage-v2 .card .tbl td.act .cd-tert{height:36px}
+
+/* Search: tertiary-gray border on hover, blue while typing (focus wins over hover); 20px "x" at the right end when it has text */
+body.listpage-v2 .tools .srch{transition:border-color .12s}
+body.listpage-v2 .tools .srch:hover{border-color:var(--text-tertiary)}
+body.listpage-v2 .tools .srch:focus-within{border-color:#2970FF}
+body.listpage-v2 .tools .srch input{flex:1 1 auto;min-width:0}
+.srch__clear{display:flex;flex-shrink:0;width:20px;height:20px;padding:0;margin-left:auto;border:0;border-radius:4px;background:none;cursor:pointer}
+.srch__clear img{display:block}
+.srch__clear:focus-visible{outline:2px solid #2970FF;outline-offset:2px}
+
+/* ---------- Toolbar: [segmented control][bulk bar] ……… [Search 320px][Filters][Columns][Add], 12px apart ---------- */
+body.listpage-v2 .listing-toolbar{flex-wrap:wrap;gap:12px;padding:0}   /* narrow screens: the right group drops under the status control */
+.listing-toolbar__start{display:flex;align-items:center;gap:12px;flex:1 1 auto;min-width:0}
+.listing-toolbar__start .lb-bgrp{flex-shrink:0}
+/* Status segmented control: Figma Employee-Onboarding 9768:54864. Same control on the Review Details page
+   (.cd-tools-l, Employees toolbar — layers/17-cycle-detail-layout.js). The shared component already matches the track, buttons
+   and selected state; the count badge is a flat #F9FAFB pill (no multiply blend), so it reads lighter than the #F2F4F7 track. */
+:is(body.listpage-v2 .listing-toolbar,body.perf-head,.cd-tools-l) .lb-bgrp--segmented .lb-bgrp__badge{mix-blend-mode:normal}
+/* labels: secondary text when unselected (hover too), primary text on the selected button */
+:is(body.listpage-v2 .listing-toolbar,body.perf-head,.cd-tools-l) .lb-bgrp--segmented .lb-bgrp__btn,
+:is(body.listpage-v2 .listing-toolbar,body.perf-head,.cd-tools-l) .lb-bgrp--segmented .lb-bgrp__btn:hover:not(.is-selected):not(:disabled){color:var(--text-secondary)}
+:is(body.listpage-v2 .listing-toolbar,body.perf-head,.cd-tools-l) .lb-bgrp--segmented .lb-bgrp__btn.is-selected{color:var(--text-primary)}
+/* Figma 9768:54864 (updated): no gap between tabs, 8px x 12px tab padding, 4px label to badge; label 14/600 line-height 1.4,
+   badge 12/500 line-height 1.3, both -2% letter-spacing. Track is 44px tall overall (1px border + 4px in + 34px tabs),
+   the same as every other toolbar control. */
+:is(body.listpage-v2 .listing-toolbar,body.perf-head,.cd-tools-l) .lb-bgrp--segmented{box-sizing:border-box;height:44px;gap:0}
+:is(body.listpage-v2 .listing-toolbar,body.perf-head,.cd-tools-l) .lb-bgrp--segmented .lb-bgrp__btn{position:relative;height:100%;padding:0 12px;gap:4px;line-height:1.4;letter-spacing:-.28px}
+:is(body.listpage-v2 .listing-toolbar,body.perf-head,.cd-tools-l) .lb-bgrp--segmented .lb-bgrp__badge{line-height:1.3;letter-spacing:-.24px}
+/* lighter #F9FAFB track on the Review Cycles + Questionnaires listings and the Review Details Employees toolbar */
+:is(body.listpage-v2 .listing-toolbar,.cd-tools-l) .lb-bgrp--segmented{background:#F9FAFB}
+body.listpage-v2 .listing-toolbar__end{flex-shrink:0;flex-wrap:nowrap;gap:12px}
+body.listpage-v2 .listing-toolbar .srch{width:320px;flex:none}
+/* SearchBar spec (public/components/search-bar/SearchBar.tsx), lg: 44px, 12px side padding, 20px #667085 icon, 16/400 (regular) text,
+   #7D89B0 placeholder; no native WebKit cancel button (the × is ours) */
+body.listpage-v2 .listing-toolbar .srch{padding:0 12px;color:#667085}
+body.listpage-v2 .listing-toolbar .srch__icon{flex:none;width:20px;height:20px}
+body.listpage-v2 .listing-toolbar .srch__input{-webkit-appearance:none;appearance:none;font-family:inherit}
+/* V2 search bars (listings + Review Details Employees): regular 400 text, per the SearchBar spec */
+body.listpage-v2 .tools .srch input,body.cd-people-v2 .cd-tools .cd-srch input{font-weight:400}
+body.listpage-v2 .listing-toolbar .srch__input::-webkit-search-cancel-button,
+body.listpage-v2 .listing-toolbar .srch__input::-webkit-search-decoration{-webkit-appearance:none;display:none}
+/* Filters: icon + label; a count badge while any filter is applied */
+.listing-toolbar__count{display:inline-flex;align-items:center;height:19px;box-sizing:border-box;padding:1px 7px;border-radius:16px;
+ background:#EFF4FF;border:1px solid #D1E0FF;font-size:12px;font-weight:500;line-height:15px;color:#2970FF}
+/* Filters · Columns (secondary) and Add (primary) are the shared Button component (public/components/button) */
+/* Opened Columns dropdown: gray focus ring */
+body.listpage-v2 .listing-toolbar .lb-btn.col-open,body.listpage-v2 .listing-toolbar .lb-btn.col-open:hover{background:#fff;color:#344054;box-shadow:0 1px 2px rgba(16,24,40,.05),0 0 0 4px rgba(152,162,179,.14)}
+
+/* Action buttons: assign / reopen + more options; the sizing row reserves two 36px buttons + 8px gap (V1 is 88px) */
+body.listpage-v2 .cl-sizer-act{width:80px}
+
+/* ---------- Overview (V2): same "Performance" header as the listing tabs — 24/32/0 padding, 16px to the tabs ---------- */
+body.perf-head .pagehead{display:flex;flex-direction:column;gap:16px;padding-top:24px}
+/* 32px left/right in the header and the body, like Review Cycles and Questionnaires (small screens keep 16px) */
+body.perf-head .main{padding-left:32px;padding-right:32px}
+body.perf-head .pagehead{margin-left:-32px;margin-right:-32px;padding-left:32px;padding-right:32px}
+@media (max-width:900px){
+ body.perf-head .main{padding-left:16px;padding-right:16px}
+ body.perf-head .pagehead{margin-left:-16px;margin-right:-16px;padding-left:16px;padding-right:16px}}
+body.perf-head .pagehead .ph{margin:0;align-items:center}
+body.perf-head .ph h1{line-height:1.2;color:#000}
+/* Header tabs: listing-page tab style (14px semibold, 20px line height, 44px tall incl. the 2px stroke (12px top / 10px bottom + 2px stroke), 2px gray stroke on the selected tab;
+   selected / hover = primary text, unselected = secondary text) on the Overview too */
+body.perf-head .perf-tabs{gap:16px}
+body.perf-head .perf-tabs .lb-tab{gap:8px;height:44px;box-sizing:border-box;padding:12px 4px 10px;border-bottom-width:2px;font-size:14px;font-weight:600;line-height:20px;color:var(--text-secondary)}
+body.perf-head .perf-tabs .lb-tab.is-selected{color:var(--text-primary);border-bottom-color:#344054}
+body.perf-head .perf-tabs .lb-tab:hover:not(.is-selected):not(:disabled){color:var(--text-primary);border-bottom-color:transparent}
+
+/* ---------- Top bar HR menu (V2): the shared dropdown component (28-dropdown-menu.css), opened from topnav.js ----------
+   Fixed to the HR button (topnav places it with inline left/top), above the top bar; hugs its longest item, at least 240px. */
+.nav-dropdown.dropdown__menu{--fc-card-line:#EAECF0;position:fixed;z-index:1300;width:max-content;min-width:240px}
+.nav-dropdown .dropdown__option{white-space:nowrap}
+
+/* ---------- Review Details page (V2): body.cd-v2 / body.cd-people-v2, set in layers/34-listing-v2.js ---------- */
+/* header: 16px from the title row to the tabs (V1 is 24px) */
+body.cd-v2 .cd-head{gap:16px}
+
+/* Employees tab: the Review Cycles tab body — white page, toolbar above the card, 24px top, 16px apart */
+html:has(body.cd-people-v2),body.cd-people-v2{background:#fff}
+body.cd-people-v2 .cd-body{padding-top:24px;gap:16px}
+body.cd-people-v2 .cd-body>.cd-tools{padding:0;flex-wrap:wrap}   /* narrow screens: Search + Filters drop under the segmented control */
+
+/* search: 320px, tertiary-gray border on hover, blue while typing (no glow); "x" at the right end when it has text */
+body.cd-people-v2 .cd-tools .cd-srch{transition:border-color .12s}
+body.cd-people-v2 .cd-tools .cd-srch:hover{border-color:var(--text-tertiary)}
+body.cd-people-v2 .cd-tools .cd-srch:focus-within{border-color:#2970FF}
+body.cd-people-v2 .cd-tools .cd-srch input{flex:1 1 auto;min-width:0}
+body.cd-people-v2 .cd-tools .cd-btn{white-space:nowrap}
+
+/* card holds only the table: 12px radius; the card's border is the top edge, so the header row drops its top stroke;
+   header and last-row corners round to the card's inner radius (12px - 1px border) */
+body.cd-people-v2 .cd-card{border-radius:12px}
+body.cd-people-v2 .cd-card .cd-tbl thead th{border-top:0}
+body.cd-people-v2 .cd-card>.tw:first-child thead tr:first-child th:first-child{border-top-left-radius:11px}
+body.cd-people-v2 .cd-card>.tw:first-child thead tr:first-child th:last-child{border-top-right-radius:11px}
+body.cd-people-v2 .cd-card>.tw:last-child tbody tr:last-child td:first-child{border-bottom-left-radius:11px}
+body.cd-people-v2 .cd-card>.tw:last-child tbody tr:last-child td:last-child{border-bottom-right-radius:11px}
+
+/* cells: 16px left/right padding (V1 is 24px); the 20px expand-chevron column keeps no padding; actions 8px */
+body.cd-people-v2 .cd-card .cd-tbl :is(th,td):not(.cd-chev-c){padding-left:16px;padding-right:16px}
+body.cd-people-v2 .cd-card .cd-tbl :is(th,td).cd-act{padding-left:8px;padding-right:8px}
+body.cd-people-v2 .cd-card .cd-tbl :is(th,td).cbx{width:52px}
+body.cd-people-v2 .cd-tbl-fixed .c-cbx{width:52px}
+body.cd-people-v2 .cd-card .cd-tbl th.ls-th{padding:0}
+body.cd-people-v2 .cd-card .cd-tbl th .ls-sort{padding:0 16px}
+/* needs-attention dot: inside the 16px padding, clear of the name */
+body.cd-people-v2 .cd-card .cd-tbl td.cd-emp-c>.rdot{left:4px}
+/* row actions: 36x36 with a 20px icon (V1 is 40x40), like the Review Cycles table */
+body.cd-people-v2 .cd-card .cd-tbl .cd-kb{width:36px;height:36px;padding:8px}
+/* status badges in the table: the header status badge's box (.cd-name .pill, 18-cycle-detail-layout.css) — 2px x 12px,
+   1px border, 16px corners, 14/500, 20px line, -2% letter-spacing, 8px gap (26px tall); status colors stay */
+body.cd-people-v2 .cd-card .cd-tbl .pill{gap:8px;box-sizing:border-box;padding:2px 12px;border-width:1px;border-style:solid;border-radius:16px;
+ font-size:14px;font-weight:500;line-height:20px;letter-spacing:-.28px}
+/* resizable columns: the .ls-rz handle (25-listing-pages.css) on each sortable header's right edge; header text ends in "…" when narrowed */
+body.cd-people-v2 .cd-card .cd-tbl th.ls-th{position:relative}
+body.cd-people-v2 .cd-card .cd-tbl th .ls-sort{min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+
+/* Review Cycles table: secondary line under the Cycle Period ("Starts in 3 days" / "Ends in 12 days") — 12/500 tertiary, 18px line */
+body.listpage-v2 .cyctbl .cl-sub{display:block;margin-top:2px;font-size:12px;font-weight:500;line-height:18px;color:var(--text-tertiary);white-space:nowrap}
+
+/* Employees tab: Reject on a pending peer nomination */
+.cd-tert.cd-tert--danger{color:#D92D20}
+.cd-tert.cd-tert--danger:hover{background:#FEF3F2}
+
+/* Created By: 32px avatar + name, 8px apart; the name truncates */
+.person-cell{display:flex;align-items:center;gap:8px;min-width:0}
+.person-cell>.avatar{width:32px;height:32px;flex:none}
+.person-cell__name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* V2: avatars inside any table are gray (#F2F4F7 fill, #475467 initials) instead of the per-name color set inline by av() */
+:is(body.listpage-v2,body.cd-v2,body.perf-head) table .avatar{background:#F2F4F7!important;color:#475467}
+/* V2: table header text is semibold (600) in every table, including the sortable header buttons
+   (the selector matches the listing / Review Details header rules' weight — .card .tbl th — so it wins by coming later) */
+:is(body.listpage-v2,body.cd-v2,body.perf-head) :is(.card,.cd-card,div) :is(.tbl,.cd-tbl,table) th,
+:is(body.listpage-v2,body.cd-v2,body.perf-head) :is(.card,.cd-card,div) :is(.tbl,.cd-tbl,table) th :is(.ls-sort,.th-sort,button){font-weight:600}

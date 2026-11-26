@@ -35,11 +35,12 @@ body.listpage .ph .btn.p{height:44px;padding:0 20px;gap:8px;border-radius:8px;fo
 body.listpage .ph .btn.p:hover{background:#155EEF;border-color:#155EEF}
 body.listpage .ph .btn svg{width:20px;height:20px}
 
-/* Tabs (Review Cycles, Questionnaires and the Review Details page .cd-tabs): 14px semibold, 16px gap, 4px side / 10px bottom padding, 2px gray stroke on the selected tab */
+/* Tabs (Review Cycles, Questionnaires and the Review Details page .cd-tabs): 14px semibold, 20px line height, 16px gap, 44px tall incl. the 2px stroke (12px top / 10px bottom + 2px stroke / 4px side padding),
+   2px gray stroke on the selected tab. Text: selected / hover = primary, unselected = secondary (see public/components/tabs) */
 body.listpage .lb-tabs,.lb-tabs.cd-tabs{gap:16px}
-:is(body.listpage,.cd-tabs) .lb-tab{gap:8px;padding:0 4px 10px;border-bottom-width:2px;font-size:14px;font-weight:600;line-height:17px;color:#344054}
-:is(body.listpage,.cd-tabs) .lb-tab.is-selected{color:#000;border-bottom-color:#344054}
-:is(body.listpage,.cd-tabs) .lb-tab:hover:not(.is-selected):not(:disabled){color:#000;border-bottom-color:transparent}
+:is(body.listpage,.cd-tabs) .lb-tab{gap:8px;height:44px;box-sizing:border-box;padding:12px 4px 10px;border-bottom-width:2px;font-size:14px;font-weight:600;line-height:20px;color:var(--text-secondary)}
+:is(body.listpage,.cd-tabs) .lb-tab.is-selected{color:var(--text-primary);border-bottom-color:#344054}
+:is(body.listpage,.cd-tabs) .lb-tab:hover:not(.is-selected):not(:disabled){color:var(--text-primary);border-bottom-color:transparent}
 :is(body.listpage,.cd-tabs) .lb-tab__badge{min-width:0;height:19px;padding:1px 7px;border:1px solid #EAECF0;border-radius:16px;
  font-size:12px;font-weight:500;line-height:15px;background:#F9FAFB;color:#344054}
 :is(body.listpage,.cd-tabs) .lb-tab.is-selected .lb-tab__badge{background:#F6F6F6;border-color:#E6E6E6;color:#555}
@@ -69,6 +70,9 @@ body.listpage .card .tbl td .link{font-size:14px;font-weight:500;letter-spacing:
 body.listpage .card .tbl th.cbx,body.listpage .card .tbl td.cbx{width:68px;padding:0 24px;line-height:0}
 body.listpage .card .cyctbl :where(th.cbx,th:nth-child(2),th.act){background:#F9FAFB}
 body.listpage .card .tbl tr.click:hover td{background:#F9FAFB}
+/* Row hover (V1 + V2): the name turns blue to show the row opens its details */
+body.listpage .card .cyctbl tr.click:hover td:nth-child(2) .cl-t,
+body.listpage .card .tpltbl tr.click:hover td:nth-child(2) .b{color:#2970FF}
 /* no pagination below: the last row sits on the card's rounded bottom, so drop its divider and round its corners */
 body.listpage .card>.tw:last-child tbody tr:last-child td{border-bottom:0}
 body.listpage .card>.tw:last-child tbody tr:last-child td:first-child{border-bottom-left-radius:19px}
@@ -93,7 +97,7 @@ body.listpage .card .tbl .cyc-act,body.listpage .card .tbl .tpl-act{gap:8px}
 body.listpage .card .tbl td.act .cd-tert{height:40px;padding:0 14px;border-radius:8px;letter-spacing:0;line-height:normal}
 body.listpage .card .tbl td.act .btn.ghost{width:40px;height:40px;padding:10px;border:0;border-radius:8px;color:#475467;justify-content:center;background:transparent}
 body.listpage .card .tbl td.act .btn.ghost:hover,body.listpage .card .tbl td.act .btn.ghost[aria-expanded=true],
-body.listpage .card .tbl td.act .kebab:has(.menu)>.btn.ghost{background:#EAECF0}
+body.listpage .card .tbl td.act .kebab:has(.action-menu)>.btn.ghost{background:#EAECF0}
 body.listpage .card .tbl td.act .btn.ghost:focus-visible{outline:2px solid #2970FF;outline-offset:0}
 body.listpage .card .tbl td.act .btn.ghost svg.i{width:20px;height:20px;background:currentColor;
  -webkit-mask:var(--lp-ico) center/20px 20px no-repeat;mask:var(--lp-ico) center/20px 20px no-repeat}
@@ -106,22 +110,7 @@ body.listpage .card .tbl td.act .btn.ghost.fav{color:#F59E0B}
 
 /* Tooltip: moved to public/components/tooltip/tooltip.css */
 
-/* Dropdown menu (Figma 1263:61832): white, #EAECF0 border, 8px radius, xl shadow, 8px top/bottom padding.
-   Item: 2px 8px outer + 8px inner padding, 8px radius, 20px icon (#344054, 1.25px stroke), 8px gap, 14px medium black label. */
-body.listpage .tw .kebab>.menu{background:#fff;border:1px solid #EAECF0;border-radius:8px;padding:8px 0;min-width:200px;
- box-shadow:0 20px 24px -4px rgba(16,24,40,.08),0 8px 8px -4px rgba(16,24,40,.03)}
-body.listpage .tw .kebab>.menu button{width:calc(100% - 16px);margin:2px 8px;padding:8px;gap:8px;border-radius:8px;
- font-size:14px;font-weight:500;line-height:normal;letter-spacing:0;color:#000}
-body.listpage .tw .kebab>.menu button:hover{background:#F9FAFB}
-body.listpage .tw .kebab>.menu button svg.i{width:20px;height:20px;color:#344054;stroke-width:1.5}
-body.listpage .tw .kebab>.menu button.d,body.listpage .tw .kebab>.menu button.d svg.i{color:#D92D20}
-body.listpage .tw .kebab>.menu hr{display:none}   /* no divider line between actions and the red (destructive) ones */
-body.listpage .tw .kebab>.menu svg.i:is([data-i=edit],[data-i=copy],[data-i=archive]){background:currentColor;
- -webkit-mask:var(--lp-ico) center/20px 20px no-repeat;mask:var(--lp-ico) center/20px 20px no-repeat}
-body.listpage .tw .kebab>.menu svg.i:is([data-i=edit],[data-i=copy],[data-i=archive])>*{display:none}
-body.listpage .tw .kebab>.menu svg.i[data-i=edit]{--lp-ico:url(/assets/icons/edit-05.svg)}
-body.listpage .tw .kebab>.menu svg.i[data-i=copy]{--lp-ico:url(/assets/icons/copy-03.svg)}
-body.listpage .tw .kebab>.menu svg.i[data-i=archive]{--lp-ico:url(/assets/icons/box.svg)}
+/* row menus: the shared action menu (public/components/action-menu) */
 
 /* ---------- Pagination: 16px top/bottom, 24px left/right, 32px controls ---------- */
 body.listpage .card .pgfoot{padding:16px 24px;border-top:1px solid #EAECF0}
@@ -196,6 +185,8 @@ body.listpage .card>.tools>.row{gap:12px}
    Last Modified Date (Questionnaires too). 240px fits "Project Completion Review" with the 24px cell padding; spare table
    width goes to the other columns. Once a column has been resized (.ls-fixed) the dragged widths take over. */
 body.listpage .card .tbl:not(.ls-fixed) th:is([data-k=type],[data-k=modBy],[data-k=modified]){width:240px;min-width:240px;max-width:240px}
+/* Reviewers (Review Cycles): a short number, so a narrow 140px column; spare width goes to the text columns */
+body.listpage .card .cyctbl:not(.ls-fixed) th[data-k=reviewers]{width:140px;min-width:140px;max-width:140px}
 
 /* Review Cycles sizing row (clSizer, layer 12): invisible, takes no height, only sets column widths so Active,
    Scheduled and Closed match. The action cell reserves two 40px buttons + 8px gap. */

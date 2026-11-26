@@ -17,7 +17,7 @@ const lfCount=v=>Array.isArray(v)?v.length:lfActive(v)?1:0;
    date + day(row) = one ISO date, date + range(row) = [startISO, endISO] (kept when it overlaps the picked range) */
 const LF_CATS={
  cycles:{
-  "Cycle Type":{opts:()=>["General Review","New Hire Review","Project Completion Review"],val:c=>clType(c)},
+  "Review Type":{opts:()=>["General Review","New Hire Review","Project Completion Review"],val:c=>clType(c)},
   "Cycle Period":{date:true,range:c=>clType(c)==="General Review"?cycDates(c):["",""]},   // new hire / project cycles have no fixed dates
   "Repeats":{opts:()=>lfUniq(["One-time","Every month","Every 3 months","Every 6 months","Every year",...D.cycles.map(c=>clSortVal(c,"repeats"))]),val:c=>clSortVal(c,"repeats")},
   "Reviewee":{opts:()=>RX_ROLES,val:c=>clReviewee(c)},

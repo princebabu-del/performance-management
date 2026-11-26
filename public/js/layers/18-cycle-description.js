@@ -5,9 +5,9 @@
 const CD_DESC_MAX=500;
 /* demo descriptions for the seeded cycles (a saved description, even an empty one, wins) */
 const CD_SEED_DESC={
- c1:"Quarterly check-in for field crews. Workers answer a short self review on their phone, their crew manager completes the crew batch review on three metrics, and foremen who worked with them this quarter add notes. Results are calibrated by branch before they're shared, and every employee acknowledges receipt.",
- c2:"Quarterly check-in for field crews covering July through September: self review, crew batch review and contributing foreman notes, calibrated before sharing.",
- c3:"Annual review for office staff. Employees complete a self review, nominate up to three peers for their manager to approve, and receive a manager review. Ratings are calibrated and approved before results are shared."};
+ c1:"Quarterly check-in for field crews. Workers answer a short self-evaluation on their phone, their crew manager completes the crew batch review on three metrics, and foremen who worked with them this quarter add notes. Results are calibrated by branch before they're shared, and every employee acknowledges receipt.",
+ c2:"Quarterly check-in for field crews covering July through September: self-evaluation, crew batch review and contributing foreman notes, calibrated before sharing.",
+ c3:"Annual review for office staff. Employees complete a self-evaluation, nominate up to three peers for their manager to approve, and receive a manager review. Ratings are calibrated and approved before results are shared."};
 const cdDesc=c=>c?(c.desc!==undefined?c.desc:(CD_SEED_DESC[c.id]||"")):"";
 /* Overview › Cycle Details › Additional Notes: clamped to 3 lines; "More" only when it's actually cut off, "Less" collapses it */
 function cdDescBlock(c){const d=(cdDesc(c)||"").trim();if(!d)return`<span class="dim">—</span>`;const open=S.descOpen===c.id;
@@ -17,12 +17,10 @@ function cdDescFit(){const a=document.querySelector(".cs-desc:not(.open)");if(!a
 const _renderAbout=render;render=function(...a){_renderAbout(...a);if(S.view==="cycle")cdDescFit()};
 addEventListener("resize",()=>{if(S.view==="cycle")cdDescFit()});
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(S.view==="cycle")cdDescFit()});
-/* editor field (Additional Notes + helper text): after Cycle Period / Repeats, at the end of the Cycle Details card */
+/* editor field (Additional Notes + helper text): a row in the Review Guidance card (rxGuidance, 14-reviewee-reviewers.js) */
 function fcDescIn(el){W().desc=el.value;const n=$("#fcDescCount");if(n)n.textContent=`${el.value.length}/${CD_DESC_MAX}`}
-const _fcDetailsDesc=fcDetails;fcDetails=function(w){const h=_fcDetailsDesc(w),d=w.desc||"",i=h.lastIndexOf("</div></section>");
- const f=`<div class="setting">${fcQ("Additional notes",{for:"wDesc",d:"Shown to reviewers while they complete the review.",did:"wDescHelp"})}
-  <textarea class="input input--textarea" id="wDesc" maxlength="${CD_DESC_MAX}" rows="4" placeholder="Enter focus areas, rating guidance or anything that affected this period." aria-describedby="wDescHelp" oninput="fcDescIn(this)">${esc(d)}</textarea></div>`;
- return i<0?h:h.slice(0,i)+f+h.slice(i)};
+const fcNotesRow=w=>`<div class="setting">${fcQ("Additional notes",{for:"wDesc",d:"Shown to reviewers while they complete the review.",did:"wDescHelp"})}
+  <textarea class="input input--textarea" id="wDesc" maxlength="${CD_DESC_MAX}" rows="4" placeholder="Enter focus areas, rating guidance or anything that affected this period." aria-describedby="wDescHelp" oninput="fcDescIn(this)">${esc(w.desc||"")}</textarea></div>`;
 /* save: drafts and new cycles (createCycle saves through wzSave), and live edits */
 const _wzSaveDesc=wzSave;wzSave=function(...a){_wzSaveDesc(...a);const w=W(),c=w&&w.id&&C(w.id);if(c)c.desc=(w.desc||"").trim()};
 const _fcLiveSaveDesc=fcLiveSave;fcLiveSave=function(...a){const w=W(),c=w&&C(w.id);if(c)c.desc=(w.desc||"").trim();return _fcLiveSaveDesc(...a)};

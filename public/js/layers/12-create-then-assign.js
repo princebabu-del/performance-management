@@ -70,15 +70,15 @@ const clSortVal=(c,k)=>{const x=clCols().find(x=>x.k===k);return x&&x.sv?x.sv(c)
 const clT=t=>`<span class="cl-t" title="${t}">${t}</span>`;
 const CL_COLS=[
  {k:"name",l:"Cycle Name",lock:true,sv:c=>c.name,td:c=>`<td>${clT(esc(c.name))}</td>`},
- {k:"type",l:"Cycle Type",sv:c=>clType(c),td:c=>`<td>${clT(esc(clType(c)))}</td>`},
+ {k:"type",l:"Review Type",sv:c=>clType(c),td:c=>`<td>${clT(esc(clType(c)))}</td>`},
  {k:"period",l:"Cycle Period",sv:c=>clType(c)!=="General Review"?clSchedWindow(c):clPeriod(c),td:c=>`<td>${clT(esc(clType(c)!=="General Review"?clSchedWindow(c):clPeriod(c)))}</td>`},
  {k:"repeats",l:"Repeats",sv:c=>clType(c)!=="General Review"?clSchedEvery(c):clRepeats(c),td:c=>`<td>${clT(esc(clType(c)!=="General Review"?clSchedEvery(c):clRepeats(c)))}</td>`},
  {k:"reviewee",l:"Reviewee",sv:c=>clReviewee(c),td:c=>`<td>${clT(esc(clReviewee(c)))}</td>`},
- {k:"reviewers",l:"Number of Reviewers",num:true,sv:c=>Number(clReviewers(c))||0,td:c=>`<td class="num">${clReviewers(c)}</td>`},
+ {k:"reviewers",l:"Reviewers",num:true,sv:c=>Number(clReviewers(c))||0,td:c=>`<td class="num">${clReviewers(c)}</td>`},
  {k:"rating",l:"Rating System",sv:c=>clRating(c),td:c=>`<td>${clT(esc(clRating(c)))}</td>`},
- {k:"createdBy",l:"Created By",sv:c=>clStamp(c).createdBy,td:c=>`<td>${clT(esc(clStamp(c).createdBy))}</td>`},
- {k:"created",l:"Created Date",sv:c=>clStamp(c).createdISO,td:c=>`<td class="nw">${isoMDY(clStamp(c).createdISO)}</td>`}];
-/* Drafts tab: Cycle Name · Cycle Type · Last Modified By · Last Modified Date. Last modified falls back to created
+ {k:"createdBy",l:"Created By",off:true,sv:c=>clStamp(c).createdBy,td:c=>`<td>${clT(esc(clStamp(c).createdBy))}</td>`},
+ {k:"created",l:"Created Date",off:true,sv:c=>clStamp(c).createdISO,td:c=>`<td class="nw">${isoMDY(clStamp(c).createdISO)}</td>`}];
+/* Drafts tab: Cycle Name · Review Type · Last Modified By · Last Modified Date. Last modified falls back to created
    until the draft is saved again (wzSave stamps modBy / modISO, layer 31). */
 const clMod=c=>{clStamp(c);return {by:c.modBy||c.createdBy,iso:c.modISO||c.createdISO}};
 const CL_DRAFT_COLS=[CL_COLS[0],CL_COLS[1],
@@ -148,7 +148,7 @@ function assignCycle(cid){const c=C(cid),cur=D.packets.filter(p=>p.cid===cid&&p.
 function gapModal(cid){const c=C(cid),w=c.wz,pool=D.packets.filter(p=>p.cid===cid&&p.exc!=="Removed").map(p=>E(p.eid)),g=gaps(w,pool);
  if(!g.length){closeModal();toast("Every assigned person has a reviewer.");return}
  openModal(`<h3>${new Set(g.map(x=>x.e.name)).size} people need a reviewer</h3><p class="dim" style="margin:0 0 12px">They're assigned, but no manager was found for a role you picked. Choose who reviews them.</p>
- <div class="card"><div class="tw"><table class="tbl"><thead><tr><th>Employee</th><th>Missing</th><th>Reviewer</th></tr></thead><tbody>${g.map(x=>`<tr><td>${esc(x.e.name)}<div class="dim sm">${esc(x.x.why)}</div></td><td>${x.x.type}</td><td><select class="inp" style="height:36px;border-color:var(--red)" onchange="C('${cid}').wz.mgrFix['${x.e.name}|${x.x.t}']=this.value;gapModal('${cid}')"><option value="">Choose…</option>${ALL_MGRS().map(n=>`<option>${n}</option>`).join("")}</select></td></tr>`).join("")}</tbody></table></div></div>
+ <div class="card"><div class="tw"><table class="tbl"><thead><tr><th>Employee</th><th>Missing</th><th>Reviewer</th></tr></thead><tbody>${g.map(x=>`<tr><td>${esc(x.e.name)}<div class="dim sm">${esc(x.x.why)}</div></td><td>${x.x.type}</td><td><select class="inp" style="height:36px;border-color:var(--red)" onchange="C('${cid}').wz.mgrFix['${x.e.name}|${x.x.t}']=this.value;gapModal('${cid}')"><option value="">Select</option>${ALL_MGRS().map(n=>`<option>${n}</option>`).join("")}</select></td></tr>`).join("")}</tbody></table></div></div>
  <div class="mf"><button class="btn" onclick="closeModal();toast('Saved. Fix the missing reviewers from the cycle page.')">Fix later</button><button class="btn p" onclick="g2Branch('${cid}')">Use branch manager for all</button></div>`,720)}
 function g2Branch(cid){const c=C(cid),w=c.wz,pool=D.packets.filter(p=>p.cid===cid&&p.exc!=="Removed").map(p=>E(p.eid));gaps(w,pool).forEach(x=>{w.mgrFix[x.e.name+"|"+x.x.t]=ORG.branch[x.e.branch]||"Dana Whitfield"});closeModal();toast("Their branch manager will review them.")}
 if(S.wz)S.wz.step=Math.min(S.wz.step,1);

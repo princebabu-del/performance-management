@@ -18,8 +18,8 @@
  * ANATOMY
  * ─────────────────────────────────────────────────────────────────────────────
  *   .lb-tabs            role="tablist"  flex row, 18px gap, scrolls sideways, no scrollbar
- *   └ .lb-tab           role="tab"      12px × 4px padding, 3px bottom border, 6px gap to badge
- *     ├ .lb-tab__label                  Inter 16/24. Reserves its 600-weight width so the row
+ *   └ .lb-tab           role="tab"      44px tall incl. the bottom border: 12px top padding, 20px text, bottom padding + border = 12px, 4px sides, 3px bottom border, 6px gap to badge
+ *     ├ .lb-tab__label                  Inter 16, 20px line height. Reserves its 600-weight width so the row
  *     │                                 doesn't shift when a tab becomes selected
  *     └ .lb-tab__badge                  optional count pill
  *
@@ -28,12 +28,15 @@
  * ─────────────────────────────────────────────────────────────────────────────
  *   State      Text      Weight  Underline (3px)    Cursor        Notes
  *   ─────────  ────────  ──────  ─────────────────  ────────────  ─────────────────────────────
- *   Default    #4B5563   500     transparent        pointer
- *   Hover      #111827   500     #D1D5DB            pointer       Not applied to selected or disabled
- *   Selected   #111827   600     #2F6FDE (blue)     default       aria-selected="true", tabindex 0
+ *   Default    #344054   500     transparent        pointer
+ *   Hover      #101828   500     #D1D5DB            pointer       Not applied to selected or disabled
+ *   Selected   #101828   600     #2F6FDE (blue)     default       aria-selected="true", tabindex 0
  *   Focus      unchanged unch.   unchanged          —             2px #2F6FDE outline, -2px offset,
  *                                                                  4px top radius (keyboard only)
  *   Disabled   #9CA3AF   500     transparent        not-allowed   Badge at 60% opacity, no click
+ *
+ *   Text colours are the gray text tokens (01-base.css): selected / hover = --text-primary #101828,
+ *   unselected = --text-secondary #344054. Same in V1 and V2 listing pages.
  *
  * ─────────────────────────────────────────────────────────────────────────────
  * BADGE
@@ -79,15 +82,17 @@ import * as React from "react";
 
 export const TAB_TOKENS = {
   gap: 18,
-  paddingY: 12,
+  height: 44, // includes the bottom border
+  paddingTop: 12,
+  paddingBottom: 9, // + 3px border = 12px
   paddingX: 4,
   labelBadgeGap: 6,
   underline: 3,
-  font: { family: "Inter", size: 16, lineHeight: 24 },
+  font: { family: "Inter", size: 16, lineHeight: 20 },
   state: {
-    default:  { color: "#4B5563", weight: 500, underline: "transparent" },
-    hover:    { color: "#111827", weight: 500, underline: "#D1D5DB" },
-    selected: { color: "#111827", weight: 600, underline: "#2F6FDE" },
+    default:  { color: "#344054", weight: 500, underline: "transparent" },
+    hover:    { color: "#101828", weight: 500, underline: "#D1D5DB" },
+    selected: { color: "#101828", weight: 600, underline: "#2F6FDE" },
     focus:    { outline: "2px solid #2F6FDE", outlineOffset: -2 },
     disabled: { color: "#9CA3AF", weight: 500, underline: "transparent", badgeOpacity: 0.6 },
   },

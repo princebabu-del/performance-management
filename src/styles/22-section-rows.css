@@ -32,6 +32,8 @@ body.focusmode{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:graysc
 .editor__main .setting-list>.setting>.setting__control{grid-column:2;grid-row:1;display:flex;flex-direction:column;align-items:stretch;gap:8px;min-width:0}
 /* a question alone sits level with the middle of its 44px field; one with a description, or answered with radios, starts at the top */
 .editor__main .setting-list>.setting>.setting-label:not(:has(.setting-desc)){padding-top:12px}
+/* V2 visibility questions (no description, can wrap to two lines): label top flush with the field's top */
+.editor__main .setting-list>.setting>.setting-label:not(:has(.setting-desc)):is(:has(#rxResultsQ),:has(#rxSelfVisQ),#rxResultsQ,#rxSelfVisQ){padding-top:0}
 .editor__main .setting-list>.setting:has(>.setting__control>.choice-group:first-child)>.setting-label{padding-top:0}
 .editor__main .setting-list>.setting>.setting__control>.choice-group:first-child{margin-top:0}
 /* nested labels that keep the old style (Auto-assign › Exclude) */
@@ -55,7 +57,28 @@ body.focusmode{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:graysc
 .editor__main .input{height:44px;font-weight:400}
 .editor__main .input.input--textarea{height:auto}
 .editor__main .reviewer-table__row .input{height:36px}
+/* reviewer table body rows: 56px (incl. the 1px row line); the 36px fields sit centred, 10px above and below */
+.editor__main .reviewer-table__row--body{height:56px}
+.editor__main .reviewer-table__row--body>:first-child{line-height:55px}   /* reviewer name centred in the row */
 .editor__main .multiselect{height:44px}
+/* Fields follow the shared specs (public/components/input-field, select-field, number-stepper):
+   12px side padding, chevron 12px from the right (40px right padding on selects), focus as below,
+   #F9FAFB / #98A2B3 when disabled. Field-specific paddings further down still win (stepper, questionnaire, due date). */
+.editor__main .input:not(.multiselect){padding-left:12px}
+.editor__main .input:not(.input--select,.input--date-range,.input--number,.multiselect){padding-right:12px}
+.editor__main .input--select{padding-right:40px;background-position:right 12px center}
+/* Focus, every field (text, textarea, select, multi-select, date range, stepper, weightage %):
+   clicked / tapped / open = blue border only (red in error). The 4px ring shows only when focus came from the keyboard:
+   html.is-keyboard is added on Tab and removed on any pointer press (listener in 14-reviewee-reviewers.js).
+   The weightage field's border is on the .percent-input wrapper, so it uses :focus-within.
+   Search bars are the exception: blue border only, never a ring (public/components/search-bar). */
+.editor__main :is(input.input,textarea.input):focus,.editor__main button.input:focus-visible,
+.editor__main .input.open,.editor__main .input--date-range[aria-expanded="true"],.editor__main .percent-input:focus-within{border-color:#2970FF;box-shadow:none}
+.editor__main .input.bad:is(:focus,:focus-visible,.open){border-color:#DC2626;box-shadow:none}
+html.is-keyboard :is(input.input,textarea.input,.inp,.finp):focus,html.is-keyboard button.input:focus-visible,html.is-keyboard .input.open,
+html.is-keyboard .percent-input:focus-within{border-color:#2970FF;box-shadow:0 0 0 4px rgba(41,112,255,.16)}
+html.is-keyboard .input.bad:is(:focus,:focus-visible,.open){border-color:#DC2626;box-shadow:0 0 0 4px rgba(220,38,38,.16)}
+.editor__main .input:disabled{background:#F9FAFB;color:#98A2B3;cursor:not-allowed}
 
 /* too narrow for both columns (beside the section nav, or on small screens): the answer goes under its question */
 @media (min-width:1001px) and (max-width:1080px),(max-width:760px){
@@ -77,17 +100,20 @@ body.focusmode{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:graysc
 .editor__main .reviewer-table__frame{letter-spacing:-.28px}
 .editor__main .reviewer-table__row--head{font-weight:500;line-height:1.4;letter-spacing:-.28px;color:#667085}
 .editor__main .reviewer-table__name,.editor__main .due-date__unit{font-size:14px;font-weight:500;letter-spacing:-.28px;color:#344054}   /* line height left to the row, which centres the text */
-.editor__main .reviewer-table__row .input,.editor__main .reviewer-table__row .input .select__value,.editor__main .percent-input input,.editor__main .reviewer-table__row .due-date__days{font-size:14px;font-weight:500;letter-spacing:-.28px;color:#344054}
+.editor__main .due-date__unit{font-weight:400}   /* "days" between the due-date fields: 14px regular */
+/* Table fields = the sm size of the shared specs (InputField / SelectField / NumberStepper): 36px, 14/400, value #101828, placeholder #98A2B3 */
+.editor__main .reviewer-table__row .input,.editor__main .reviewer-table__row .input .select__value,.editor__main .percent-input input,.editor__main .reviewer-table__row .due-date__days{font-size:14px;font-weight:400;letter-spacing:normal;color:#101828}
+.editor__main .reviewer-table__row .input.empty{color:var(--fc-ph)}   /* nothing picked yet (e.g. Select questionnaire): placeholder color */
 .editor__main .reviewer-table__row .due-date__days::placeholder{color:#98A2B3}
 .editor__main .reviewer-table__total{line-height:1.4;letter-spacing:-.28px}
 .editor__main .reviewer-table__total-label{font-weight:500;color:#344054}
-.editor__main .reviewer-table__total-value{font-weight:500}
+.editor__main .reviewer-table__total-value{font-weight:600}
 
 /* reviewer table cells: 16px left/right padding in every cell (header and rows), no column gap and no row padding.
    Each column is its old content width + 32px, so the fields inside keep their size (14 → 0 gaps, 16 → per-cell padding). */
-.editor__main .reviewer-table__row{column-gap:0;padding:0;min-width:1372px;
-  grid-template-columns:200px 136px 248px 288px 160px 160px 120px 60px}   /* View self-evaluation: 160px */
-.editor__main .reviewer-table__frame.noself .reviewer-table__row{min-width:1212px;grid-template-columns:200px 136px 248px 288px 160px 120px 60px}
+.editor__main .reviewer-table__row{column-gap:0;padding:0;min-width:1304px;
+  grid-template-columns:200px 96px 248px 296px 184px 160px 120px}   /* View Self-Evaluation: 184px (fits the longer header) · Due Date 296px (168px "counted from" dropdown) · Wgt. (%) 96px */
+.editor__main .reviewer-table__frame.noself .reviewer-table__row{min-width:1120px;grid-template-columns:200px 96px 248px 296px 160px 120px}
 .editor__main .reviewer-table__row>*{box-sizing:border-box;padding-left:16px;padding-right:16px}
 .editor__main .reviewer-table__row>:first-child{margin-left:0}
 /* centred columns (checkboxes, —): the cell spans its column so the 16px padding holds on both sides */
@@ -96,16 +122,16 @@ body.focusmode{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:graysc
    header text by line-height (keeps the … truncation), field cells by flex */
 .editor__main .reviewer-table__row--head>*{align-self:stretch;line-height:43px}
 .editor__main .reviewer-table__row--body>*{align-self:stretch}
-.editor__main .reviewer-table__row--body>:not(:first-child):not(.c):not(.reviewer-table__remove){display:flex;align-items:center}
-.editor__main .reviewer-table__row--body>:not(:first-child):not(.c):not(.reviewer-table__remove)>:not(.sr-only){flex:1 1 auto;min-width:0}
-.editor__main .reviewer-table__row--body>.reviewer-table__remove{display:flex;align-items:center;justify-content:center}
+.editor__main .reviewer-table__row--body>:not(:first-child):not(.c){display:flex;align-items:center}
+.editor__main .reviewer-table__row--body>:not(:first-child):not(.c)>:not(.sr-only){flex:1 1 auto;min-width:0}
 
 /* reviewer table header: resize handle on each column's right edge (same stroke / hover as the Review Cycles table, .ls-rz).
    Header cells keep their … truncation via the inner text span. After a drag, --rx-cols / --rx-min (rxColApply) set the widths. */
-.editor__main .reviewer-table__row--head>.reviewer-table__heading:not(:first-child){position:relative}
+.editor__main .reviewer-table__row--head>.reviewer-table__heading:not(:first-child){position:relative;z-index:0}   /* own stacking layer: its resize stroke (z 3) stays inside it, so it passes under the pinned Reviewer column (z 2) when scrolled */
 .editor__main .reviewer-table__heading .reviewer-table__heading-text{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .editor__main .reviewer-table__row--head>.reviewer-table__heading.c .reviewer-table__heading-text{text-align:center}
 .editor__main .reviewer-table__resizer{right:0;z-index:3}
+.editor__main .reviewer-table__heading:last-child .reviewer-table__resizer:not(:hover,.is-drag)::after{background:transparent}   /* last column: no stroke against the table's own border (still draggable, blue on hover) */
 .editor__main .reviewer-table__resizer::after{left:auto;right:0}
 .editor__main .reviewer-table__resizer:hover::after,.editor__main .reviewer-table__resizer.is-drag::after{left:auto;right:0}
 .editor__main .reviewer-table__frame[style*="--rx-cols"] .reviewer-table__row{grid-template-columns:var(--rx-cols);min-width:var(--rx-min)}
@@ -115,19 +141,14 @@ body.focusmode{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:graysc
 /* reviewer table cell padding: text cells 16px · field cells (Weightage, Questionnaire, Due date) 4px · action cell 12px.
    Inside the fields the text sits 12px from the left edge and dropdown chevrons 12px from the right. */
 .editor__main .reviewer-table__row--body>:is(.reviewer-table__weight,.reviewer-table__questionnaire,.reviewer-table__due){padding-left:4px;padding-right:4px}
-.editor__main .reviewer-table__row>.reviewer-table__remove{padding-left:8px;padding-right:8px}
 .editor__main .percent-input input{padding:0 12px}
 .editor__main .reviewer-table__row .due-date__days{padding-left:12px}
-.editor__main .questionnaire-picker__trigger{padding-left:12px;padding-right:38px;background-position:right 12px center}
-.editor__main .due-date__from .select__trigger{padding-left:12px;padding-right:36px;background-position:right 12px center}
-/* remove button: 36×36, 20px x-close icon in the tertiary text color */
-.editor__main .remove-button{width:36px;height:36px;display:flex;align-items:center;justify-content:center;padding:0;flex-shrink:0;color:var(--text-tertiary)}
-.editor__main .remove-button:hover{color:var(--text-tertiary)}
-.remove-button__icon{display:block;width:20px;height:20px;background:currentColor;-webkit-mask:url(/assets/x-close-20.svg) center/20px 20px no-repeat;mask:url(/assets/x-close-20.svg) center/20px 20px no-repeat}
+/* selects in the table: 12px left / 40px right padding, 20px chevron 12px from the right (SelectField sm) */
+.editor__main .questionnaire-picker__trigger,.editor__main .due-date__from .select__trigger{padding-left:12px;padding-right:40px;background-position:right 12px center;background-size:20px 20px}
 
 /* Questionnaire dropdown in the reviewer table: rows follow the standard single-select (.select__option / .dropdown__option) — 8px 12px padding (28-dropdown-menu.css),
    14/500 #101828 one-line name (… when long), #F9FAFB hover / keyboard focus, no blue fill on the chosen row, which ends in the
-   standard 20px #2970FF check. Details line: 12px tertiary "Type · N questions · Preview" (medium), where Preview (blue semibold link) opens the
+   standard 16px #2970FF check. Details line: 12px tertiary "Type · N questions · Preview" (medium), where Preview (blue semibold link) opens the
    questionnaire preview. Clicking anywhere else on the row picks it. */
 .questionnaire-picker__menu .questionnaire-picker__option{flex-shrink:0;gap:0;padding:8px 10px;cursor:pointer}   /* flex-shrink:0 — the list is a fixed-height scroller; without it rows get squashed below their padding */
 .questionnaire-picker__menu .questionnaire-picker__option:hover,.questionnaire-picker__menu .questionnaire-picker__option:has(.questionnaire-picker__name-button:focus-visible){background:#F9FAFB}
@@ -145,14 +166,16 @@ body.focusmode{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:graysc
 .questionnaire-picker__menu .questionnaire-picker__check{margin-left:12px}
 
 
-/* checkbox cells (View self-review, Visible to reviewee, Anonymous): the checkbox sits at the exact vertical centre of the 44px row.
+/* checkbox cells (View self-evaluation, Visible to reviewee, Anonymous): the checkbox sits at the exact vertical centre of the 44px row.
    Anonymous wraps its checkbox in a <span> (for the disabled hint), which otherwise put it on the text line, ~3px high. */
 .editor__main .reviewer-table__row--body>.c{line-height:0}
 .editor__main .reviewer-table__row--body>.c>span,.editor__main .reviewer-table__row--body>.c .reviewer-table__check{display:flex;align-items:center;justify-content:center}
 .editor__main .reviewer-table__row--body>.c .checkbox{display:block}
+/* table checkboxes = Checkbox sm (16px box, 1px border, 4px radius, 12px check), also when disabled */
+.checkbox.sm:disabled:checked{background-size:12px}
 
-/* Due date "counted from" dropdown: fixed 160px wide */
-.editor__main .due-date .due-date__from{flex:0 0 160px;width:160px}
+/* Due date "counted from" dropdown: fixed 168px wide */
+.editor__main .due-date .due-date__from{flex:0 0 168px;width:168px}
 .editor__main .due-date .due-date__from .select__trigger{width:100%}
 
 /* Anonymous column: no cell padding, 120px wide */
@@ -187,17 +210,25 @@ body.focusmode{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:graysc
 .editor__main .dropdown:has(#rxProjs){width:min(100%,560px)}
 /* Repeats: the select, then "[N] occurrences" beside it once an option is picked */
 .inline-fields{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.inline-fields__text{font-size:16px;font-weight:400;color:#101828}
+.inline-fields__text{font-size:14px;font-weight:400;color:#101828}   /* "occurrences": same 14px regular as the other rule-based setting text */
 .editor__main .inline-fields .input--number{font-size:16px;font-weight:400;color:#101828}
 /* mandatory questions: "*" right after the text, same color as the question (PTO prototype .req) */
 .required-mark{color:inherit;margin-left:2px}
 
 /* Rating format: its menu opens 4px under the field */
 .editor__main #rxFmtWrap>.dropdown__menu{top:calc(100% + 4px)}
-/* Remove column stays pinned on the right while the table scrolls, with a 1px #EAECF0 stroke on its left */
-.reviewer-table__row>.reviewer-table__remove{position:sticky;right:0;z-index:2;align-self:stretch;background:#fff;box-shadow:inset 1px 0 0 #EAECF0}
-.reviewer-table__row--head>.reviewer-table__remove{background:#F9FAFB}
-/* left section list header: same container and text as the Cycle Summary header (.summary__header), no background */
-.editor__nav-header{padding:12px;font-size:12px;font-weight:600;line-height:1.35;letter-spacing:.08em;text-transform:uppercase;color:#344054}
 /* Which projects should be included? → Specific projects: the project multi-select fills the nested line's width */
 .project-scope__pick>.dropdown{flex:1 1 100%;min-width:0}
+/* New Review Cycle › Rating format: the scale's level labels in tertiary text (badges keep their own colors) */
+.editor__main .rating-preview .cs-lvl{color:var(--text-tertiary)}
+
+/* Apply to all reviewers: checkbox row at the top of the Questionnaire menu (under the search) and of the Due Date
+   "counted from" menu, above the options, since it's ticked before picking. 1px divider below it. */
+:is(.questionnaire-picker__apply-all,.dropdown__apply-all){display:flex;align-items:center;gap:8px;margin:0;padding:10px 16px;border-bottom:1px solid var(--fc-card-line);border-radius:0;
+ font-size:14px;font-weight:500;line-height:20px;color:#101828;cursor:pointer}
+:is(.questionnaire-picker__apply-all,.dropdown__apply-all):hover{background:#F9FAFB}
+.dropdown__menu>.dropdown__apply-all{margin:0 0 4px;border-radius:8px 8px 0 0}   /* stays inside the menu's 4px padding, like the options, so the divider never reaches the border */
+
+/* Rule-based settings ("Every [2] months till […]", "[3] occurrences", "[1] peers", "[3] months"): the text between the
+   fields is regular weight (400). Steppers, line breaks and hidden labels are left alone. */
+.editor__main :is(.sub-settings,.inline-fields)>span:not(.number-stepper,.sub-settings__break,.sr-only){font-weight:400}

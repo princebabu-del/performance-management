@@ -1,0 +1,70 @@
+/* Buttons: text buttons (.lb-btn) and icon-only buttons (.lb-icon-btn).
+   Spec: Button.tsx / IconButton.tsx · Usage: README.md. Keep the values in sync with BUTTON_TOKENS.
+   Variants: primary · secondary · secondary-blue · tertiary · tertiary-blue · link-gray · link-blue
+   Sizes: sm 36px · lg 44px (default, not written out). No 40px size. Heights include the 1px border. */
+
+/* ---------- Text button ---------- */
+.lb-btn{box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;margin:0;padding:0 16px;
+ border:1px solid transparent;border-radius:8px;background:transparent;cursor:pointer;white-space:nowrap;text-decoration:none;
+ font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif;font-size:16px;font-weight:600;line-height:normal;
+ transition:background .12s,border-color .12s,color .12s,box-shadow .12s}
+.lb-btn--sm{height:36px;padding:0 14px;font-size:14px}
+.lb-btn:disabled,.lb-btn[aria-disabled="true"]{cursor:not-allowed}
+/* 20px icons (svg / img / mask span), always currentColor */
+.lb-btn__icon,.lb-btn>svg,.lb-btn>img{display:block;flex:none;width:20px;height:20px}
+.lb-btn__icon--plus,.lb-btn__icon--close,.lb-icon-btn__icon--close{background:currentColor;-webkit-mask:var(--lb-icon) center/20px 20px no-repeat;mask:var(--lb-icon) center/20px 20px no-repeat}
+.lb-btn__icon--plus{--lb-icon:url(/assets/icons/plus.svg)}
+.lb-btn__icon--close,.lb-icon-btn__icon--close{--lb-icon:url(/assets/x-close-20.svg)}
+
+/* Primary */
+.lb-btn--primary,.lb-icon-btn--primary{background:#2970FF;border-color:#2970FF;color:#fff;box-shadow:0 1px 2px rgba(16,24,40,.05)}
+.lb-btn--primary:hover:not(:disabled),.lb-icon-btn--primary:hover:not(:disabled){background:#155EEF;border-color:#155EEF}
+.lb-btn--primary:focus-visible,.lb-icon-btn--primary:focus-visible{outline:none;box-shadow:0 1px 2px rgba(16,24,40,.05),0 0 0 4px rgba(41,112,255,.16)}
+.lb-btn--primary:disabled,.lb-icon-btn--primary:disabled{background:#F2F4F7;border-color:#EAECF0;color:#98A2B3}
+
+/* Secondary (gray) */
+.lb-btn--secondary,.lb-icon-btn--secondary{background:#fff;border-color:#D0D5DD;color:#344054;box-shadow:0 1px 2px rgba(16,24,40,.05)}
+.lb-btn--secondary:hover:not(:disabled),.lb-icon-btn--secondary:hover:not(:disabled),.lb-icon-btn--secondary[aria-expanded="true"]{background:#F9FAFB;color:#101828}
+.lb-btn--secondary:focus-visible,.lb-icon-btn--secondary:focus-visible{outline:none;box-shadow:0 1px 2px rgba(16,24,40,.05),0 0 0 4px rgba(152,162,179,.14)}
+.lb-btn--secondary:disabled,.lb-icon-btn--secondary:disabled{background:#fff;border-color:#EAECF0;color:#D0D5DD}
+
+/* Secondary blue */
+.lb-btn--secondary-blue,.lb-icon-btn--secondary-blue{background:#fff;border-color:#B2CCFF;color:#2970FF;box-shadow:0 1px 2px rgba(16,24,40,.05)}
+.lb-btn--secondary-blue:hover:not(:disabled),.lb-icon-btn--secondary-blue:hover:not(:disabled),.lb-icon-btn--secondary-blue[aria-expanded="true"]{background:#F5F8FF;border-color:#84ADFF;color:#155EEF}
+.lb-btn--secondary-blue:focus-visible,.lb-icon-btn--secondary-blue:focus-visible{outline:none;box-shadow:0 1px 2px rgba(16,24,40,.05),0 0 0 4px rgba(41,112,255,.16)}
+.lb-btn--secondary-blue:disabled,.lb-icon-btn--secondary-blue:disabled{background:#fff;border-color:#EAECF0;color:#D0D5DD}
+
+/* Tertiary (gray) */
+.lb-btn--tertiary,.lb-icon-btn--tertiary{color:#475467}
+.lb-btn--tertiary:hover:not(:disabled),.lb-icon-btn--tertiary:hover:not(:disabled){background:#F2F4F7;color:#344054}
+.lb-icon-btn--tertiary[aria-expanded="true"]{background:#EAECF0;color:#344054}
+.lb-btn--tertiary:disabled,.lb-icon-btn--tertiary:disabled{color:#D0D5DD}
+
+/* Tertiary blue */
+.lb-btn--tertiary-blue,.lb-icon-btn--tertiary-blue{color:#2970FF}
+.lb-btn--tertiary-blue:hover:not(:disabled),.lb-icon-btn--tertiary-blue:hover:not(:disabled){background:#EFF4FF;color:#155EEF}
+.lb-icon-btn--tertiary-blue[aria-expanded="true"]{background:#D1E0FF;color:#155EEF}
+.lb-btn--tertiary-blue:disabled,.lb-icon-btn--tertiary-blue:disabled{color:#D0D5DD}
+
+/* Link gray / link blue: no box */
+.lb-btn--link-gray,.lb-btn--link-blue{height:auto;padding:0;border:0;border-radius:4px}
+.lb-btn--link-gray.lb-btn--sm,.lb-btn--link-blue.lb-btn--sm{padding:0}
+.lb-btn--link-gray,.lb-icon-btn--link-gray{color:#475467}
+.lb-btn--link-gray:hover:not(:disabled),.lb-icon-btn--link-gray:hover:not(:disabled){color:#344054}
+.lb-btn--link-blue,.lb-icon-btn--link-blue{color:#2970FF}
+.lb-btn--link-blue:hover:not(:disabled),.lb-icon-btn--link-blue:hover:not(:disabled){color:#155EEF}
+.lb-btn--link-gray:hover:not(:disabled),.lb-btn--link-blue:hover:not(:disabled){text-decoration:underline;text-underline-offset:2px}   /* text only: icons are boxes, so they don't get a line */
+/* sm (36px) with an icon + label: 12px sides (text only keeps 14px). Links have no padding. */
+.lb-btn--sm:not([class*="--link-"]):has(>.lb-btn__icon,>svg,>img){padding:0 12px}
+.lb-btn--link-gray:disabled,.lb-btn--link-blue:disabled,.lb-icon-btn--link-gray:disabled,.lb-icon-btn--link-blue:disabled{color:#98A2B3}
+
+/* Tertiary and link focus: 2px blue outline, 2px offset (keyboard only) */
+:is(.lb-btn,.lb-icon-btn):is([class*="--tertiary"],[class*="--link-"]):focus-visible{outline:2px solid #2970FF;outline-offset:2px}
+
+/* ---------- Icon-only button: square, label in aria-label + data-tip ---------- */
+.lb-icon-btn{box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;flex:none;width:44px;height:44px;margin:0;padding:0;
+ border:1px solid transparent;border-radius:8px;background:transparent;cursor:pointer;transition:background .12s,border-color .12s,color .12s,box-shadow .12s}
+.lb-icon-btn--sm{width:36px;height:36px}
+.lb-icon-btn:disabled{cursor:not-allowed}
+.lb-icon-btn>svg,.lb-icon-btn>img,.lb-icon-btn__icon{display:block;flex:none;width:20px;height:20px}
+.lb-icon-btn--link-gray,.lb-icon-btn--link-blue{width:auto;height:auto;border:0;border-radius:4px}

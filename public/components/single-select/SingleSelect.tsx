@@ -10,9 +10,9 @@
  *   └──────────────────────────────────────┘
  *     6px gap (4px when the list opens above)
  *   ┌──────────────────────────────────────┐
- *   │ ┌──────────────────────────────────┐ │   ← menu: 1px #EAECF0, 12px radius, 4px padding
+ *   │ ┌──────────────────────────────────┐ │   ← menu: 1px #EAECF0, 8px radius, 4px padding
  *   │ │ Foreman                          │ │   ← option: 8px 12px padding
- *   │ │▒Worker                         ✓▒│ │   ← selected: #F2F4F7 fill + 20px #2970FF check
+ *   │ │▒Worker                         ✓▒│ │   ← selected: #F2F4F7 fill + 16px #2970FF check
  *   │ │ Project Manager                  │ │
  *   │ └──────────────────────────────────┘ │
  *   └──────────────────────────────────────┘
@@ -83,10 +83,11 @@
  * ─────────────────────────────────────────────────────────────────────────────
  *   State        Border     Text      Notes
  *   ───────────  ─────────  ────────  ──────────────────────────────────────────
- *   Empty        #D0D5DD    #98A2B3   Placeholder ("Select an option")
+ *   Empty        #D0D5DD    #98A2B3   Placeholder "Select" (always just "Select")
  *   Filled       #D0D5DD    #101828   Inter 16/400
- *   Open         #2970FF    —
- *   Focus (kbd)  #2970FF    —         + 4px ring rgba(41,112,255,.16)
+ *   Open         #2970FF    —         Chevron flips up. No ring by click; + 4px ring when opened from the keyboard
+ *   Focus (kbd)  #2970FF    —         + 4px ring rgba(41,112,255,.16). Clicked: border only
+ *                                     (see FOCUS in ../input-field/InputField.tsx)
  *   Error        #DC2626    —         Message under the field, not part of this component
  *   Clearable    —          —         16px solid x-circle at right 40px, shown on hover / focus-within.
  *                                     Icon #98A2B3, #667085 on hover (no background). Tooltip "Remove" after 300ms.
@@ -99,7 +100,7 @@
  *   Default      none        36px (56px with a secondary line), 8px 12px padding, 8px radius
  *                            Primary Inter 14/20 medium #101828 · secondary 12/18 #667085, 2px gap
  *   Hover        #F9FAFB
- *   Selected     #F2F4F7     Same on hover and focus. 20px #2970FF check, 12px left margin
+ *   Selected     #F2F4F7     Same on hover and focus. 16px #2970FF check (check-blue-16.svg), 12px left margin
  *   Focus (kbd)  #F9FAFB     + inset 2px ring rgba(41,112,255,.4)
  *   Disabled     none        Text #98A2B3, not-allowed cursor, no hover
  *
@@ -127,7 +128,7 @@
  * ─────────────────────────────────────────────────────────────────────────────
  * USAGE (prototype, plain JS)
  * ─────────────────────────────────────────────────────────────────────────────
- *   fcSel({ id: "rxWho", value: x.reviewee || "", ph: "Select a role", pick: "fcWhoPick",
+ *   fcSel({ id: "rxWho", value: x.reviewee || "", ph: "Select", pick: "fcWhoPick",
  *           options: [{ v: "Worker", t: "Worker" }, { v: "Foreman", t: "Foreman" }],
  *           cls: x.reviewee ? "" : "select--up" });   // select--up = placement "top"
  *   fcSel({ ..., search: "Search questionnaires",            // adds the search block
@@ -144,7 +145,7 @@ import * as React from "react";
 const MENU_TOKENS = {
   font: "Inter, -apple-system, 'Segoe UI', Roboto, sans-serif",
   container: {
-    radius: 12, padding: 4, border: "#EAECF0", background: "#FFFFFF", zIndex: 45,
+    radius: 8, padding: 4, border: "#EAECF0", background: "#FFFFFF", zIndex: 45,
     shadow: "0 12px 16px -4px rgba(16,24,40,.08), 0 4px 6px -2px rgba(16,24,40,.03)",
   },
   search: {
@@ -468,16 +469,16 @@ export interface SingleSelectProps<V extends string = string> {
   style?: React.CSSProperties;
 }
 
-/* ───────────── Icons (same paths as /assets/chevron-down.svg, check-blue-20.svg, x-circle-16.svg) ───────────── */
+/* ───────────── Icons (same paths as /assets/chevron-down.svg / chevron-up.svg, check-blue-16.svg, x-circle-16.svg) ───────────── */
 
-const Chevron = () => (
+const Chevron = ({ up = false }: { up?: boolean }) => (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-    <path d="M5 7.5L10 12.5L15 7.5" stroke={T.color.icon} strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+    <path d={up ? "M15 12.5L10 7.5L5 12.5" : "M5 7.5L10 12.5L15 7.5"} stroke={T.color.icon} strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 const Check = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true" style={{ flex: "none", marginLeft: T.option.checkGap }}>
-    <path d="M16.6667 5L7.50004 14.1667L3.33337 10" stroke={T.color.blue} strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round" />
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" style={{ flex: "none", marginLeft: T.option.checkGap }}>
+    <path d="M13.3333 4L6 11.3333L2.66667 8" stroke={T.color.blue} strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 /* clear: solid x-circle, 16px, #98A2B3 (Figma Exploration – Lumber Web App 800:34496) */
@@ -495,7 +496,7 @@ const srOnly: React.CSSProperties = {
 /* ───────────── Component ───────────── */
 
 export function SingleSelect<V extends string = string>({
-  options, value, onChange, placeholder = "Select an option", searchPlaceholder, emptyText = "No matches",
+  options, value, onChange, placeholder = "Select", searchPlaceholder, emptyText = "No matches",
   labelledBy, label, clearLabel, placement = "bottom", invalid, disabled, id, style,
 }: SingleSelectProps<V>) {
   const autoId = React.useId();
@@ -624,7 +625,7 @@ export function SingleSelect<V extends string = string>({
           {current ? current.label : placeholder}
         </span>
         <span style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", display: "flex" }}>
-          <Chevron />
+          <Chevron up={open} />
         </span>
       </button>
 
@@ -753,12 +754,12 @@ export function SingleSelectStates() {
 
       <section style={row}>
         <span id="ssWhoQ" style={q}>3 · Empty, opens above (Who is going to be reviewed?)</span>
-        <SingleSelect labelledBy="ssWhoQ" value={who} onChange={setWho} options={ROLES} placeholder="Select a role" placement={who ? "bottom" : "top"} />
+        <SingleSelect labelledBy="ssWhoQ" value={who} onChange={setWho} options={ROLES} placeholder="Select" placement={who ? "bottom" : "top"} />
       </section>
 
       <section style={row}>
         <span id="ssBadQ" style={q}>4 · Error</span>
-        <SingleSelect labelledBy="ssBadQ" value={bad} onChange={setBad} options={ROLES} placeholder="Select a role" invalid={!bad} />
+        <SingleSelect labelledBy="ssBadQ" value={bad} onChange={setBad} options={ROLES} placeholder="Select" invalid={!bad} />
       </section>
 
       <section style={row}>
@@ -794,7 +795,7 @@ export function SingleSelectStates() {
 
       <section style={row}>
         <span id="ssRoleQ" style={q}>8 · With search, one-line options (Job title)</span>
-        <SingleSelect labelledBy="ssRoleQ" value={title} onChange={setTitle} options={TITLES} searchPlaceholder="Search job titles" placeholder="Select a job title" />
+        <SingleSelect labelledBy="ssRoleQ" value={title} onChange={setTitle} options={TITLES} searchPlaceholder="Search job titles" placeholder="Select" />
       </section>
     </div>
   );

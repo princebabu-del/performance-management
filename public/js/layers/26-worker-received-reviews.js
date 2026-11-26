@@ -71,12 +71,12 @@ function wResult(){const a=WA(),es=a.lang==="ES",x=wReceived().find(i=>i.cid===a
    <div class="wa-sub">${L("fromF")} · ${esc(x.by)}</div><p>“${esc(tr(d.c[0],d.c[1]))}”</p></div>
   <div class="wa-sec flush">${L("byArea")}</div>${areas}
   ${cn?`<div class="wa-sec flush">${L("contrib")}</div><div class="wa-res"><div class="wa-sub" style="margin-top:0"><b style="color:#111827">${esc(cn.by)}</b> · ${cn.hrs} ${es?"h juntos":"hrs together"} · ${esc(d.contrib.site)}</div><p>“${esc(tr(d.contrib.c[0],d.contrib.c[1]))}”</p></div>`:""}
-  ${d.self?`<button class="wa-link" onclick="wGo('form','${d.self}')">${es?"Ver su autoevaluación":"See your self review"} ${chev}</button>`:""}
+  ${d.self?`<button class="wa-link" onclick="wGo('form','${d.self}')">${es?"Ver su autoevaluación":"See your self-evaluation"} ${chev}</button>`:""}
   <button class="wa-link" onclick="toast('${es?"Mensaje enviado a RR. HH.":"Message sent to HR. They will reach out."}')">${L("ask")} ${chev}</button>
  </div>
  ${x.ack?"":`<div class="wa-foot"><div class="wa-sub" style="text-align:center;margin:0 0 8px">${L("ackNote")}</div><button class="wa-submit" onclick="wrAck('${x.cid}')">${L("ack")}</button></div>`}</div>`}
 
-/* Self-review screen: replace the inline results card with a link to the full review in "About me" */
+/* Self-evaluation screen: replace the inline results card with a link to the full review in "About me" */
 const _wForm=wForm;
 wForm=function(loading){const a=WA(),it=wItems().find(x=>x.id===a.item);
  let html=_wForm(loading);

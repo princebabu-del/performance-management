@@ -42,7 +42,7 @@ body.focusmode .main{padding:0;background:#F2F4F7;min-height:100vh}
 .input--date-range span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .input--date-range.empty{color:var(--fc-ph)}
 .input--date-range[aria-expanded="true"]{border-color:var(--fc-blue)}
-.datepicker{position:absolute;top:calc(100% + 8px);left:0;z-index:40;width:640px;background:#fff;border:1px solid var(--fc-card-line);border-radius:12px;box-shadow:0 12px 16px -4px rgba(16,24,40,.08),0 4px 6px -2px rgba(16,24,40,.03);padding:20px 24px 0}
+.datepicker{position:absolute;top:calc(100% + 8px);left:0;z-index:40;width:640px;background:#fff;border:1px solid var(--fc-card-line);border-radius:8px;box-shadow:0 12px 16px -4px rgba(16,24,40,.08),0 4px 6px -2px rgba(16,24,40,.03);padding:20px 24px 0}
 .datepicker__nav{position:absolute;left:12px;right:12px;top:14px;display:flex;justify-content:space-between;pointer-events:none}
 .datepicker__nav-button{pointer-events:auto;width:32px;height:32px;border:0;background:none;border-radius:8px;font-size:22px;line-height:1;color:var(--fc-ink);cursor:pointer}
 .datepicker__nav-button:hover{background:#F2F4F7}
@@ -68,6 +68,8 @@ body.focusmode .main{padding:0;background:#F2F4F7;min-height:100vh}
 #cxPeriod{display:flex}
 .input--select{text-align:left;text-align-last:left;appearance:none;-webkit-appearance:none;cursor:pointer;padding-right:44px;background:#fff url(/assets/chevron-down.svg) right 14px center/20px 20px no-repeat}
 .input--select option{color:#101828}
+/* open select (single, multi, questionnaire picker): chevron flips up */
+.input--select:is(.open,[aria-expanded="true"]),.multiselect.open{background-image:url(/assets/chevron-up.svg)}
 
 @media (max-width:1000px){.editor__nav{display:none}}
 @media (max-width:700px){

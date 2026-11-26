@@ -6,7 +6,7 @@
 .ldp-btn.empty .ldp-v{color:#98A2B3}
 .ldp-btn[aria-expanded="true"]{border-color:#2970FF}
 .ldp-btn:disabled{cursor:not-allowed;opacity:.6}
-.ldp-pop{position:fixed;z-index:1400;width:312px;box-sizing:border-box;background:#fff;border:1px solid #EAECF0;border-radius:12px;padding:16px;
+.ldp-pop{position:fixed;z-index:1400;width:312px;box-sizing:border-box;background:#fff;border:1px solid #EAECF0;border-radius:8px;padding:16px;
   box-shadow:0 12px 16px -4px rgba(16,24,40,.08),0 4px 6px -2px rgba(16,24,40,.03);font-family:Inter,sans-serif}
 .ldp-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;font-size:16px;font-weight:600;color:#344054}
 .ldp-nav{width:32px;height:32px;border:0;background:none;border-radius:8px;font-size:22px;line-height:1;color:#344054;cursor:pointer}

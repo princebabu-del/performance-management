@@ -1,0 +1,198 @@
+/* Add / Edit Questionnaire — LMS course-creation layout (Figma LMS 1:17984 page, 1:19383 settings panel).
+   Markup: public/js/layers/33-questionnaire-editor.js. Reuses the New Review Cycle top bar (.editor__header, 23-cycle-header.css),
+   .input / .button / .checkbox / single-select (fcSel) and the shared button group, tooltip and banner components.
+   Page: 75px top bar · grey canvas (32px in) with a 1044px white sheet · 560px white settings panel on the right (#D0D5DD rule on its left). */
+
+/* ---- page grid: canvas + panel (overrides the cycle editor's 3-column .editor__body) ---- */
+.editor--questionnaire .editor__body{display:flex;align-items:stretch;justify-content:flex-start;gap:0;padding:0;column-gap:0;row-gap:0;grid-template-columns:none}
+.editor__canvas{position:relative;flex:1 1 auto;min-width:0;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;padding:32px;background:#F2F4F7}
+
+/* ---- top bar: the New Review Cycle bar as-is (Exit · rule · title, lb-btn actions — 23-cycle-header.css); only the Edit | Preview segmented control is added ---- */
+.editor--questionnaire .editor__title{color:var(--text-primary)}
+/* Edit | Preview: the shared segmented control (button-group component, 44px) — no overrides */
+/* canvas toolbar above the sheet (sheet width): English · Español · Both left; Translate Missing with AI + Questionnaire Settings right */
+.canvas-toolbar{width:100%;max-width:1044px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.canvas-toolbar__actions{display:flex;align-items:center;gap:12px;margin-left:auto}
+/* AI actions: sparkle icon before the label */
+.ai-button{display:inline-flex;align-items:center;gap:8px}
+.ai-button__icon{flex:none;display:block}
+.link-button.ai-button{gap:6px}
+
+/* ---- the sheet (Figma "Course" card without the cover banner): 12px corners, 40px in, 80px at the bottom, content 900px ---- */
+.questionnaire-sheet{width:100%;max-width:1044px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:40px;padding:40px 40px 80px;background:#fff;border-radius:12px}
+.questionnaire-sheet>*{width:100%;max-width:900px}
+.questionnaire-sheet__header{display:flex;flex-direction:column;gap:12px}
+.questionnaire-sheet__title{margin:0;font-size:32px;font-weight:600;line-height:1.2;letter-spacing:-.64px;color:var(--text-primary);overflow-wrap:anywhere}
+.questionnaire-sheet__description{margin:0;font-size:16px;font-weight:400;line-height:1.4;letter-spacing:-.32px;color:var(--text-secondary)}
+.questionnaire-sheet__description:empty{display:none}   /* no description yet */
+.questionnaire-sheet__meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.questionnaire-sheet__meta:empty{display:none}
+.questionnaire-sheet__header .lb-banner{margin-top:4px}
+
+/* ---- a section: editable name (20/600), question count, delete; cards 12px apart ---- */
+.question-section{display:flex;flex-direction:column;gap:16px;scroll-margin-top:107px}
+.question-section__header{display:flex;align-items:center;gap:12px}
+.question-section__name{flex:1;min-width:0;height:40px;margin:0 0 0 -10px;padding:0 10px;border:1px solid transparent;border-radius:8px;background:none;
+  font-family:var(--f);font-size:20px;font-weight:600;line-height:1.2;color:var(--text-primary)}
+.question-section__name:hover{border-color:#EAECF0}
+.question-section__name:focus{outline:none;border-color:#2970FF;background:#fff}
+/* Preview: the section name as plain text, in the same spot as the input's text */
+.question-section__name--static{display:flex;align-items:center;gap:8px;margin:0;padding:0;border:0}
+/* Both: the Spanish section name on its own line under the English one */
+.question-section__translation{display:flex;align-items:center;gap:8px;margin:-8px 0 0;font-size:16px;font-weight:500;line-height:1.4;color:var(--text-secondary)}
+.question-section__name--translation{height:36px;font-size:16px;font-weight:500;color:var(--text-secondary);margin-left:-10px}
+.question-section__name--translation::placeholder,.question-section__name::placeholder{color:#98A2B3;font-weight:500}
+.question-section__count{flex:none;font-size:14px;font-weight:500;color:var(--text-tertiary);white-space:nowrap}
+.question-section__list{display:flex;flex-direction:column;gap:12px}
+
+/* ---- question card ---- */
+.question-card{position:relative;display:flex;flex-direction:column;gap:8px;padding:16px;border:1px solid #EAECF0;border-radius:12px;background:#fff;cursor:pointer;transition:border-color .12s,box-shadow .12s}
+.question-card:hover{border-color:#D0D5DD}
+.question-card:focus-visible{outline:none;box-shadow:0 0 0 4px rgba(41,112,255,.16)}
+.question-card.is-selected{border-color:#2970FF;box-shadow:0 0 0 4px rgba(41,112,255,.16)}
+/* Preview: read-only card — no pointer, no hover */
+.question-card--static{cursor:default}
+.question-card--static:hover{border-color:#EAECF0}
+/* drag to reorder: grip in the sheet's left gutter, shown on hover; 2px #2970FF line where the card will land */
+.question-card__handle{position:absolute;top:18px;left:-30px;display:flex;align-items:center;justify-content:center;width:24px;height:28px;border-radius:6px;color:#98A2B3;cursor:grab;opacity:0;transition:opacity .12s}
+.question-card:hover .question-card__handle,.question-card.is-selected .question-card__handle{opacity:1}
+.question-card__handle:hover{background:#F2F4F7;color:#344054}
+.question-card.is-dragging{opacity:.5}
+.question-card.is-drop-before{box-shadow:0 -3px 0 -1px #2970FF}
+.question-card.is-drop-after{box-shadow:0 3px 0 -1px #2970FF}
+/* Both: Spanish line under the English question / help text */
+.question-card__translation{display:flex;align-items:flex-start;gap:8px;margin:0;font-size:14px;font-weight:400;line-height:1.4;color:var(--text-secondary)}
+/* small EN/ES language marker */
+.lang-tag{flex:none;display:inline-flex;align-items:center;height:20px;padding:0 6px;border-radius:4px;background:#F2F4F7;font-size:12px;font-weight:600;line-height:1;letter-spacing:.02em;color:var(--text-tertiary)}
+/* AI-translated text that hasn't been checked yet */
+.tag.tag--ai{background:#F4F3FF;border-color:#D9D6FE;color:#5925DC;font-weight:500}
+.question-card__header{display:flex;align-items:flex-start;gap:12px}
+.question-card__number{flex:none;display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:28px;padding:0 6px;box-sizing:border-box;border-radius:8px;background:#F2F4F7;
+  font-size:14px;font-weight:600;color:var(--text-secondary);font-variant-numeric:tabular-nums}
+.question-card__text{flex:1;min-width:0;padding-top:3px;font-size:16px;font-weight:500;line-height:1.4;letter-spacing:-.32px;color:var(--text-primary);overflow-wrap:anywhere}
+.question-card__text .req{margin-left:2px}
+.question-card__missing{color:#B54708}
+.question-card__actions{flex:none;display:flex;gap:4px;margin:-4px -4px 0 0;opacity:0;transition:opacity .12s}
+.question-card:hover .question-card__actions,.question-card.is-selected .question-card__actions,.question-card:focus-within .question-card__actions,.question-card__actions:has(.action-menu){opacity:1}
+/* kebab menu: the shared action menu (public/components/action-menu), placed under the card's kebab */
+.question-card__actions.kebab{position:relative}
+.question-card .question-menu{top:40px;right:0;z-index:40}
+/* Delete Module (trash icon button): red on hover */
+.icon-button--danger:hover:not(:disabled){background:#FEF3F2;color:#D92D20}
+.question-card__tags{display:flex;flex-wrap:wrap;gap:6px;padding-left:40px}
+.question-card__tags:empty{display:none}
+.question-card__help{margin:0;font-size:14px;font-weight:400;line-height:1.4;color:var(--text-tertiary)}
+.question-card>:not(.question-card__header):not(.question-card__tags){margin-left:40px}
+.question-card .scale,.question-card .ochips{margin-top:4px}
+.question-card__field{height:44px;margin-top:4px;background:#F9FAFB;display:flex;align-items:center}
+.question-card__field--tall{height:72px}
+.question-card__field--short{max-width:220px}
+.question-card__gap{margin-top:4px}
+
+/* 36px icon buttons (card actions, delete section) */
+.icon-button{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;padding:0;border:0;border-radius:8px;background:none;color:#667085;cursor:pointer}
+.icon-button:hover:not(:disabled){background:#F2F4F7;color:#344054}
+.icon-button:focus-visible{outline:2px solid #2970FF;outline-offset:-2px}
+.icon-button:disabled{color:#D0D5DD;cursor:not-allowed}
+.icon-button svg.i{width:20px;height:20px}
+
+/* ---- centered button on a rule (Figma "Add Module": 14/600, 8px × 14px, xs shadow + 4px #F2F4F7 ring) ---- */
+.standard-sections{display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:-16px}
+.standard-sections__label{font-size:14px;font-weight:500;line-height:1.4;color:var(--text-tertiary)}
+.standard-sections .chip-buttons{justify-content:center}
+.divider-action{position:relative;display:flex;justify-content:center;align-items:center;min-height:40px}
+.divider-action::before{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:#EAECF0}
+.divider-action__button{position:relative;display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border:1px solid #D0D5DD;border-radius:8px;background:#fff;cursor:pointer;
+  box-shadow:0 1px 2px rgba(16,24,40,.05),0 0 0 4px #F2F4F7;font-family:var(--f);font-size:14px;font-weight:600;line-height:normal;color:#344054;white-space:nowrap}
+.divider-action__button:hover{background:#F9FAFB}
+.divider-action__button:focus-visible{outline:none;box-shadow:0 1px 2px rgba(16,24,40,.05),0 0 0 4px rgba(41,112,255,.24)}
+.divider-action__button img{display:block}
+
+/* ---- answer-type menu (Figma command menu: 280px, 8px in, items 2px × 8px, content 10px × 12px, 40px featured icon, 14/500 + 14/400) ---- */
+.type-menu{position:absolute;top:calc(100% + 4px);left:50%;transform:translateX(-50%);z-index:30;width:280px;max-height:min(420px,60vh);overflow-y:auto;box-sizing:border-box;padding:8px 0;
+  background:#fff;border:1px solid #EAECF0;border-radius:8px;box-shadow:0 20px 24px -4px rgba(16,24,40,.08),0 8px 8px -4px rgba(16,24,40,.03)}
+.type-menu__item{display:flex;align-items:center;gap:8px;width:calc(100% - 16px);margin:2px 8px;padding:10px 12px;box-sizing:border-box;border:0;border-radius:8px;background:none;cursor:pointer;text-align:left;font-family:var(--f)}
+.type-menu__item:hover,.type-menu__item:focus-visible{outline:none;background:#F9FAFB}
+.type-menu__text{display:flex;flex-direction:column;min-width:0;font-size:14px;line-height:normal}
+.type-menu__title{font-weight:500;color:var(--text-primary)}
+.type-menu__description{font-weight:400;color:var(--text-tertiary)}
+/* 40px featured icon: #F9FAFB fill in the menu, white in the panel; 1px #EAECF0, 8px corners, 20px icon */
+.featured-icon{flex:none;display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;box-sizing:border-box;border:1px solid #EAECF0;border-radius:8px;background:#F9FAFB;
+  box-shadow:0 1px 1px rgba(16,24,40,.05);color:#344054}
+.featured-icon__svg{display:block}
+
+/* ---- settings panel (Figma "Course Settings" / "Module Settings"): 560px, 24px in, groups 32px apart split by #EAECF0 rules ---- */
+.settings-panel{flex:0 0 560px;max-width:560px;box-sizing:border-box;position:sticky;top:75px;align-self:flex-start;height:calc(100vh - 75px);overflow-y:auto;
+  display:flex;flex-direction:column;background:#fff;border-left:1px solid #D0D5DD}
+/* header (Figma LMS 1129:14349 "Slide out menu header"): 16px in, 8px gaps, #EAECF0 bottom rule;
+   [← back 36px] title 20/600 black [× close 36px]; both buttons 8px padding, 8px radius, 20px #344054 icon. Questionnaire Settings has no back. */
+.settings-panel__header{position:sticky;top:0;z-index:3;display:flex;align-items:center;gap:8px;padding:16px;background:#fff;border-bottom:1px solid #EAECF0}
+.settings-panel__title{flex:1;min-width:0;margin:0;font-size:20px;font-weight:600;line-height:24px;color:#000;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.settings-panel__back,.settings-panel__close{flex:none;display:inline-flex;align-items:center;justify-content:center;margin:0;padding:8px;border:0;border-radius:8px;background:none;cursor:pointer}
+.settings-panel__back:hover,.settings-panel__close:hover{background:#F2F4F7}
+.settings-panel__back:focus-visible,.settings-panel__close:focus-visible{outline:2px solid #2970FF;outline-offset:0}
+.settings-panel__back img,.settings-panel__close img{display:block}
+.settings-panel__body{flex:1;display:flex;flex-direction:column;gap:32px;padding:24px}
+.settings-panel__group{display:flex;flex-direction:column;align-items:flex-start;gap:20px}
+.settings-panel__group>*{width:100%}
+.settings-panel__group>.button{width:auto}
+.settings-panel__group-title{margin:0;font-size:16px;font-weight:600;line-height:1.2;letter-spacing:-.32px;color:#1D2939}
+.settings-panel__divider{width:100%;height:1px;margin:0;border:0;background:#EAECF0}
+
+/* fields: 14/500 label (flush with the control), 8px to the control, 14/400 hint */
+.settings-panel .field{display:flex;flex-direction:column;gap:8px;min-width:0}
+.settings-panel .field__label{padding:0;font-size:14px;font-weight:500;line-height:1.4;letter-spacing:-.28px;color:var(--text-primary)}
+.settings-panel .field__label .required-mark{margin-left:4px}
+.field__hint{margin:0;font-size:14px;font-weight:400;line-height:1.4;letter-spacing:.07px;color:var(--text-secondary)}
+/* label with an action on the right (Translate with AI) */
+.field__label-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.settings-panel .field__label-row .link-button{align-self:center}
+.field__hint--ai{color:#5925DC}
+.field__hint--ai .link-button{margin-left:4px;font-size:14px}
+.settings-panel .input{height:46px;font-size:16px;font-weight:500}
+.settings-panel .input.input--textarea{height:120px;min-height:96px}
+.settings-panel .input.settings-panel__textarea--short{height:80px;min-height:80px}   /* help text (Figma Description: 80px) */
+.settings-panel .dropdown{width:100%}
+.settings-panel .link-button{align-self:flex-start;margin:0}
+.settings-panel .lb-bgrp{align-self:flex-start}
+
+/* Answer Options: English | Spanish columns (+ 36px delete on editable rows), 8px apart */
+.answer-options{display:flex;flex-direction:column;gap:8px}
+.answer-options__row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;align-items:center}
+.answer-options__row--edit,.answer-options__row--head:has(+.answer-options__row--edit){grid-template-columns:minmax(0,1fr) minmax(0,1fr) 36px}
+.answer-options__row--head{font-size:12px;font-weight:500;line-height:18px;color:var(--text-tertiary)}
+.settings-panel .field>.button{align-self:flex-start}   /* Add Option hugs its label */
+.settings-panel .answer-options .input:disabled{background:#F9FAFB;color:var(--text-secondary);cursor:default}
+
+/* section list: name + question count, click to scroll the canvas to it */
+.section-list{display:flex;flex-direction:column;border:1px solid #EAECF0;border-radius:8px;overflow:hidden}
+.section-list__item{display:flex;align-items:center;gap:12px;padding:12px 14px;border:0;background:#fff;cursor:pointer;text-align:left;font-family:var(--f)}
+.section-list__item+.section-list__item{border-top:1px solid #EAECF0}
+.section-list__item:hover{background:#F9FAFB}
+.section-list__item:focus-visible{outline:2px solid #2970FF;outline-offset:-2px}
+.section-list__name{flex:1;min-width:0;font-size:14px;font-weight:500;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.section-list__count{flex:none;min-width:24px;height:20px;padding:0 8px;box-sizing:border-box;border-radius:999px;background:#F2F4F7;font-size:12px;font-weight:500;line-height:20px;text-align:center;color:var(--text-secondary)}
+.button--with-icon{gap:8px}
+.button--with-icon img{display:block}
+.chip-buttons{display:flex;flex-wrap:wrap;gap:8px}
+
+/* checkbox with title + description (Figma: 16px box, 8px gap, 14/500 title, 14/400 #667085 description) */
+.check-option{display:flex;align-items:flex-start;gap:8px;cursor:pointer}
+.check-option .checkbox{margin-top:2px}   /* centred on the 14px title's 20px line */
+.check-option__text{display:flex;flex-direction:column;gap:2px;line-height:1.4}
+.check-option__title{font-size:14px;font-weight:500;color:var(--text-primary)}
+.check-option__description{font-size:14px;font-weight:400;letter-spacing:.07px;color:var(--text-tertiary)}
+
+/* narrower screens: panel drops under the canvas */
+@media (max-width:1100px){
+  .editor--questionnaire .editor__body{flex-direction:column}
+  .settings-panel{position:static;flex:none;width:100%;max-width:none;height:auto;border-left:0;border-top:1px solid #D0D5DD}
+  .settings-panel__header{position:static}
+}
+@media (max-width:700px){
+  .editor__canvas{padding:16px}
+  .questionnaire-sheet{padding:24px 16px 40px;gap:32px}
+  .questionnaire-sheet__title{font-size:24px}
+  .question-card>:not(.question-card__header):not(.question-card__tags),.question-card__tags{margin-left:0;padding-left:0}
+  .question-card__handle{position:static;flex:none;opacity:1}   /* no gutter at this width: grip sits before the number */
+}
